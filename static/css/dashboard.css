@@ -1,0 +1,389 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+
+body{
+    display:flex;
+    background:#eef5fb;
+}
+
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+
+    width:260px;
+    height:100vh;
+
+    background:#1565c0;
+    color:white;
+
+    position:fixed;
+    left:0;
+    top:0;
+
+    overflow-y:auto;
+
+}
+
+
+.logo{
+
+    text-align:center;
+    padding:25px;
+
+    border-bottom:1px solid rgba(255,255,255,.2);
+
+}
+
+
+.logo h2{
+
+    margin-bottom:8px;
+
+}
+
+
+.logo p{
+
+    font-size:13px;
+    opacity:.8;
+
+}
+
+
+.sidebar ul{
+
+    list-style:none;
+    margin-top:20px;
+
+}
+
+
+.sidebar li{
+
+    transition:.3s;
+
+}
+
+
+.sidebar li:hover{
+
+    background:rgba(255,255,255,.12);
+
+}
+
+
+.sidebar a{
+
+    display:block;
+
+    padding:18px 25px;
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:16px;
+
+}
+
+
+
+/* ================= MAIN AREA ================= */
+
+
+.main{
+
+    margin-left:260px;
+
+    width:calc(100% - 260px);
+
+    min-height:100vh;
+
+}
+
+
+
+/* ================= TOP BAR ================= */
+
+
+.topbar{
+
+    height:75px;
+
+    background:white;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 35px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+
+}
+
+
+.top-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+
+.username{
+
+    font-weight:bold;
+
+    color:#1565c0;
+
+}
+
+
+
+.logout{
+
+    background:#dc3545;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+}
+
+
+.logout:hover{
+
+    background:#b52a37;
+
+}
+
+
+
+/* ================= CONTENT ================= */
+
+
+.content{
+
+    padding:35px;
+
+}
+
+
+
+/* ================= DASHBOARD CARDS ================= */
+
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:25px;
+
+    margin-top:25px;
+
+}
+
+
+
+.card{
+
+    background:white;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+
+.card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+
+.card h3{
+
+    color:#1565c0;
+
+    margin-bottom:12px;
+
+}
+
+
+.card p{
+
+    color:#666;
+
+    line-height:1.6;
+
+}
+
+
+
+/* ================= PROFILE ================= */
+
+
+.profile{
+
+    margin-top:35px;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:15px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+
+.profile h2{
+
+    margin-bottom:20px;
+
+    color:#1565c0;
+
+}
+
+
+.profile p{
+
+    margin:10px 0;
+
+}
+
+
+.badge{
+
+    display:inline-block;
+
+    margin-top:15px;
+
+    background:#1565c0;
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+}
+
+
+
+/* ================= TABLE ================= */
+
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+table td{
+
+    padding:15px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+
+table td:first-child{
+
+    font-weight:bold;
+
+    width:35%;
+
+}
+
+
+
+/* ================= BUTTON ================= */
+
+
+.button{
+
+    margin-top:30px;
+
+    text-align:center;
+
+}
+
+
+.button a{
+
+    display:inline-block;
+
+    background:#1565c0;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:12px 25px;
+
+    border-radius:8px;
+
+}
+
+
+.button a:hover{
+
+    background:#0d47a1;
+
+}
+
+
+
+/* ================= TEXT ================= */
+
+
+.welcome{
+
+    font-size:32px;
+
+    color:#1565c0;
+
+    margin-bottom:10px;
+
+}
+
+
+.role{
+
+    font-size:18px;
+
+    color:#666;
+
+    margin-bottom:30px;
+
+}

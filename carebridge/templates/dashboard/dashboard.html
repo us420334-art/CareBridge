@@ -1,0 +1,107 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block page_title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h1 class="welcome">
+
+Welcome, {{ request.user.username }} 👋
+
+</h1>
+
+<p class="role">
+
+{{ profile.role }}
+
+</p>
+
+<div class="cards">
+
+<a href="/profile/" style="text-decoration:none;color:inherit;">
+
+<div class="card">
+
+<h3>👤 My Profile</h3>
+
+<p>
+
+View and update your personal information.
+
+</p>
+
+</div>
+
+</a>
+
+<div class="card">
+
+<h3>📋 Service Requests</h3>
+
+<p>
+
+Create and track your service requests.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>🔔 Notifications</h3>
+
+<p>
+
+Check your latest updates and reminders.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>🚨 Emergency SOS</h3>
+
+<p>
+
+Send emergency alerts instantly.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="profile">
+
+<h2>Profile Summary</h2>
+
+<p><strong>Email:</strong> {{ request.user.email }}</p>
+
+<p><strong>Phone:</strong> {{ profile.phone }}</p>
+
+<p><strong>Address:</strong> {{ profile.address }}</p>
+
+<p><strong>Emergency Contact:</strong> {{ profile.emergency_contact_name }}</p>
+
+<p><strong>Emergency Phone:</strong> {{ profile.emergency_contact_phone }}</p>
+
+<p><strong>Blood Group:</strong> {{ profile.blood_group }}</p>
+
+<p><strong>Medical Conditions:</strong> {{ profile.medical_conditions }}</p>
+
+<span class="badge">
+
+{{ profile.role }}
+
+</span>
+
+</div>
+
+{% endblock %}

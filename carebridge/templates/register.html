@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CareBridge Register</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:#eaf5fb;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:30px;
+}
+
+.container{
+width:600px;
+background:white;
+padding:35px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+h1{
+text-align:center;
+color:#1b6ca8;
+margin-bottom:10px;
+}
+
+.tag{
+text-align:center;
+color:#666;
+margin-bottom:30px;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-top:15px;
+}
+
+input,
+textarea,
+select{
+
+width:100%;
+padding:12px;
+margin-top:8px;
+border:1px solid #ccc;
+border-radius:6px;
+font-size:15px;
+
+}
+
+textarea{
+resize:vertical;
+height:80px;
+}
+
+button{
+
+width:100%;
+margin-top:30px;
+padding:14px;
+background:#1b6ca8;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+
+}
+
+button:hover{
+background:#155a8a;
+}
+
+.bottom{
+text-align:center;
+margin-top:20px;
+}
+
+.bottom a{
+text-decoration:none;
+font-weight:bold;
+color:#1b6ca8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>CareBridge</h1>
+
+<p class="tag">Create Your Account</p>
+{% if error %}
+<p style="color:red; text-align:center; margin-bottom:15px;">
+    {{ error }}
+</p>
+{% endif %}
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Username</label>
+<input type="text" name="username" required>
+
+<label>Email</label>
+<input type="email" name="email" required>
+
+<label>Password</label>
+<input type="password" name="password" required>
+
+<label>Phone Number</label>
+<input type="text" name="phone" required>
+
+<label>Address</label>
+<textarea name="address" required></textarea>
+
+<label>Role</label>
+
+<select name="role" required>
+
+<option value="">Select Role</option>
+
+<option>Elderly Person</option>
+
+<option>Person with Mobility Impairment</option>
+
+<option>Person with Hearing Impairment</option>
+
+<option>Care Representative</option>
+
+<option>Caregiver</option>
+
+<option>Volunteer</option>
+
+</select>
+
+<label>Emergency Contact Name</label>
+<input type="text" name="emergency_contact_name">
+
+<label>Emergency Contact Phone</label>
+<input type="text" name="emergency_contact_phone">
+
+<label>Blood Group</label>
+
+<select name="blood_group">
+
+<option value="">Select Blood Group</option>
+
+<option>A+</option>
+<option>A-</option>
+<option>B+</option>
+<option>B-</option>
+<option>AB+</option>
+<option>AB-</option>
+<option>O+</option>
+<option>O-</option>
+
+</select>
+
+<label>Medical Conditions</label>
+
+<textarea
+name="medical_conditions"
+placeholder="Optional">
+</textarea>
+
+<button type="submit">
+
+Register
+
+</button>
+
+</form>
+
+<div class="bottom">
+
+Already have an account?
+
+<a href="/login/">
+
+Login
+
+</a>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

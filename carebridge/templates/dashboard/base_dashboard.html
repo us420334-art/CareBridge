@@ -1,0 +1,203 @@
+{% load static %}
+
+<div style="display:none;">
+    HOME TEMPLATE LOADED
+</div>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+{% block title %}
+CareBridge
+{% endblock %}
+</title>
+
+
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=100">
+
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=1">
+
+
+</head>
+
+
+<body>
+
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+
+    <div class="logo">
+
+        <h2>
+            CareBridge
+        </h2>
+
+        <p>
+            Care Beyond Boundaries
+        </p>
+
+    </div>
+
+
+
+    <ul>
+
+
+        <li>
+            <a href="/dashboard/">🏠 Dashboard</a>
+        </li>
+
+
+        <li>
+            <a href="/profile/">👤 My Profile</a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                👨‍👩‍👧 Care Representatives
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                📋 Service Requests
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                📅 Appointments
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                💊 Medicine Reminders
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                🚨 Emergency SOS
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                🔔 Notifications
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                ⭐ Feedback
+            </a>
+        </li>
+
+
+        <li>
+            <a href="#">
+                ⚙ Settings
+            </a>
+        </li>
+
+
+    </ul>
+
+
+</div>
+
+
+
+
+
+<!-- Main -->
+
+
+<div class="main">
+
+
+
+    <div class="topbar">
+
+
+        <div>
+
+            <h2>
+
+                {% block page_title %}
+
+                Dashboard
+
+                {% endblock %}
+
+            </h2>
+
+
+        </div>
+
+
+
+        <div class="top-right">
+
+
+            <span class="username">
+
+                👋 {{ request.user.username }}
+
+            </span>
+
+
+
+            <a href="/logout/" class="logout">
+
+                Logout
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <div class="content">
+
+
+        {% block content %}
+
+        {% endblock %}
+
+
+    </div>
+
+
+
+</div>
+
+
+
+
+</body>
+
+</html>

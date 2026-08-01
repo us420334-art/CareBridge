@@ -1,0 +1,260 @@
+.profile-container{
+    padding:20px;
+}
+
+
+.profile-header{
+
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    gap:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    margin-bottom:25px;
+
+}
+
+
+.profile-icon{
+
+    width:80px;
+    height:80px;
+    background:#1565c0;
+    color:white;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:40px;
+
+}
+
+
+.profile-header h2{
+
+    color:#1565c0;
+    margin-bottom:8px;
+
+}
+
+
+.profile-header p{
+
+    color:#666;
+
+}
+
+
+
+.profile-card{
+
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+
+}
+
+
+.profile-card h3{
+
+    color:#1565c0;
+    margin-bottom:20px;
+
+}
+
+
+
+.info-row{
+
+    display:flex;
+    justify-content:space-between;
+    padding:15px 0;
+    border-bottom:1px solid #eee;
+
+}
+
+
+.info-row span{
+
+    font-weight:bold;
+    color:#555;
+
+}
+
+
+.info-row strong{
+
+    color:#333;
+
+}
+
+
+
+.edit-button{
+
+    text-align:center;
+    margin-top:30px;
+
+}
+
+
+.edit-button a{
+
+    background:#1565c0;
+    color:white;
+    text-decoration:none;
+    padding:12px 30px;
+    border-radius:8px;
+    display:inline-block;
+
+}
+
+
+.edit-button a:hover{
+
+    background:#0d47a1;
+
+}
+
+/* =========================
+   EDIT PROFILE PAGE
+========================= */
+
+
+.edit-profile-container{
+
+    display:flex;
+    justify-content:center;
+    padding:30px;
+
+}
+
+
+.edit-profile-card{
+
+    background:white;
+    width:700px;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.1);
+
+}
+
+
+
+.edit-profile-card h2{
+
+    text-align:center;
+    color:#1565c0;
+    margin-bottom:30px;
+
+}
+
+
+
+
+.form-group{
+
+    margin-bottom:22px;
+
+}
+
+
+
+
+.form-group label{
+
+    display:block;
+    font-weight:600;
+    margin-bottom:8px;
+    color:#333;
+
+}
+
+
+
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+
+
+    width:100%;
+    padding:12px 15px;
+
+    border:1px solid #ddd;
+    border-radius:10px;
+
+    font-size:15px;
+
+    outline:none;
+
+    box-sizing:border-box;
+
+}
+
+
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+
+    border-color:#1565c0;
+
+}
+
+
+
+
+.form-group textarea{
+
+    height:100px;
+    resize:none;
+
+}
+
+
+
+
+
+.save-button{
+
+    text-align:center;
+    margin-top:30px;
+
+}
+
+
+
+.save-button button{
+
+
+    background:#1565c0;
+
+    color:white;
+
+    border:none;
+
+    padding:14px 40px;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+
+
+.save-button button:hover{
+
+    background:#0d47a1;
+
+}

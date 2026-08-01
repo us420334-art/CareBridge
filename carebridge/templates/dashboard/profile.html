@@ -1,0 +1,266 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+
+{% block page_title %}
+My Profile
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- Refresh trigger (hidden) -->
+<div style="display:none;">
+    PROFILE TEMPLATE LOADED
+</div>
+
+
+
+<div class="profile-container">
+
+
+    <!-- Profile Header -->
+
+    <div class="profile-header">
+
+        <div class="profile-icon">
+            👤
+        </div>
+
+
+        <div>
+
+            <h2>
+                {{ request.user.username }}
+            </h2>
+
+            <p>
+                {{ profile.role }}
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- Personal Information -->
+
+
+    <div class="profile-card">
+
+
+        <h3>
+            📋 Personal Information
+        </h3>
+
+
+        <div class="info-row">
+
+            <span>
+                Username
+            </span>
+
+            <strong>
+                {{ request.user.username }}
+            </strong>
+
+        </div>
+
+
+
+        <div class="info-row">
+
+            <span>
+                Email
+            </span>
+
+            <strong>
+                {{ request.user.email }}
+            </strong>
+
+        </div>
+
+
+
+
+        <div class="info-row">
+
+            <span>
+                Phone
+            </span>
+
+            <strong>
+                {{ profile.phone }}
+            </strong>
+
+        </div>
+
+
+
+
+        <div class="info-row">
+
+            <span>
+                Address
+            </span>
+
+            <strong>
+                {{ profile.address }}
+            </strong>
+
+        </div>
+
+
+
+
+        <div class="info-row">
+
+            <span>
+                Role
+            </span>
+
+            <strong>
+                {{ profile.role }}
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- Emergency Information -->
+
+
+    <div class="profile-card">
+
+
+        <h3>
+            🚨 Emergency Information
+        </h3>
+
+
+
+        <div class="info-row">
+
+            <span>
+                Contact Name
+            </span>
+
+            <strong>
+                {{ profile.emergency_contact_name|default:"Not Added" }}
+            </strong>
+
+        </div>
+
+
+
+
+        <div class="info-row">
+
+            <span>
+                Contact Phone
+            </span>
+
+            <strong>
+                {{ profile.emergency_contact_phone|default:"Not Added" }}
+            </strong>
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Medical Information -->
+
+
+    <div class="profile-card">
+
+
+        <h3>
+            🏥 Medical Information
+        </h3>
+
+
+
+
+        <div class="info-row">
+
+            <span>
+                Blood Group
+            </span>
+
+            <strong>
+                {{ profile.blood_group|default:"Not Added" }}
+            </strong>
+
+        </div>
+
+
+
+
+
+        <div class="info-row">
+
+            <span>
+                Medical Conditions
+            </span>
+
+            <strong>
+                {{ profile.medical_conditions|default:"Not Added" }}
+            </strong>
+
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+    <!-- Edit Button -->
+
+
+    <div class="edit-button">
+
+        <a href="/edit-profile/">
+
+            ✏️ Edit Profile
+
+        </a>
+
+    </div>
+
+
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,260 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+
+body{
+    background:#eef5fb;
+    color:#333;
+}
+
+
+/* Navbar */
+
+.navbar{
+
+    height:80px;
+    background:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 60px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+
+}
+
+
+.logo h2{
+
+    color:#1565c0;
+
+}
+
+
+.logo p{
+
+    font-size:13px;
+    color:#777;
+
+}
+
+
+.nav-links a{
+
+    text-decoration:none;
+    margin-left:25px;
+    color:#333;
+
+}
+
+
+.register-btn{
+
+    background:#1565c0;
+    color:white !important;
+    padding:10px 20px;
+    border-radius:25px;
+
+}
+
+
+
+/* Hero */
+
+.hero{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:70px;
+
+}
+
+
+.hero-text{
+
+    width:55%;
+
+}
+
+
+.hero-text h1{
+
+    font-size:45px;
+    color:#1565c0;
+    line-height:1.2;
+
+}
+
+
+.hero-text p{
+
+    margin-top:20px;
+    font-size:18px;
+    line-height:1.6;
+
+}
+
+
+.hero-buttons{
+
+    margin-top:25px;
+
+}
+
+
+.primary-btn,
+.secondary-btn{
+
+    display:inline-block;
+    padding:12px 25px;
+    border-radius:25px;
+    text-decoration:none;
+    margin-right:15px;
+
+}
+
+
+.primary-btn{
+
+    background:#1565c0;
+    color:white;
+
+}
+
+
+.secondary-btn{
+
+    border:2px solid #1565c0;
+    color:#1565c0;
+
+}
+
+
+
+.circle{
+
+    width:220px;
+    height:220px;
+    background:#1565c0;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:70px;
+
+}
+
+
+
+
+/* Features */
+
+.features,
+.how,
+.about{
+
+    padding:50px;
+    text-align:center;
+
+}
+
+
+.feature-container,
+.steps{
+
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:25px;
+    margin-top:30px;
+
+}
+
+
+.feature-card,
+.step-card{
+
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+}
+
+
+.feature-card h3,
+.step-card h3{
+
+    color:#1565c0;
+    margin-bottom:15px;
+
+}
+
+
+
+.steps{
+
+    grid-template-columns:repeat(3,1fr);
+
+}
+
+
+
+
+/* About */
+
+.about{
+
+    background:white;
+
+}
+
+
+.about p{
+
+    margin-top:20px;
+    line-height:1.6;
+
+}
+
+
+
+/* CTA */
+
+.cta{
+
+    text-align:center;
+    padding:50px;
+    background:#1565c0;
+    color:white;
+
+}
+
+
+.cta a{
+
+    display:inline-block;
+    margin-top:20px;
+    background:white;
+    color:#1565c0;
+    padding:12px 25px;
+    border-radius:25px;
+    text-decoration:none;
+
+}
+
+
+
+/* Footer */
+
+footer{
+
+    background:#0d47a1;
+    color:white;
+    text-align:center;
+    padding:20px;
+
+}
