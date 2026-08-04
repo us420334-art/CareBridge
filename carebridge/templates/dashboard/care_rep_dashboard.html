@@ -1,0 +1,349 @@
+{% extends 'dashboard/care_rep_base.html' %}
+
+{% block title %}
+Care Representative Dashboard
+{% endblock %}
+
+{% block page_title %}
+Care Representative Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="care-container">
+
+    <h2>Care Representative Dashboard</h2>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="success-message">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <p class="page-description">
+        View and manage support requests sent by users.
+    </p>
+
+    <!-- Pending Requests -->
+
+    <div class="section">
+
+        <h3>Pending Requests</h3>
+
+        {% if pending_requests %}
+
+        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+            <tr>
+                <th>User</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            {% for req in pending_requests %}
+
+            <tr>
+
+                <td>{{ req.requester.username }}</td>
+
+                <td>{{ req.requester.userprofile.phone }}</td>
+
+                <td>{{ req.requester.userprofile.address }}</td>
+
+                <td>{{ req.status }}</td>
+
+                <td>
+
+                    <form method="POST" action="{% url 'accept_request' req.id %}" style="display:inline;">
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Accept
+                        </button>
+
+                    </form>
+
+                    <form method="POST" action="{% url 'reject_request' req.id %}" style="display:inline;">
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Reject
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>No pending requests.</p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Connected Users -->
+
+    <div class="section">
+
+        <h3>Connected Users</h3>
+
+        {% if connections %}
+
+        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+            <tr>
+                <th>User</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Caregiver</th>
+                <th>Volunteer</th>
+                <th>Action</th>
+            </tr>
+            {% for connection in connections %}
+
+            <tr>
+
+                <form method="POST" action="{% url 'assign_user' connection.id %}">
+
+                    {% csrf_token %}
+
+                    <td>
+                        {{ connection.user.username }}
+                    </td>
+
+                    <td>
+                        {{ connection.user.userprofile.phone }}
+                    </td>
+
+                    <td>
+                        {{ connection.user.userprofile.address }}
+                    </td>
+
+                    <td>
+
+                        {% with assignment=connection.user.caregiver_assignment.first %}
+
+                        {% if assignment %}
+
+                        <strong>👨‍⚕️ {{ assignment.caregiver.username }}</strong>
+
+                        <br><br>
+
+                        {% if assignment.status == "Pending" %}
+
+                        <span
+                            style="background:#fff3cd;color:#856404;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;">
+                            🟡 Pending
+                        </span>
+
+                        {% elif assignment.status == "Accepted" %}
+
+                        <span
+                            style="background:#d4edda;color:#155724;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;">
+                            🟢 Accepted
+                        </span>
+
+                        {% elif assignment.status == "Rejected" %}
+
+                        <span
+                            style="background:#f8d7da;color:#721c24;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;">
+                            🔴 Rejected
+                        </span>
+
+                        {% endif %}
+
+                        {% else %}
+
+                        <select name="caregiver">
+
+                            <option value="">Select Caregiver</option>
+
+                            {% for caregiver in caregivers %}
+
+                            <option value="{{ caregiver.user.id }}">
+                                {{ caregiver.user.username }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        {% endif %}
+
+                        {% endwith %}
+
+                    </td>
+                    <td>
+
+                        {% with assignment=connection.user.volunteer_assignment.first %}
+
+                        {% if assignment %}
+
+                        <strong>🙋 {{ assignment.volunteer.username }}</strong>
+
+                        <br><br>
+
+                        {% if assignment.status == "Pending" %}
+
+                        <span
+                            style="background:#fff3cd;color:#856404;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;">
+                            🟡 Pending
+                        </span>
+
+                        {% elif assignment.status == "Accepted" %}
+
+                        <span
+                            style="background:#d4edda;color:#155724;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;">
+                            🟢 Accepted
+                        </span>
+
+                        {% elif assignment.status == "Rejected" %}
+
+                        <span
+                            style="background:#f8d7da;color:#721c24;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:bold;">
+                            🔴 Rejected
+                        </span>
+
+                        {% endif %}
+
+                        {% else %}
+
+                        <select name="volunteer">
+
+                            <option value="">Select Volunteer</option>
+
+                            {% for volunteer in volunteers %}
+
+                            <option value="{{ volunteer.user.id }}">
+                                {{ volunteer.user.username }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        {% endif %}
+
+                        {% endwith %}
+
+                    </td>
+
+                    <td>
+
+                        {% with caregiver=connection.user.caregiver_assignment.first %}
+                        {% with volunteer=connection.user.volunteer_assignment.first %}
+
+                        {% if caregiver and volunteer %}
+
+                        <button type="button" disabled style="
+                    background:#28a745;
+                    color:white;
+                    border:none;
+                    padding:8px 18px;
+                    border-radius:6px;
+                    font-weight:bold;
+                    cursor:not-allowed;
+                ">
+                            ✅ Team Assigned
+                        </button>
+
+                        {% elif caregiver %}
+
+                        <button type="submit">
+                            Assign Volunteer
+                        </button>
+
+                        {% elif volunteer %}
+
+                        <button type="submit">
+                            Assign Caregiver
+                        </button>
+
+                        {% else %}
+
+                        <button type="submit">
+                            Assign Team
+                        </button>
+
+                        {% endif %}
+
+                        {% endwith %}
+                        {% endwith %}
+
+                    </td>
+                </form>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <p>No connected users.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<style>
+    .success-message {
+
+        background: #d4edda;
+
+        color: #155724;
+
+        border: 1px solid #c3e6cb;
+
+        padding: 12px;
+
+        margin-bottom: 20px;
+
+        border-radius: 6px;
+
+        font-weight: bold;
+
+    }
+
+    .section table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .section th,
+    .section td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 10px;
+        word-wrap: break-word;
+    }
+
+    .section select {
+        width: 100%;
+        padding: 6px;
+    }
+
+    .section {
+        overflow-x: auto;
+    }
+</style>
+
+{% endblock %}

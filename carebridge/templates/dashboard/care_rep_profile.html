@@ -1,0 +1,56 @@
+{% extends 'dashboard/care_rep_base.html' %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block page_title %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="profile">
+
+    <h2>👤 My Profile</h2>
+
+    <table>
+
+        <tr>
+            <td>Username</td>
+            <td>{{ request.user.username }}</td>
+        </tr>
+
+        <tr>
+            <td>Email</td>
+            <td>{{ request.user.email }}</td>
+        </tr>
+
+        <tr>
+            <td>Phone</td>
+            <td>{{ profile.phone }}</td>
+        </tr>
+
+        <tr>
+            <td>Address</td>
+            <td>{{ profile.address }}</td>
+        </tr>
+
+        <tr>
+            <td>Role</td>
+            <td>{{ profile.role }}</td>
+        </tr>
+
+    </table>
+
+    <div class="button">
+
+        <a href="{% url 'edit_profile' %}">
+            Edit Profile
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

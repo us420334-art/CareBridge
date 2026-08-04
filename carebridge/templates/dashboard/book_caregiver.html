@@ -1,0 +1,90 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Book Caregiver
+{% endblock %}
+
+{% block page_title %}
+Book Caregiver
+{% endblock %}
+
+{% block content %}
+
+<h2>Available Caregivers</h2>
+
+{% if messages %}
+{% for message in messages %}
+<div class="success-message">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+    <tr>
+
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Action</th>
+
+    </tr>
+
+    {% for caregiver in caregivers %}
+
+    <tr>
+
+        <td>{{ caregiver.user.username }}</td>
+
+        <td>{{ caregiver.phone }}</td>
+
+        <td>{{ caregiver.address }}</td>
+
+        <td>
+
+            {% if caregiver.user.id in booked_ids %}
+
+            <button style="
+        background:#ffc107;
+        color:black;
+        border:none;
+        padding:8px 18px;
+        border-radius:8px;
+        cursor:not-allowed;
+    " disabled>
+
+                Pending
+
+            </button>
+
+            {% else %}
+
+            <a href="{% url 'confirm_caregiver_booking' caregiver.user.id %}">
+
+                <button style="
+        background:#28a745;
+        color:white;
+        border:none;
+        padding:8px 18px;
+        border-radius:8px;
+        cursor:pointer;
+    ">
+
+                    Book
+
+                </button>
+
+            </a>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

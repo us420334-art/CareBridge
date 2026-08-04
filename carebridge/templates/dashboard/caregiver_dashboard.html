@@ -1,0 +1,100 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Caregiver Dashboard
+{% endblock %}
+
+{% block page_title %}
+Caregiver Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h2>Direct Booking Requests</h2>
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div style="
+            background:#d4edda;
+            color:#155724;
+            padding:12px;
+            border-radius:8px;
+            margin-bottom:20px;
+            font-weight:bold;
+        ">
+            ✔ {{ message }}
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+{% if bookings %}
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+    <tr>
+
+        <th>User</th>
+
+        <th>Phone</th>
+
+        <th>Booked On</th>
+
+        <th>Status</th>
+
+        <th>Action</th>
+
+    </tr>
+
+    {% for booking in bookings %}
+
+    <tr>
+
+        <td>{{ booking.user.username }}</td>
+
+        <td>{{ booking.user.userprofile.phone }}</td>
+
+        <td>{{ booking.booked_at }}</td>
+
+        <td>{{ booking.status }}</td>
+
+        <td>
+
+            {% if booking.status == "Pending" %}
+
+                <a href="{% url 'accept_caregiver_booking' booking.id %}">
+                    <button style="background:green;color:white;padding:8px 15px;border:none;border-radius:6px;">
+                        Accept
+                    </button>
+                </a>
+
+                <a href="{% url 'reject_caregiver_booking' booking.id %}">
+                    <button style="background:red;color:white;padding:8px 15px;border:none;border-radius:6px;">
+                        Reject
+                    </button>
+                </a>
+
+            {% else %}
+
+                <strong>{{ booking.status }}</strong>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No booking requests received.</p>
+
+{% endif %}
+
+{% endblock %}

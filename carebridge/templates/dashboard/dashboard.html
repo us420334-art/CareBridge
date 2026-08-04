@@ -11,96 +11,147 @@ Dashboard
 {% block content %}
 
 <h1 class="welcome">
-
-Welcome, {{ request.user.username }} 👋
-
+    Welcome, {{ request.user.username }} 👋
 </h1>
 
 <p class="role">
-
-{{ profile.role }}
-
+    {{ profile.role }}
 </p>
 
 <div class="cards">
 
-<a href="/profile/" style="text-decoration:none;color:inherit;">
+    <a href="/profile/" style="text-decoration:none;color:inherit;">
+        <div class="card">
+            <h3>👤 My Profile</h3>
+            <p>
+                View and update your personal information.
+            </p>
+        </div>
+    </a>
 
-<div class="card">
+    <div class="card">
+        <h3>📋 Service Requests</h3>
+        <p>
+            Create and track your service requests.
+        </p>
+    </div>
 
-<h3>👤 My Profile</h3>
+    <div class="card">
+        <h3>🔔 Notifications</h3>
+        <p>
+            Check your latest updates and reminders.
+        </p>
+    </div>
 
-<p>
+    <div class="card">
+        <h3>🚨 Emergency SOS</h3>
+        <p>
+            Send emergency alerts instantly.
+        </p>
+    </div>
 
-View and update your personal information.
+    <a href="{% url 'book_caregiver' %}" style="text-decoration:none;color:inherit;">
+        <div class="card">
+            <h3>👨‍⚕️ Book Caregiver</h3>
+            <p>
+                Book a caregiver directly.
+            </p>
+        </div>
+    </a>
 
-</p>
+    <a href="{% url 'my_bookings' %}" style="text-decoration:none;color:inherit;">
+        <div class="card">
+            <h3>📑 My Bookings</h3>
+            <p>
+                View your caregiver booking requests.
+            </p>
+        </div>
+    </a>
 
-</div>
+    {% if profile.role == "Caregiver" %}
 
-</a>
+    <a href="{% url 'caregiver_dashboard' %}" style="text-decoration:none;color:inherit;">
 
-<div class="card">
+        <div class="card">
 
-<h3>📋 Service Requests</h3>
+            <h3>📋 Caregiver Dashboard</h3>
 
-<p>
+            <p>
+                View and manage your booking requests.
+            </p>
 
-Create and track your service requests.
+        </div>
 
-</p>
+    </a>
 
-</div>
-
-<div class="card">
-
-<h3>🔔 Notifications</h3>
-
-<p>
-
-Check your latest updates and reminders.
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h3>🚨 Emergency SOS</h3>
-
-<p>
-
-Send emergency alerts instantly.
-
-</p>
-
-</div>
+    {% endif %}
 
 </div>
 
 <div class="profile">
 
-<h2>Profile Summary</h2>
+    <h2>Profile Summary</h2>
 
-<p><strong>Email:</strong> {{ request.user.email }}</p>
+    <p><strong>Email:</strong> {{ request.user.email }}</p>
 
-<p><strong>Phone:</strong> {{ profile.phone }}</p>
+    <p><strong>Phone:</strong> {{ profile.phone }}</p>
 
-<p><strong>Address:</strong> {{ profile.address }}</p>
+    <p><strong>Address:</strong> {{ profile.address }}</p>
 
-<p><strong>Emergency Contact:</strong> {{ profile.emergency_contact_name }}</p>
+    <p><strong>Emergency Contact:</strong> {{ profile.emergency_contact_name }}</p>
 
-<p><strong>Emergency Phone:</strong> {{ profile.emergency_contact_phone }}</p>
+    <p><strong>Emergency Phone:</strong> {{ profile.emergency_contact_phone }}</p>
 
-<p><strong>Blood Group:</strong> {{ profile.blood_group }}</p>
+    <p><strong>Blood Group:</strong> {{ profile.blood_group }}</p>
 
-<p><strong>Medical Conditions:</strong> {{ profile.medical_conditions }}</p>
+    <p><strong>Medical Conditions:</strong> {{ profile.medical_conditions }}</p>
 
-<span class="badge">
+    <span class="badge">
+        {{ profile.role }}
+    </span>
 
-{{ profile.role }}
+</div>
 
-</span>
+<div class="profile">
+
+    <h2>🤝 My Care Team</h2>
+
+    <table width="100%" cellpadding="8">
+
+        <tr>
+            <td><strong>Care Representative</strong></td>
+            <td>
+                {% if representative %}
+                {{ representative.username }}
+                {% else %}
+                Not Assigned
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Caregiver</strong></td>
+            <td>
+                {% if caregiver %}
+                {{ caregiver.username }}
+                {% else %}
+                Not Assigned
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Volunteer</strong></td>
+            <td>
+                {% if volunteer %}
+                {{ volunteer.username }}
+                {% else %}
+                Not Assigned
+                {% endif %}
+            </td>
+        </tr>
+
+    </table>
 
 </div>
 
