@@ -1,0 +1,796 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+Book a Volunteer
+{% endblock %}
+
+{% block page_title %}
+Book a Volunteer
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===============================
+       MAIN PAGE
+    =============================== */
+
+    .volunteer-page {
+        padding: 30px 35px 50px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+
+    /* ===============================
+       HEADER
+    =============================== */
+
+    .volunteer-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .volunteer-header-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+
+        background: linear-gradient(135deg, #00897b, #26a69a);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 32px;
+
+        box-shadow: 0 8px 20px rgba(0, 137, 123, 0.20);
+    }
+
+    .volunteer-header h1 {
+        margin: 0;
+        font-size: 30px;
+        color: #1f2937;
+    }
+
+    .volunteer-header p {
+        margin: 6px 0 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+
+    /* ===============================
+       MESSAGE
+    =============================== */
+
+    .volunteer-message {
+        padding: 14px 18px;
+        margin-bottom: 20px;
+
+        border-radius: 10px;
+
+        background: #e8f7f5;
+        color: #00695c;
+
+        border-left: 5px solid #00897b;
+
+        font-weight: 600;
+    }
+
+
+    /* ===============================
+       ACTIVE BOOKING BOX
+    =============================== */
+
+    .active-volunteer-box {
+        background: linear-gradient(135deg, #eefaf8, #ffffff);
+
+        border: 1px solid #bfe5df;
+        border-left: 5px solid #00897b;
+
+        border-radius: 14px;
+
+        padding: 20px 22px;
+
+        margin-bottom: 28px;
+
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+    }
+
+    .active-volunteer-title {
+        font-size: 20px;
+        font-weight: 700;
+
+        color: #1f2937;
+
+        margin-bottom: 8px;
+    }
+
+    .active-volunteer-text {
+        color: #4b5563;
+
+        margin: 5px 0;
+
+        line-height: 1.5;
+    }
+
+    .active-volunteer-name {
+        font-weight: 700;
+        color: #00897b;
+    }
+
+
+    /* ===============================
+       VOLUNTEER GRID
+    =============================== */
+
+    .volunteer-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(auto-fit, minmax(300px, 1fr));
+
+        gap: 24px;
+    }
+
+
+    /* ===============================
+       VOLUNTEER CARD
+    =============================== */
+
+    .volunteer-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 24px;
+
+        border: 1px solid #e2e8f0;
+
+        box-shadow:
+            0 8px 22px rgba(0, 0, 0, 0.07);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        min-height: 300px;
+    }
+
+    .volunteer-card:hover {
+        transform: translateY(-4px);
+
+        box-shadow:
+            0 12px 28px rgba(0, 0, 0, 0.11);
+    }
+
+
+    /* ===============================
+       VOLUNTEER ICON
+    =============================== */
+
+    .volunteer-icon {
+        width: 65px;
+        height: 65px;
+
+        border-radius: 50%;
+
+        background: #e6f7f5;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 32px;
+
+        margin-bottom: 15px;
+    }
+
+
+    /* ===============================
+       VOLUNTEER INFORMATION
+    =============================== */
+
+    .volunteer-info h2 {
+        margin: 0 0 5px;
+
+        font-size: 22px;
+
+        color: #1f2937;
+    }
+
+    .volunteer-role {
+        display: inline-block;
+
+        background: #e6f7f5;
+
+        color: #00897b;
+
+        padding: 5px 10px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        margin-bottom: 15px;
+    }
+
+    .volunteer-details {
+        margin-top: 8px;
+    }
+
+    .volunteer-details div {
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 8px;
+
+        margin: 9px 0;
+
+        color: #4b5563;
+
+        font-size: 14px;
+    }
+
+    .detail-icon {
+        width: 22px;
+
+        flex-shrink: 0;
+    }
+
+
+    /* ===============================
+       ACTION AREA
+    =============================== */
+
+    .volunteer-action {
+        margin-top: 20px;
+    }
+
+    .booking-button,
+    .booking-pending,
+    .booking-accepted,
+    .booking-unavailable {
+
+        width: 100%;
+
+        min-height: 48px;
+
+        border-radius: 10px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        box-sizing: border-box;
+
+        font-size: 15px;
+
+        font-weight: 700;
+    }
+
+
+    /* ===============================
+       BOOK NOW
+    =============================== */
+
+    .booking-button {
+
+        background: #00897b;
+
+        color: white;
+
+        text-decoration: none;
+
+        transition:
+            background 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .booking-button:hover {
+
+        background: #00695c;
+
+        color: white;
+
+        transform: translateY(-2px);
+    }
+
+
+    /* ===============================
+       PENDING
+    =============================== */
+
+    .booking-pending {
+
+        background: #f59e0b;
+
+        color: white;
+
+        border: none;
+
+        cursor: not-allowed;
+    }
+
+
+    /* ===============================
+       ACCEPTED
+    =============================== */
+
+    .booking-accepted {
+
+        background: #2e9d50;
+
+        color: white;
+
+        border: none;
+
+        cursor: not-allowed;
+    }
+
+
+    /* ===============================
+       UNAVAILABLE
+    =============================== */
+
+    .booking-unavailable {
+
+        background: #e5e7eb;
+
+        color: #6b7280;
+
+        border: none;
+
+        cursor: not-allowed;
+    }
+
+
+    /* ===============================
+       NO VOLUNTEERS
+    =============================== */
+
+    .no-volunteers {
+
+        background: white;
+
+        border-radius: 16px;
+
+        padding: 45px 25px;
+
+        text-align: center;
+
+        box-shadow:
+            0 8px 22px rgba(0, 0, 0, 0.06);
+    }
+
+    .no-volunteers-icon {
+
+        font-size: 50px;
+
+        margin-bottom: 12px;
+    }
+
+    .no-volunteers h2 {
+
+        margin: 5px 0;
+
+        color: #1f2937;
+    }
+
+    .no-volunteers p {
+
+        color: #6b7280;
+    }
+
+
+    /* ===============================
+       SUPPORT BOX
+    =============================== */
+
+    .volunteer-support {
+
+        margin-top: 35px;
+
+        padding: 20px 22px;
+
+        border-radius: 14px;
+
+        background:
+            linear-gradient(135deg, #eefaf8, #ffffff);
+
+        border: 1px solid #cfeae6;
+
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .volunteer-support-icon {
+
+        font-size: 28px;
+    }
+
+    .volunteer-support h3 {
+
+        margin: 0 0 6px;
+
+        color: #1f2937;
+    }
+
+    .volunteer-support p {
+
+        margin: 0;
+
+        color: #6b7280;
+
+        line-height: 1.6;
+    }
+
+
+    /* ===============================
+       MY BOOKINGS LINK
+    =============================== */
+
+    .my-bookings-link {
+
+        color: #00897b;
+
+        font-weight: 700;
+
+        text-decoration: none;
+    }
+
+    .my-bookings-link:hover {
+
+        text-decoration: underline;
+    }
+
+
+    /* ===============================
+       MOBILE
+    =============================== */
+
+    @media (max-width: 700px) {
+
+        .volunteer-page {
+
+            padding: 20px 15px 40px;
+        }
+
+        .volunteer-header h1 {
+
+            font-size: 25px;
+        }
+
+        .volunteer-grid {
+
+            grid-template-columns: 1fr;
+        }
+
+        .volunteer-support {
+
+            flex-direction: column;
+        }
+
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="volunteer-page">
+
+
+    <!-- ===============================
+         PAGE HEADER
+    =============================== -->
+
+    <div class="volunteer-header">
+
+        <div class="volunteer-header-icon">
+            🤝
+        </div>
+
+        <div>
+
+            <h1>
+                Find a Volunteer
+            </h1>
+
+            <p>
+                Choose a volunteer who can provide
+                assistance and support when you need it.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===============================
+         MESSAGES
+    =============================== -->
+
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="volunteer-message">
+        {{ message }}
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <!-- ===============================
+         ACTIVE VOLUNTEER BOOKING
+    =============================== -->
+
+    {% if active_booking %}
+
+    <div class="active-volunteer-box">
+
+        <div class="active-volunteer-title">
+            🔒 Active Volunteer Booking
+        </div>
+
+        <p class="active-volunteer-text">
+
+            You currently have an active booking with
+
+            <span class="active-volunteer-name">
+                {{ active_booking.volunteer.username }}
+            </span>.
+
+        </p>
+
+        <p class="active-volunteer-text">
+
+            Status:
+
+            <strong>
+                {{ active_booking.status }}
+            </strong>
+
+        </p>
+
+        <p class="active-volunteer-text">
+
+            You can book another volunteer after this
+            booking is completed, rejected, or cancelled.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ===============================
+         VOLUNTEER LIST
+    =============================== -->
+
+    {% if volunteers %}
+
+    <div class="volunteer-grid">
+
+        {% for volunteer in volunteers %}
+
+        <div class="volunteer-card">
+
+
+            <!-- VOLUNTEER ICON -->
+
+            <div class="volunteer-icon">
+                🤝
+            </div>
+
+
+            <!-- VOLUNTEER INFORMATION -->
+
+            <div class="volunteer-info">
+
+                <h2>
+                    {{ volunteer.user.username }}
+                </h2>
+
+                <span class="volunteer-role">
+                    Volunteer
+                </span>
+
+
+                <div class="volunteer-details">
+
+                    <div>
+
+                        <span class="detail-icon">
+                            📞
+                        </span>
+
+                        <span>
+                            {{ volunteer.phone }}
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="detail-icon">
+                            📍
+                        </span>
+
+                        <span>
+                            {{ volunteer.address }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ===============================
+                         BOOKING ACTION
+                    =============================== -->
+
+            <div class="volunteer-action">
+
+
+                {% if active_booking %}
+
+
+                {% if active_booking.volunteer.id == volunteer.user.id %}
+
+
+                {% if active_booking.status == "Pending" %}
+
+                <button class="booking-pending" disabled>
+
+                    ⏳ Booking Pending
+
+                </button>
+
+
+                {% elif active_booking.status == "Accepted" %}
+
+                <button class="booking-accepted" disabled>
+
+                    ✅ Booking Accepted
+
+                </button>
+
+
+                {% endif %}
+
+
+                {% else %}
+
+
+                <button class="booking-unavailable" disabled>
+
+                    🔒 Volunteer Unavailable
+
+                </button>
+
+
+                {% endif %}
+
+
+                {% else %}
+
+
+                <!-- NO ACTIVE BOOKING -->
+
+                <a href="{% url 'confirm_volunteer_booking' volunteer.user.id %}" class="booking-button">
+
+                    <span>
+                        📅 Book Now
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% else %}
+
+
+    <!-- ===============================
+             NO VOLUNTEERS
+        =============================== -->
+
+    <div class="no-volunteers">
+
+        <div class="no-volunteers-icon">
+            🤝
+        </div>
+
+        <h2>
+            No volunteers available
+        </h2>
+
+        <p>
+            There are currently no volunteers available
+            for booking. Please check again later.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ===============================
+         SUPPORT / MY BOOKINGS
+    =============================== -->
+
+    <div class="volunteer-support">
+
+        <div class="volunteer-support-icon">
+            💙
+        </div>
+
+        <div>
+
+            <h3>
+                Need help choosing?
+            </h3>
+
+            <p>
+
+                Choose a volunteer based on your assistance
+                needs. You can view and manage your booking
+                from
+
+                <a href="{% url 'my_bookings' %}" class="my-bookings-link">
+
+                    My Bookings
+
+                </a>.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

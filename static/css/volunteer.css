@@ -1,0 +1,16 @@
+body {
+    background: #fff8f0;
+}
+
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: #2e7d32;
+}
+
+.sidebar h2 {
+    color: white;
+}

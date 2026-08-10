@@ -52,153 +52,12 @@ class UserProfile(models.Model):
         return self.user.username
 
 
-
-class CareRepresentativeRequest(models.Model):
-
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Accepted', 'Accepted'),
-        ('Rejected', 'Rejected'),
-    ]
-
-
-    requester = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='care_requests_sent'
-    )
-
-
-    representative = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='care_requests_received'
-    )
-
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='Pending'
-    )
-
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-
-    def __str__(self):
-        return f"{self.requester.username} → {self.representative.username} ({self.status})"
-
-
-
-
-class CareRepresentativeConnection(models.Model):
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='connected_users'
-    )
-
-    representative = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='connected_representatives'
-    )
-
-    connected_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    def __str__(self):
-        return f"{self.user.username} ↔ {self.representative.username}"
-
-
-class CaregiverAssignment(models.Model):
-
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Accepted', 'Accepted'),
-        ('Rejected', 'Rejected'),
-    ]
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='caregiver_assignment'
-    )
-
-    caregiver = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='assigned_caregiver'
-    )
-
-    assigned_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='caregiver_assigned_by'
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='Pending'
-    )
-
-    assigned_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    def __str__(self):
-        return f"{self.user.username} → {self.caregiver.username} ({self.status})"
-
-
-class VolunteerAssignment(models.Model):
-
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'),
-        ('Accepted', 'Accepted'),
-        ('Rejected', 'Rejected'),
-    ]
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='volunteer_assignment'
-    )
-
-    volunteer = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='assigned_volunteer'
-    )
-
-    assigned_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='volunteer_assigned_by'
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='Pending'
-    )
-
-    assigned_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    def __str__(self):
-        return f"{self.user.username} → {self.volunteer.username} ({self.status})"
 class DirectCaregiverBooking(models.Model):
 
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
     ]
@@ -233,6 +92,7 @@ class DirectVolunteerBooking(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Accepted', 'Accepted'),
+        ('Rejected', 'Rejected'),
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
     ]
@@ -261,3 +121,45 @@ class DirectVolunteerBooking(models.Model):
 
     def __str__(self):
         return f"{self.user.username} booked {self.volunteer.username}"
+
+class ServiceRequest(models.Model):
+
+    PRIORITY_CHOICES = [
+        ("Normal", "Normal"),
+        ("High", "High"),
+        ("Emergency", "Emergency"),
+    ]
+
+    STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Assigned", "Assigned"),
+        ("Completed", "Completed"),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    services = models.TextField()
+
+    description = models.TextField()
+
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default="Normal"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="Pending"
+    )
+
+    requested_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.priority}"

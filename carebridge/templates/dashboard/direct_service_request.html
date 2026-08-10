@@ -1,0 +1,126 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Service Request
+{% endblock %}
+
+{% block page_title %}
+Service Request
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card">
+
+    <h2>Choose Required Services</h2>
+
+    <p style="margin-bottom:25px;color:#666;">
+        Select the services you require.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {% if "caregiver" in selected_helpers %}
+
+        <div class="card" style="margin-bottom:30px;">
+
+            <h3>👨‍⚕️ Caregiver Services</h3>
+
+            <br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Personal Care"> Personal Care</label><br><br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Medication Assistance"> Medication
+                Assistance</label><br><br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Meal Preparation"> Meal
+                Preparation</label><br><br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Mobility Assistance"> Mobility
+                Assistance</label><br><br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Hospital Visit Assistance"> Hospital Visit
+                Assistance</label><br><br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Post Hospital Recovery"> Post Hospital
+                Recovery</label><br><br>
+
+            <label><input type="checkbox" name="caregiver_services" value="Health Monitoring"> Health Monitoring</label>
+
+        </div>
+
+        {% endif %}
+
+        {% if "volunteer" in selected_helpers %}
+
+        <div class="card" style="margin-bottom:30px;">
+
+            <h3>🙋 Volunteer Services</h3>
+
+            <br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Grocery Shopping"> Grocery
+                Shopping</label><br><br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Transportation">
+                Transportation</label><br><br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Household Help"> Household
+                Help</label><br><br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Companionship"> Companionship</label><br><br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Reading and Conversation"> Reading &
+                Conversation</label><br><br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Bill Payment Assistance"> Bill Payment
+                Assistance</label><br><br>
+
+            <label><input type="checkbox" name="volunteer_services" value="Outdoor Walk"> Outdoor Walk</label>
+
+        </div>
+
+        {% endif %}
+
+        <div class="card">
+
+            <h3>Additional Information</h3>
+
+            <br>
+
+            <textarea name="description" rows="5" style="width:100%;padding:12px;"
+                placeholder="Describe your requirements..."></textarea>
+
+            <br><br>
+
+            <label><strong>Priority</strong></label>
+
+            <br><br>
+
+            <select name="priority" style="width:100%;padding:12px;">
+
+                <option value="Normal">Normal</option>
+
+                <option value="High">High</option>
+
+                <option value="Emergency">Emergency</option>
+
+            </select>
+
+        </div>
+
+        <br>
+
+        <button class="submit-btn">
+
+            Submit Request
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

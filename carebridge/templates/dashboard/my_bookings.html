@@ -12,63 +12,137 @@ My Bookings
 
 <h2>My Caregiver Bookings</h2>
 
-{% if bookings %}
+{% if caregiver_bookings %}
 
 <table border="1" cellpadding="10" cellspacing="0" width="100%">
 
-<tr>
+    <tr>
+        <th>Caregiver</th>
+        <th>Booked On</th>
+        <th>Status</th>
+    </tr>
 
-<th>Caregiver</th>
-<th>Booked On</th>
-<th>Status</th>
+    {% for booking in caregiver_bookings %}
 
-</tr>
+    <tr>
 
-{% for booking in bookings %}
+        <td>{{ booking.caregiver.username }}</td>
 
-<tr>
+        <td>{{ booking.booked_at }}</td>
 
-<td>{{ booking.caregiver.username }}</td>
+        <td>
 
-<td>{{ booking.booked_at }}</td>
+            {% if booking.status == "Pending" %}
 
-<td>
+            <span style="color:orange;font-weight:bold;">
+                Pending
+            </span>
 
-{% if booking.status == "Pending" %}
+            {% elif booking.status == "Accepted" %}
 
-<span style="color:orange;font-weight:bold;">
-Pending
-</span>
+            <span style="color:green;font-weight:bold;">
+                Accepted
+            </span>
 
-{% elif booking.status == "Accepted" %}
+            {% elif booking.status == "Completed" %}
 
-<span style="color:green;font-weight:bold;">
-Accepted
-</span>
+            <span style="color:blue;font-weight:bold;">
+                Completed
+            </span>
 
-{% elif booking.status == "Completed" %}
+            {% elif booking.status == "Rejected" %}
 
-<span style="color:blue;font-weight:bold;">
-Completed
-</span>
+            <span style="color:red;font-weight:bold;">
+                Rejected
+            </span>
 
-{% else %}
+            {% else %}
 
-{{ booking.status }}
+            {{ booking.status }}
 
-{% endif %}
+            {% endif %}
 
-</td>
+        </td>
 
-</tr>
+    </tr>
 
-{% endfor %}
+    {% endfor %}
 
 </table>
 
 {% else %}
 
-<p>You have not made any bookings yet.</p>
+<p>You have not made any caregiver bookings yet.</p>
+
+{% endif %}
+
+
+<br><br>
+
+
+<h2>My Volunteer Bookings</h2>
+
+{% if volunteer_bookings %}
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+    <tr>
+        <th>Volunteer</th>
+        <th>Booked On</th>
+        <th>Status</th>
+    </tr>
+
+    {% for booking in volunteer_bookings %}
+
+    <tr>
+
+        <td>{{ booking.volunteer.username }}</td>
+
+        <td>{{ booking.booked_at }}</td>
+
+        <td>
+
+            {% if booking.status == "Pending" %}
+
+            <span style="color:orange;font-weight:bold;">
+                Pending
+            </span>
+
+            {% elif booking.status == "Accepted" %}
+
+            <span style="color:green;font-weight:bold;">
+                Accepted
+            </span>
+
+            {% elif booking.status == "Completed" %}
+
+            <span style="color:blue;font-weight:bold;">
+                Completed
+            </span>
+
+            {% elif booking.status == "Rejected" %}
+
+            <span style="color:red;font-weight:bold;">
+                Rejected
+            </span>
+
+            {% else %}
+
+            {{ booking.status }}
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>You have not made any volunteer bookings yet.</p>
 
 {% endif %}
 

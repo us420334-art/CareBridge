@@ -1,0 +1,192 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Service Requests
+{% endblock %}
+
+{% block page_title %}
+Service Requests
+{% endblock %}
+
+{% block content %}
+
+<div class="service-page">
+
+    <!-- Page Header -->
+    <div class="service-hero">
+
+        <div class="service-hero-icon">
+            🤝
+        </div>
+
+        <div>
+            <h1>How can we help you?</h1>
+
+            <p>
+                Choose the type of assistance you need.
+                CareBridge connects you with trusted caregivers
+                and volunteers.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- Service Cards -->
+    <div class="service-options">
+
+
+        <!-- CAREGIVER -->
+        <div class="service-card">
+
+            <div class="service-card-top">
+
+                <div class="service-card-icon">
+                    👨‍⚕️
+                </div>
+
+                <span class="service-label">
+                    PROFESSIONAL CARE
+                </span>
+
+            </div>
+
+
+            <h2>Book a Caregiver</h2>
+
+            <p class="service-description">
+                Get reliable personal care and daily assistance
+                from a caregiver based on your specific needs.
+            </p>
+
+
+            <div class="service-features">
+
+                <div>
+                    <span>✓</span>
+                    Personal care assistance
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Daily activity support
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Mobility assistance
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Choose your preferred caregiver
+                </div>
+
+            </div>
+
+
+            <div class="service-card-footer">
+
+                <a href="{% url 'book_caregiver' %}" class="service-button">
+
+                    <span>Book Caregiver</span>
+
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- VOLUNTEER -->
+        <div class="service-card volunteer-card">
+
+            <div class="service-card-top">
+
+                <div class="service-card-icon">
+                    🤝
+                </div>
+
+                <span class="service-label">
+                    COMMUNITY SUPPORT
+                </span>
+
+            </div>
+
+
+            <h2>Book a Volunteer</h2>
+
+            <p class="service-description">
+                Get friendly community support for companionship,
+                errands, transportation, and everyday activities.
+            </p>
+
+
+            <div class="service-features">
+
+                <div>
+                    <span>✓</span>
+                    Companionship
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Help with errands
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Transportation assistance
+                </div>
+
+                <div>
+                    <span>✓</span>
+                    Community support
+                </div>
+
+            </div>
+
+
+            <div class="service-card-footer">
+
+                <a href="{% url 'book_volunteer' %}" class="service-button">
+
+                    <span>Book Volunteer</span>
+
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Information Box -->
+    <div class="service-info">
+
+        <div class="service-info-icon">
+            💙
+        </div>
+
+        <div>
+
+            <h3>CareBridge is here to support you</h3>
+
+            <p>
+                Select the service that best matches your needs.
+                You can view, track and manage all your bookings
+                from the My Bookings section.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Service Requests
+{% endblock %}
+
+{% block page_title %}
+Service Requests
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div style="
+            background:#d4edda;
+            color:#155724;
+            padding:15px;
+            border-radius:10px;
+            margin-bottom:20px;
+            font-weight:bold;
+        ">
+    ✔ {{ message }}
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+
+
+<div class="form-card">
+
+    <h2>📝 Create Service Request</h2>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <h3 style="margin-bottom:15px;">
+            Select Services Required
+        </h3>
+
+        <div class="service-grid">
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Personal Care">
+                    Personal Care
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Medication Assistance">
+                    Medication Assistance
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Hospital Visit">
+                    Hospital Visit
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Meal Preparation">
+                    Meal Preparation
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Household Help">
+                    Household Help
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Grocery Shopping">
+                    Grocery Shopping
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Companionship">
+                    Companionship
+                </label>
+            </div>
+
+            <div class="service-item">
+                <label>
+                    <input type="checkbox" name="services" value="Emergency Support">
+                    Emergency Support
+                </label>
+            </div>
+
+        </div>
+
+        <br>
+
+        <label>
+            <strong>Description</strong>
+        </label>
+
+        <textarea name="description" rows="5" placeholder="Describe the help you need..." required></textarea>
+
+        <br><br>
+
+        <label>
+            <strong>Priority</strong>
+        </label>
+
+        <select name="priority">
+
+            <option value="Normal">
+                Normal
+            </option>
+
+            <option value="High">
+                High
+            </option>
+
+            <option value="Emergency">
+                Emergency
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <button class="submit-btn">
+
+            Submit Request
+
+        </button>
+
+    </form>
+
+</div>
+
+
+
+<h2 style="margin-bottom:20px;">
+    📋 My Service Requests
+</h2>
+
+
+{% if requests %}
+
+{% for request in requests %}
+
+<div class="request-card">
+
+    <h3>
+
+        {{ request.services }}
+
+    </h3>
+
+    <p style="margin:15px 0;">
+
+        {{ request.description }}
+
+    </p>
+
+    <p>
+
+        {% if request.priority == "Normal" %}
+
+        <span class="badge normal">
+
+            {{ request.priority }}
+
+        </span>
+
+        {% elif request.priority == "High" %}
+
+        <span class="badge high">
+
+            {{ request.priority }}
+
+        </span>
+
+        {% else %}
+
+        <span class="badge emergency">
+
+            {{ request.priority }}
+
+        </span>
+
+        {% endif %}
+
+
+        {% if request.status == "Pending" %}
+
+        <span class="badge pending">
+
+            {{ request.status }}
+
+        </span>
+
+        {% elif request.status == "Assigned" %}
+
+        <span class="badge assigned">
+
+            {{ request.status }}
+
+        </span>
+
+        {% else %}
+
+        <span class="badge completed">
+
+            {{ request.status }}
+
+        </span>
+
+        {% endif %}
+
+    </p>
+
+    <br>
+
+    <small style="color:#666;">
+
+        Requested on :
+
+        {{ request.requested_at }}
+
+    </small>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="request-card">
+
+    <h3>No Requests Yet</h3>
+
+    <p>
+
+        You haven't submitted any service requests.
+
+    </p>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -9,191 +9,168 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-{% block title %}
-CareBridge
-{% endblock %}
-</title>
+    <title>
+        {% block title %}
+        CareBridge
+        {% endblock %}
+    </title>
 
 
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=100">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=999">
 
-<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=1">
 
-<link rel="stylesheet" href="{% static 'css/care_representatives.css' %}?v=1">
-
+    <link rel="stylesheet" href="{% static 'css/care_representatives.css' %}?v=1">
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 
 
 <body>
 
+    <!-- Sidebar -->
 
-<!-- Sidebar -->
+    <div class="sidebar">
 
-<div class="sidebar">
+        <div class="logo">
 
+            <h2>❤️ CareBridge</h2>
 
-    <div class="logo">
+            <p>Care Beyond Boundaries</p>
 
-        <h2>
-            CareBridge
-        </h2>
+        </div>
 
-        <p>
-            Care Beyond Boundaries
-        </p>
+        <ul>
 
+            <li>
+                <a href="{% url 'dashboard' %}">🏠 Dashboard</a>
+            </li>
+
+            <li>
+                <a href="{% url 'service_choice' %}">📝 Service Requests</a>
+            </li>
+
+            <li>
+                <a href="{% url 'book_caregiver' %}">👨‍⚕️ Book Caregiver</a>
+            </li>
+
+            <li>
+                <a href="{% url 'book_volunteer' %}">🤝 Book Volunteer</a>
+            </li>
+
+            <li>
+                <a href="{% url 'my_bookings' %}">📋 My Bookings</a>
+            </li>
+
+            <li>
+                <a href="#">🚑 Emergency SOS</a>
+            </li>
+
+            <li>
+                <a href="#">💊 Medicine Reminders</a>
+            </li>
+
+            <li>
+                <a href="#">🔔 Notifications</a>
+            </li>
+
+            <li>
+                <a href="#">⭐ Feedback</a>
+            </li>
+
+            <li>
+                <a href="{% url 'profile' %}">👤 My Profile</a>
+            </li>
+
+            <li>
+                <a href="{% url 'logout' %}">🚪 Logout</a>
+            </li>
+
+        </ul>
     </div>
 
 
 
-    <ul>
+
+    <!-- Main -->
 
 
-        <li>
-            <a href="/dashboard/">🏠 Dashboard</a>
-        </li>
-
-
-        <li>
-            <a href="/profile/">👤 My Profile</a>
-        </li>
-
-
-        <li>
-           <a href="/care-representatives/">👨‍👩‍👧 Care Representatives</a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                📋 Service Requests
-            </a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                📅 Appointments
-            </a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                💊 Medicine Reminders
-            </a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                🚨 Emergency SOS
-            </a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                🔔 Notifications
-            </a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                ⭐ Feedback
-            </a>
-        </li>
-
-
-        <li>
-            <a href="#">
-                ⚙ Settings
-            </a>
-        </li>
-
-
-    </ul>
-
-
-</div>
+    <div class="main">
 
 
 
+        <div class="topbar">
 
 
-<!-- Main -->
+            <div>
+
+                <div>
+
+                    <h2>
+
+                        {% block page_title %}
+                        Dashboard
+                        {% endblock %}
+
+                    </h2>
+
+                    <p style="color:#777;margin-top:5px;">
+
+                        Welcome back, {{ request.user.first_name|default:request.user.username }}
+
+                    </p>
+
+                </div>
 
 
-<div class="main">
+            </div>
 
 
 
-    <div class="topbar">
+            <div class="top-right">
 
 
-        <div>
+                <span class="username">
 
-            <h2>
+                    👋 {{ request.user.username }}
 
-                {% block page_title %}
+                </span>
 
-                Dashboard
 
-                {% endblock %}
 
-            </h2>
+                <a href="/logout/" class="logout">
+
+                    Logout
+
+                </a>
+
+
+            </div>
 
 
         </div>
 
 
 
-        <div class="top-right">
 
 
-            <span class="username">
-
-                👋 {{ request.user.username }}
-
-            </span>
+        <div class="content">
 
 
+            {% block content %}
 
-            <a href="/logout/" class="logout">
-
-                Logout
-
-            </a>
+            {% endblock %}
 
 
         </div>
 
 
-    </div>
-
-
-
-
-
-    <div class="content">
-
-
-        {% block content %}
-
-        {% endblock %}
-
 
     </div>
-
-
-
-</div>
 
 
 

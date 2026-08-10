@@ -1,4 +1,4 @@
-{% extends 'dashboard/base_dashboard.html' %}
+{% extends 'dashboard/caregiver_base.html' %}
 
 {% block title %}
 Caregiver Dashboard
@@ -14,9 +14,9 @@ Caregiver Dashboard
 
 {% if messages %}
 
-    {% for message in messages %}
+{% for message in messages %}
 
-        <div style="
+<div style="
             background:#d4edda;
             color:#155724;
             padding:12px;
@@ -24,10 +24,10 @@ Caregiver Dashboard
             margin-bottom:20px;
             font-weight:bold;
         ">
-            ✔ {{ message }}
-        </div>
+    ✔ {{ message }}
+</div>
 
-    {% endfor %}
+{% endfor %}
 
 {% endif %}
 
@@ -36,17 +36,11 @@ Caregiver Dashboard
 <table border="1" cellpadding="10" cellspacing="0" width="100%">
 
     <tr>
-
         <th>User</th>
-
         <th>Phone</th>
-
         <th>Booked On</th>
-
         <th>Status</th>
-
         <th>Action</th>
-
     </tr>
 
     {% for booking in bookings %}
@@ -65,24 +59,73 @@ Caregiver Dashboard
 
             {% if booking.status == "Pending" %}
 
-                <a href="{% url 'accept_caregiver_booking' booking.id %}">
-                    <button style="background:green;color:white;padding:8px 15px;border:none;border-radius:6px;">
-                        Accept
-                    </button>
-                </a>
+            <a href="{% url 'accept_caregiver_booking' booking.id %}">
+                <button style="
+        background:#28a745;
+        color:white;
+        border:none;
+        padding:8px 15px;
+        border-radius:6px;
+    ">
+                    Accept
+                </button>
+            </a>
 
-                <a href="{% url 'reject_caregiver_booking' booking.id %}">
-                    <button style="background:red;color:white;padding:8px 15px;border:none;border-radius:6px;">
-                        Reject
-                    </button>
-                </a>
+            <a href="{% url 'reject_caregiver_booking' booking.id %}">
+                <button style="
+        background:#dc3545;
+        color:white;
+        border:none;
+        padding:8px 15px;
+        border-radius:6px;
+    ">
+                    Reject
+                </button>
+            </a>
+
+            {% elif booking.status == "Accepted" %}
+
+            <span style="
+    background:#28a745;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+">
+                ✅ Accepted
+            </span>
+
+            <br><br>
+
+            <a href="{% url 'complete_caregiver_service' booking.id %}">
+                <button style="
+        background:#1565c0;
+        color:white;
+        border:none;
+        padding:8px 15px;
+        border-radius:6px;
+    ">
+                    ✔ Mark as Completed
+                </button>
+            </a>
+
+            {% elif booking.status == "Completed" %}
+
+            <span style="
+    background:#673ab7;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-weight:bold;
+">
+                🏆 Completed
+            </span>
 
             {% else %}
 
-                <strong>{{ booking.status }}</strong>
+            <strong>{{ booking.status }}</strong>
 
             {% endif %}
-
         </td>
 
     </tr>
@@ -93,7 +136,136 @@ Caregiver Dashboard
 
 {% else %}
 
-<p>No booking requests received.</p>
+<p>No direct booking requests received.</p>
+
+{% endif %}
+
+<hr style="margin:40px 0;">
+
+<h2>Assigned Users</h2>
+
+{% if assignments %}
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+    <tr>
+
+        <th>User</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Assigned By</th>
+        <th>Status</th>
+        <th>Action</th>
+
+    </tr>
+
+    {% for assignment in assignments %}
+
+    <tr>
+
+        <td>
+            {{ assignment.user.username }}
+        </td>
+
+        <td>
+            {{ assignment.user.userprofile.phone }}
+        </td>
+
+        <td>
+            {{ assignment.user.userprofile.address }}
+        </td>
+
+        <td>
+            {{ assignment.assigned_by.username }}
+        </td>
+
+        <td>
+
+            {% if assignment.status == "Pending" %}
+
+            <span style="
+                    background:#fff3cd;
+                    color:#856404;
+                    padding:5px 10px;
+                    border-radius:20px;
+                    font-weight:bold;
+                ">
+                🟡 Pending
+            </span>
+
+            {% elif assignment.status == "Accepted" %}
+
+            <span style="
+                    background:#d4edda;
+                    color:#155724;
+                    padding:5px 10px;
+                    border-radius:20px;
+                    font-weight:bold;
+                ">
+                🟢 Accepted
+            </span>
+
+            {% else %}
+
+            <span style="
+                    background:#f8d7da;
+                    color:#721c24;
+                    padding:5px 10px;
+                    border-radius:20px;
+                    font-weight:bold;
+                ">
+                🔴 Rejected
+            </span>
+
+            {% endif %}
+
+        </td>
+
+        <td>
+
+            {% if assignment.status == "Accepted" %}
+
+            <a href="#">
+                <button style="
+                background:#1565c0;
+                color:white;
+                border:none;
+                padding:8px 15px;
+                border-radius:6px;
+                cursor:pointer;
+            ">
+                    ✔ Mark as Completed
+                </button>
+            </a>
+
+            {% elif assignment.status == "Completed" %}
+
+            <span style="
+            background:#673ab7;
+            color:white;
+            padding:6px 12px;
+            border-radius:20px;
+            font-weight:bold;
+        ">
+                🏆 Completed
+            </span>
+
+            {% else %}
+
+            Pending...
+
+            {% endif %}
+
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No users assigned yet.</p>
 
 {% endif %}
 

@@ -7,345 +7,881 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CareBridge | Care Beyond Boundaries</title>
+    <title>CareBridge | Care Beyond Boundaries</title>
 
-<link rel="stylesheet" href="{% static 'css/style.css' %}?v=100">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1">
 
 </head>
 
-
 <body>
 
+    <!-- ===================== NAVBAR ===================== -->
 
-<!-- Navbar -->
+    <nav class="navbar">
 
-<nav class="navbar">
+        <div class="logo">
 
-    <div class="logo">
+            <h2>💙 CareBridge</h2>
 
-        <h2>CareBridge</h2>
-        <p>Care Beyond Boundaries</p>
+            <p>Care Beyond Boundaries</p>
+
+        </div>
+
+        <ul class="nav-links">
+
+            <li><a href="/">Home</a></li>
+
+            <li><a href="#services">Services</a></li>
+
+            <li><a href="#about">About</a></li>
+
+            <li><a href="/login/">Login</a></li>
+
+            <li>
+
+                <a href="/register/" class="register-btn">
+
+                    Register
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+
+
+
+    <!-- ===================== HERO ===================== -->
+
+    <section class="hero">
+
+        <div class="hero-left">
+
+            <span class="hero-tag">
+
+                ❤️ Trusted Healthcare Platform
+
+            </span>
+
+            <h1>
+
+                Connecting Care,
+                Creating Independence
+
+            </h1>
+
+            <p>
+
+                CareBridge is an inclusive healthcare platform that connects
+                elderly people and individuals with mobility and hearing
+                impairments to professional caregivers, trusted volunteers,
+                and care representatives.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="/register/" class="btn-primary">
+
+                    Get Started
+
+                </a>
+
+                <a href="/login/" class="btn-secondary">
+
+                    Login
+
+                </a>
+
+            </div>
+
+            <div class="trust">
+
+                ⭐⭐⭐⭐⭐
+
+                Trusted by Families Across Kerala
+
+            </div>
+
+        </div>
+
+
+
+
+
+        <div class="hero-right">
+
+            <img src="{% static 'images/hero.png' %}" alt="CareBridge" class="hero-img">
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- Decorative Wave -->
+
+    <div class="wave">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+
+            <path fill="#ffffff" fill-opacity="1"
+                d="M0,192L80,202.7C160,213,320,235,480,218.7C640,203,800,149,960,149.3C1120,149,1280,203,1360,229.3L1440,256L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z">
+
+            </path>
+
+        </svg>
 
     </div>
 
+    <!-- ===================== STATISTICS ===================== -->
 
-    <div class="nav-links">
+    <section class="stats">
 
-        <a href="/">Home</a>
-        <a href="#features">Features</a>
-        <a href="#about">About</a>
-        <a href="/login/">Login</a>
-        <a href="/register/" class="register-btn">Register</a>
+        <div class="stat-box">
 
-    </div>
+            <h2>500+</h2>
 
-</nav>
+            <p>Families Supported</p>
+
+        </div>
+
+        <div class="stat-box">
+
+            <h2>120+</h2>
+
+            <p>Verified Caregivers</p>
+
+        </div>
+
+        <div class="stat-box">
+
+            <h2>200+</h2>
+
+            <p>Active Volunteers</p>
+
+        </div>
+
+        <div class="stat-box">
+
+            <h2>24/7</h2>
+
+            <p>Support Available</p>
+
+        </div>
+
+    </section>
 
 
 
 
-<!-- Hero Section -->
+    <!-- ===================== SERVICES ===================== -->
 
-<section class="hero">
+    <section class="services" id="services">
+
+        <div class="section-title">
+
+            <h2>Our Support Services</h2>
+
+            <p>
+
+                CareBridge provides compassionate and accessible care services
+                designed for elderly people and individuals with mobility and
+                hearing impairments.
+
+            </p>
+
+        </div>
+
+        <div class="service-grid">
+
+            <div class="service-card">
+
+                <div class="service-icon">👵</div>
+
+                <h3>Elderly Care</h3>
+
+                <p>
+
+                    Daily assistance, companionship and healthcare support
+                    for senior citizens.
+
+                </p>
+
+            </div>
+
+            <div class="service-card">
+
+                <div class="service-icon">♿</div>
+
+                <h3>Mobility Assistance</h3>
+
+                <p>
+
+                    Helping people with mobility impairments access care
+                    and essential services safely.
+
+                </p>
+
+            </div>
+
+            <div class="service-card">
+
+                <div class="service-icon">🦻</div>
+
+                <h3>Hearing Support</h3>
+
+                <p>
+
+                    Inclusive communication support and assistance for
+                    individuals with hearing impairments.
+
+                </p>
+
+            </div>
+
+            <div class="service-card">
+
+                <div class="service-icon">🤝</div>
+
+                <h3>Volunteer Network</h3>
+
+                <p>
+
+                    Connect with trusted volunteers ready to provide
+                    timely assistance whenever needed.
+
+                </p>
+
+            </div>
+
+            <div class="service-card">
+
+                <div class="service-icon">👩‍⚕️</div>
+
+                <h3>Professional Caregivers</h3>
+
+                <p>
+
+                    Certified caregivers offering compassionate and
+                    reliable healthcare support.
+
+                </p>
+
+            </div>
+
+            <div class="service-card">
+
+                <div class="service-icon">📋</div>
+
+                <h3>Care Representatives</h3>
+
+                <p>
+
+                    Our representatives review requests and assign the
+                    most suitable caregiver or volunteer.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ===================== WHY CHOOSE CAREBRIDGE ===================== -->
+
+    <section class="why-carebridge" id="about">
+
+        <div class="section-title">
+
+            <h2>Why Choose CareBridge?</h2>
+
+            <p>
+
+                We are committed to making healthcare support accessible,
+                reliable and inclusive for everyone.
+
+            </p>
+
+        </div>
+
+        <div class="why-grid">
+
+            <div class="why-card">
+
+                <div class="why-icon">✔️</div>
+
+                <h3>Verified Caregivers</h3>
+
+                <p>
+
+                    Every caregiver is verified to ensure safe and trusted care.
+
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">🛡️</div>
+
+                <h3>Secure Platform</h3>
+
+                <p>
+
+                    Your personal information and service requests remain protected.
+
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">⚡</div>
+
+                <h3>Quick Assistance</h3>
+
+                <p>
+
+                    Requests are reviewed quickly by Care Representatives.
+
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">❤️</div>
+
+                <h3>Compassionate Care</h3>
+
+                <p>
+
+                    We believe care should always be respectful, friendly and inclusive.
+
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">🌍</div>
+
+                <h3>Accessibility First</h3>
+
+                <p>
+
+                    Designed especially for elderly users and people with mobility
+                    and hearing impairments.
+
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">🤝</div>
+
+                <h3>Community Support</h3>
+
+                <p>
+
+                    Volunteers, caregivers and families work together through one platform.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
 
 
-    <div class="hero-text">
 
 
-        <h1>
-            Connecting Care,
-            Creating Independence
-        </h1>
 
+    <!-- ===================== MEET OUR COMMUNITY ===================== -->
+
+    <section class="community">
+
+        <div class="section-title">
+
+            <h2>Meet Our Community</h2>
+
+            <p>
+
+                CareBridge connects people who need care with people who are ready to help.
+
+            </p>
+
+        </div>
+
+        <div class="community-grid">
+
+            <div class="community-card">
+
+                <img src="{% static 'images/elderly.jpg' %}" alt="Elderly">
+
+                <h3>Elderly People</h3>
+
+                <p>
+
+                    Receive personalized healthcare assistance, companionship,
+                    and daily support.
+
+                </p>
+
+            </div>
+
+            <div class="community-card">
+
+                <img src="{% static 'images/mobility.jpg' %}" alt="Mobility">
+
+                <h3>Mobility Assistance</h3>
+
+                <p>
+
+                    Helping individuals with mobility challenges access services
+                    independently.
+
+                </p>
+
+            </div>
+
+            <div class="community-card">
+
+                <img src="{% static 'images/hearing.jpg' %}" alt="Hearing">
+
+                <h3>Hearing Support</h3>
+
+                <p>
+
+                    Inclusive communication support for people with hearing impairments.
+
+                </p>
+
+            </div>
+
+            <div class="community-card">
+
+                <img src="{% static 'images/volunteer.jpg' %}" alt="Volunteer">
+
+                <h3>Volunteers & Caregivers</h3>
+
+                <p>
+
+                    Dedicated volunteers and caregivers providing compassionate support.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- ================= HOW CAREBRIDGE WORKS ================= -->
+
+    <section class="how-it-works">
+
+        <div class="section-title">
+
+            <h2>How CareBridge Works</h2>
+
+            <p>
+
+                Requesting care is simple, secure and designed to help you receive support quickly.
+
+            </p>
+
+        </div>
+
+        <div class="timeline">
+
+            <div class="timeline-card">
+
+                <div class="timeline-number">1</div>
+
+                <h3>Create an Account</h3>
+
+                <p>
+
+                    Register as an Elderly User, Mobility Assistance User,
+                    Hearing Assistance User, Caregiver, Volunteer or Care Representative.
+
+                </p>
+
+            </div>
+
+            <div class="timeline-card">
+
+                <div class="timeline-number">2</div>
+
+                <h3>Submit a Service Request</h3>
+
+                <p>
+
+                    Describe your care requirements and submit your request through the platform.
+
+                </p>
+
+            </div>
+
+            <div class="timeline-card">
+
+                <div class="timeline-number">3</div>
+
+                <h3>Representative Review</h3>
+
+                <p>
+
+                    Care Representatives review your request and assign the most suitable helper.
+
+                </p>
+
+            </div>
+
+            <div class="timeline-card">
+
+                <div class="timeline-number">4</div>
+
+                <h3>Receive Care</h3>
+
+                <p>
+
+                    A caregiver or volunteer provides assistance and updates the service status.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- ================= TESTIMONIALS ================= -->
+
+    <section class="testimonials">
+
+        <div class="section-title">
+
+            <h2>What Our Community Says</h2>
+
+            <p>
+
+                Stories from people who benefit from CareBridge.
+
+            </p>
+
+        </div>
+
+        <div class="testimonial-grid">
+
+            <div class="testimonial-card">
+
+                <div class="testimonial-image">
+
+                    👵
+
+                </div>
+
+                <h3>Sam Joseph</h3>
+
+                <span>Elderly User</span>
+
+                <p>
+
+                    "CareBridge helped me find a caring volunteer when I needed
+                    assistance with hospital visits."
+
+                </p>
+
+                <div class="stars">
+
+                    ⭐⭐⭐⭐⭐
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <div class="testimonial-card">
+
+                <div class="testimonial-image">
+
+                    ♿
+
+                </div>
+
+                <h3>Ram Menon</h3>
+
+                <span>Mobility Assistance User</span>
+
+                <p>
+
+                    "Booking a caregiver was easy and the support I received
+                    was timely and professional."
+
+                </p>
+
+                <div class="stars">
+
+                    ⭐⭐⭐⭐⭐
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <div class="testimonial-card">
+
+                <div class="testimonial-image">
+
+                    🤝
+
+                </div>
+
+                <h3>Mary Thomas</h3>
+
+                <span>Volunteer</span>
+
+                <p>
+
+                    "Helping people through CareBridge has been a rewarding
+                    experience. The platform is simple and well organized."
+
+                </p>
+
+                <div class="stars">
+
+                    ⭐⭐⭐⭐⭐
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- ================= CONTACT SECTION ================= -->
+
+    <section class="contact-section">
+
+        <div class="section-title">
+
+            <h2>Get In Touch</h2>
+
+            <p>
+
+                Have questions or need assistance? Our CareBridge team is here to help.
+
+            </p>
+
+        </div>
+
+        <div class="contact-container">
+
+            <div class="contact-card">
+
+                <div class="contact-icon">📞</div>
+
+                <h3>Phone</h3>
+
+                <p>+91 98765 43210</p>
+
+            </div>
+
+            <div class="contact-card">
+
+                <div class="contact-icon">📧</div>
+
+                <h3>Email</h3>
+
+                <p>support@carebridge.com</p>
+
+            </div>
+
+            <div class="contact-card">
+
+                <div class="contact-icon">📍</div>
+
+                <h3>Location</h3>
+
+                <p>Kerala, India</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- ================= CALL TO ACTION ================= -->
+
+    <section class="cta-section">
+
+        <h2>
+
+            Ready to Make a Difference?
+
+        </h2>
 
         <p>
-            CareBridge is an inclusive support platform
-            designed to connect elderly people and individuals
-            with mobility and hearing impairments with caregivers
-            and volunteers.
+
+            Join CareBridge today and become part of a caring and inclusive community.
+
         </p>
 
+        <div class="cta-buttons">
 
+            <a href="/register/" class="btn-primary">
 
-        <div class="hero-buttons">
+                Register Now
 
-
-            <a href="/register/" class="primary-btn">
-                Get Started
             </a>
 
+            <a href="/login/" class="btn-secondary">
 
-            <a href="/login/" class="secondary-btn">
                 Login
+
             </a>
 
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-column">
+
+                <h2>💙 CareBridge</h2>
+
+                <p>
+
+                    Care Beyond Boundaries
+
+                </p>
+
+                <p>
+
+                    Connecting elderly people and individuals with mobility and hearing impairments with trusted
+                    caregivers and volunteers.
+
+                </p>
+
+            </div>
+
+
+
+
+
+            <div class="footer-column">
+
+                <h3>Quick Links</h3>
+
+                <ul>
+
+                    <li><a href="/">Home</a></li>
+
+                    <li><a href="#services">Services</a></li>
+
+                    <li><a href="#about">About</a></li>
+
+                    <li><a href="/login/">Login</a></li>
+
+                </ul>
+
+            </div>
+
+
+
+
+
+            <div class="footer-column">
+
+                <h3>Support</h3>
+
+                <ul>
+
+                    <li>24/7 Assistance</li>
+
+                    <li>Verified Caregivers</li>
+
+                    <li>Trusted Volunteers</li>
+
+                    <li>Secure Platform</li>
+
+                </ul>
+
+            </div>
+
+
+
+
+
+            <div class="footer-column">
+
+                <h3>Follow Us</h3>
+
+                <p>📘 Facebook</p>
+
+                <p>📷 Instagram</p>
+
+                <p>💼 LinkedIn</p>
+
+                <p>▶ YouTube</p>
+
+            </div>
 
         </div>
 
 
-    </div>
 
 
 
+        <div class="footer-bottom">
 
-    <div class="hero-image">
+            <p>
 
-        <div class="circle">
+                © 2026 CareBridge | Care Beyond Boundaries | All Rights Reserved.
 
-            ❤️
+            </p>
 
         </div>
 
-    </div>
-
-
-</section>
-
-
-
-
-
-
-<!-- Support Services -->
-
-
-<section class="features" id="features">
-
-
-<h2>
-Our Support Services
-</h2>
-
-
-
-<div class="feature-container">
-
-
-
-<div class="feature-card">
-
-<h3>
-👵 Elderly Care
-</h3>
-
-<p>
-Personalized support and assistance
-for elderly individuals.
-</p>
-
-</div>
-
-
-
-
-<div class="feature-card">
-
-<h3>
-♿ Mobility Support
-</h3>
-
-<p>
-Helping individuals with mobility
-challenges access required services.
-</p>
-
-</div>
-
-
-
-
-
-<div class="feature-card">
-
-<h3>
-👂 Hearing Accessibility
-</h3>
-
-<p>
-Communication support and inclusive
-services for hearing-impaired users.
-</p>
-
-</div>
-
-
-
-
-
-<div class="feature-card">
-
-<h3>
-🤝 Volunteer Network
-</h3>
-
-<p>
-Connecting volunteers and caregivers
-with people who need support.
-</p>
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-<!-- How CareBridge Works -->
-
-
-<section class="how">
-
-
-<h2>
-How CareBridge Works
-</h2>
-
-
-
-<div class="steps">
-
-
-<div class="step-card">
-
-<h3>
-1. Register
-</h3>
-
-<p>
-Create your account and choose your role.
-</p>
-
-</div>
-
-
-
-<div class="step-card">
-
-<h3>
-2. Request Support
-</h3>
-
-<p>
-Submit your care requirements and services.
-</p>
-
-</div>
-
-
-
-
-<div class="step-card">
-
-<h3>
-3. Get Connected
-</h3>
-
-<p>
-Connect with caregivers and volunteers.
-</p>
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-
-
-<!-- About -->
-
-<section class="about" id="about">
-
-
-<h2>
-Why CareBridge?
-</h2>
-
-
-<p>
-
-CareBridge creates a connected and accessible
-environment where elderly individuals and people
-with mobility and hearing challenges can receive
-support from caregivers and volunteers.
-
-</p>
-
-
-</section>
-
-
-
-
-
-
-
-<!-- Call To Action -->
-
-
-<section class="cta">
-
-
-<h2>
-Join CareBridge Today
-</h2>
-
-
-<p>
-Be a part of an inclusive care community.
-</p>
-
-
-
-<a href="/register/">
-
-Create Account
-
-</a>
-
-
-</section>
-
-
-
-
-
-
-
-<!-- Footer -->
-
-
-<footer>
-
-<p>
-© 2026 CareBridge | Care Beyond Boundaries
-</p>
-
-</footer>
-
-
+    </footer>
 
 </body>
 

@@ -1,20 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
-
-from .models import DirectCaregiverBooking, DirectVolunteerBooking
-
 
 from .models import (
     UserProfile,
-    CareRepresentativeRequest,
-    CareRepresentativeConnection,
-    CaregiverAssignment,
-    VolunteerAssignment,
+    DirectCaregiverBooking,
+    DirectVolunteerBooking,
+    ServiceRequest,
 )
-
 
 def home(request):
 
@@ -80,8 +74,8 @@ def user_login(request):
 
     if request.method == "POST":
 
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
         user = authenticate(
             request,
@@ -93,30 +87,43 @@ def user_login(request):
 
             login(request, user)
 
-            profile = UserProfile.objects.get(
-                user=user
-            )
+            try:
 
-            if profile.role == "Care Representative":
+                profile = UserProfile.objects.get(
+                    user=user
+                )
 
-                return redirect('/care-rep-dashboard/')
+                if profile.role == "Care Representative":
 
-            else:
+                    return redirect("care_rep_dashboard")
 
-                return redirect('/dashboard/')
+                elif profile.role == "Caregiver":
+
+                    return redirect("caregiver_dashboard")
+
+                elif profile.role == "Volunteer":
+
+                    return redirect("volunteer_dashboard")
+
+                else:
+
+                    return redirect("dashboard")
+
+            except UserProfile.DoesNotExist:
+
+                return redirect("dashboard")
 
         else:
 
-            return render(
+            messages.error(
                 request,
-                'login.html',
-                {
-                    'error': 'Invalid Username or Password'
-                }
+                "Invalid Username or Password."
             )
 
-    return render(request, 'login.html')
-
+    return render(
+        request,
+        "login.html"
+    )
 
 def dashboard(request):
 
@@ -127,69 +134,22 @@ def dashboard(request):
         user=request.user
     )
 
-    representative = None
-    caregiver = None
-    volunteer = None
-
-    # Get Care Representative
-    connection = CareRepresentativeConnection.objects.filter(
-        user=request.user
-    ).first()
-
-    if connection:
-        representative = connection.representative
-
-    # Get Caregiver
-    caregiver_assignment = CaregiverAssignment.objects.filter(
-        user=request.user
-    ).first()
-
-    if caregiver_assignment:
-        caregiver = caregiver_assignment.caregiver
-
-    # Get Volunteer
-    volunteer_assignment = VolunteerAssignment.objects.filter(
-        user=request.user
-    ).first()
-
-    if volunteer_assignment:
-        volunteer = volunteer_assignment.volunteer
-
     return render(
         request,
         'dashboard/dashboard.html',
         {
             'profile': profile,
-            'representative': representative,
-            'caregiver': caregiver,
-            'volunteer': volunteer,
         }
     )
-
 
 def profile(request):
 
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    profile = UserProfile.objects.get(user=request.user)
-
-    if profile.role == "Care Representative":
-
-        return render(
-            request,
-            'dashboard/care_rep_profile.html',
-            {
-                'profile': profile,
-                'pending_requests': CareRepresentativeRequest.objects.filter(
-                    representative=request.user,
-                    status='Pending'
-                ),
-                'connections': CareRepresentativeConnection.objects.filter(
-                    representative=request.user
-                )
-            }
-        )
+    profile = UserProfile.objects.get(
+        user=request.user
+    )
 
     return render(
         request,
@@ -244,218 +204,6 @@ def edit_profile(request):
         }
     )
 
-
-    
-def care_representatives(request):
-
-    if not request.user.is_authenticated:
-
-        return redirect('/login/')
-
-
-    profile = UserProfile.objects.get(
-        user=request.user
-    )
-
-
-    message = ""
-
-
-    if request.method == "POST":
-
-        action = request.POST.get("action")
-
-
-        # SEND REQUEST
-        if action == "send":
-
-            representative_id = request.POST.get(
-                "representative_id"
-            )
-
-
-            try:
-
-                representative = User.objects.get(
-                    id=representative_id
-                )
-
-
-                already_exists = CareRepresentativeRequest.objects.filter(
-                    requester=request.user,
-                    representative=representative
-                ).exists()
-
-
-                if not already_exists:
-
-                    CareRepresentativeRequest.objects.create(
-                        requester=request.user,
-                        representative=representative
-                    )
-
-                    message = "Request sent successfully."
-
-
-                else:
-
-                    message = "Request already exists."
-
-
-            except User.DoesNotExist:
-
-                message = "Care Representative not found."
-
-
-
-        # ACCEPT REQUEST
-        elif action == "accept":
-
-            request_id = request.POST.get(
-                "request_id"
-            )
-
-
-            try:
-
-                req = CareRepresentativeRequest.objects.get(
-                    id=request_id,
-                    representative=request.user
-                )
-
-
-                req.status = "Accepted"
-                req.save()
-
-
-                CareRepresentativeConnection.objects.get_or_create(
-                    user=req.requester,
-                    representative=req.representative
-                )
-
-
-                message = "Request accepted."
-
-
-            except CareRepresentativeRequest.DoesNotExist:
-
-                message = "Request not found."
-
-
-
-        # REJECT REQUEST
-        elif action == "reject":
-
-            request_id = request.POST.get(
-                "request_id"
-            )
-
-
-            try:
-
-                req = CareRepresentativeRequest.objects.get(
-                    id=request_id,
-                    representative=request.user
-                )
-
-
-                req.status = "Rejected"
-                req.save()
-
-
-                message = "Request rejected."
-
-
-            except CareRepresentativeRequest.DoesNotExist:
-
-                message = "Request not found."
-
-
-
-    # SEARCH CARE REPRESENTATIVE
-
-    search_query = request.GET.get(
-        "search",
-        ""
-    ).strip()
-
-
-    search_user = None
-    search_profile = None
-    searched = False
-
-
-    if search_query:
-
-        searched = True
-
-
-        try:
-
-            user = User.objects.get(
-                username=search_query
-            )
-
-
-            user_profile = UserProfile.objects.get(
-                user=user
-            )
-
-
-            if user_profile.role == "Care Representative":
-
-                search_user = user
-                search_profile = user_profile
-
-
-        except (
-            User.DoesNotExist,
-            UserProfile.DoesNotExist
-        ):
-
-            pass
-
-
-
-    # PENDING REQUESTS
-
-    pending_requests = CareRepresentativeRequest.objects.filter(
-        representative=request.user,
-        status="Pending"
-    )
-
-
-
-    # CONNECTED REPRESENTATIVES
-
-    connected = CareRepresentativeConnection.objects.filter(
-        user=request.user
-    )
-
-    # MY REQUESTS
-
-    my_requests = CareRepresentativeRequest.objects.filter(
-         requester=request.user
-          ).order_by('-created_at')
-
-    return render(
-        request,
-        "dashboard/care_representatives.html",
-        {
-            "profile": profile,
-            "message": message,
-            "searched": searched,
-            "search_query": search_query,
-            "search_user": search_user,
-            "search_profile": search_profile,
-            "pending_requests": pending_requests,
-            "connected": connected,
-            "pending_requests": pending_requests,
-            "my_requests": my_requests,
-        }
-    )
-
-
 def user_logout(request):
 
     logout(request)
@@ -466,334 +214,30 @@ def user_logout(request):
 def care_rep_dashboard(request):
 
     if not request.user.is_authenticated:
-
         return redirect('/login/')
-
 
     profile = UserProfile.objects.get(
         user=request.user
     )
 
-
     if profile.role != "Care Representative":
-
         return redirect('/dashboard/')
-
-
-    pending_requests = CareRepresentativeRequest.objects.filter(
-        representative=request.user,
-        status="Pending"
-    )
-
-
-    connections = CareRepresentativeConnection.objects.filter(
-        representative=request.user
-    )
-
 
     caregivers = UserProfile.objects.filter(
         role="Caregiver"
     )
 
-
     volunteers = UserProfile.objects.filter(
         role="Volunteer"
     )
-
 
     return render(
         request,
         "dashboard/care_rep_dashboard.html",
         {
             "profile": profile,
-            "pending_requests": pending_requests,
-            "connections": connections,
             "caregivers": caregivers,
             "volunteers": volunteers,
-        }
-    )
-
-def assign_user(request, connection_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    profile = UserProfile.objects.get(
-        user=request.user
-    )
-
-    if profile.role != "Care Representative":
-        return redirect('/dashboard/')
-
-    connection = get_object_or_404(
-        CareRepresentativeConnection,
-        id=connection_id
-    )
-
-    if request.method == "POST":
-
-        caregiver_id = request.POST.get("caregiver")
-        volunteer_id = request.POST.get("volunteer")
-
-        # Nothing selected
-        if not caregiver_id and not volunteer_id:
-
-            messages.warning(
-                request,
-                "Please select at least one caregiver or volunteer."
-            )
-
-            return redirect('care_rep_dashboard')
-
-        # -------------------------
-        # Assign Caregiver
-        # -------------------------
-
-        if caregiver_id:
-
-            if CaregiverAssignment.objects.filter(
-                user=connection.user
-            ).exists():
-
-                messages.warning(
-                    request,
-                    "A caregiver has already been assigned to this user."
-                )
-
-            else:
-
-                caregiver = User.objects.get(
-                    id=caregiver_id
-                )
-
-                CaregiverAssignment.objects.create(
-
-                    user=connection.user,
-
-                    caregiver=caregiver,
-
-                    assigned_by=request.user
-
-                )
-
-                messages.success(
-                    request,
-                    "Caregiver assigned successfully."
-                )
-
-        # -------------------------
-        # Assign Volunteer
-        # -------------------------
-
-        if volunteer_id:
-
-            if VolunteerAssignment.objects.filter(
-                user=connection.user
-            ).exists():
-
-                messages.warning(
-                    request,
-                    "A volunteer has already been assigned to this user."
-                )
-
-            else:
-
-                volunteer = User.objects.get(
-                    id=volunteer_id
-                )
-
-                VolunteerAssignment.objects.create(
-
-                    user=connection.user,
-
-                    volunteer=volunteer,
-
-                    assigned_by=request.user
-
-                )
-
-                messages.success(
-                    request,
-                    "Volunteer assigned successfully."
-                )
-
-    return redirect('care_rep_dashboard')
-
-def accept_request(request, request_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    if request.method != "POST":
-        return redirect('care_rep_dashboard')
-
-    try:
-
-        req = CareRepresentativeRequest.objects.get(
-            id=request_id,
-            representative=request.user
-        )
-
-        req.status = "Accepted"
-        req.save()
-
-        CareRepresentativeConnection.objects.get_or_create(
-            user=req.requester,
-            representative=req.representative
-        )
-
-        caregiver_id = request.POST.get("caregiver")
-        volunteer_id = request.POST.get("volunteer")
-
-        if caregiver_id:
-
-            caregiver = User.objects.get(id=caregiver_id)
-
-            CaregiverAssignment.objects.update_or_create(
-                user=req.requester,
-                defaults={
-                    "caregiver": caregiver,
-                    "assigned_by": request.user
-                }
-            )
-
-        if volunteer_id:
-
-            volunteer = User.objects.get(id=volunteer_id)
-
-            VolunteerAssignment.objects.update_or_create(
-                user=req.requester,
-                defaults={
-                    "volunteer": volunteer,
-                    "assigned_by": request.user
-                }
-            )
-
-        messages.success(
-            request,
-            "Caregiver and Volunteer assigned successfully."
-        )
-
-    except CareRepresentativeRequest.DoesNotExist:
-
-        messages.error(
-            request,
-            "Request not found."
-        )
-
-    return redirect('care_rep_dashboard')
-
-def reject_request(request, request_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    try:
-
-        req = CareRepresentativeRequest.objects.get(
-            id=request_id,
-            representative=request.user
-        )
-
-        req.status = "Rejected"
-        req.save()
-
-        messages.success(
-            request,
-            "Request rejected successfully."
-        )
-
-    except CareRepresentativeRequest.DoesNotExist:
-
-        messages.error(
-            request,
-            "Request not found."
-        )
-
-    return redirect('care_rep_dashboard')
-
-
-def book_caregiver(request):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    caregivers = UserProfile.objects.filter(
-        role="Caregiver"
-    )
-
-    booked_ids = DirectCaregiverBooking.objects.filter(
-        user=request.user,
-        status="Pending"
-    ).values_list(
-        'caregiver_id',
-        flat=True
-    )
-
-    return render(
-        request,
-        'dashboard/book_caregiver.html',
-        {
-            'caregivers': caregivers,
-            'booked_ids': booked_ids,
-        }
-    )
-
-def confirm_caregiver_booking(request, caregiver_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    caregiver = User.objects.get(
-        id=caregiver_id
-    )
-
-    existing_booking = DirectCaregiverBooking.objects.filter(
-        user=request.user,
-        caregiver=caregiver,
-        status="Pending"
-    ).first()
-
-    if existing_booking:
-
-        messages.warning(
-            request,
-            "You have already sent a booking request to this caregiver."
-        )
-
-        return redirect('book_caregiver')
-
-    DirectCaregiverBooking.objects.create(
-
-        user=request.user,
-
-        caregiver=caregiver,
-
-        status="Pending"
-
-    )
-
-    messages.success(
-        request,
-        "Booking request sent successfully."
-    )
-
-    return redirect('book_caregiver')
-
-def my_bookings(request):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    bookings = DirectCaregiverBooking.objects.filter(
-        user=request.user
-    ).order_by('-booked_at')
-
-    return render(
-        request,
-        'dashboard/my_bookings.html',
-        {
-            'bookings': bookings
         }
     )
 
@@ -815,9 +259,105 @@ def caregiver_dashboard(request):
 
     return render(
         request,
-        'dashboard/caregiver_dashboard.html',
+        "dashboard/caregiver_dashboard.html",
         {
-            'bookings': bookings
+            "profile": profile,
+            "bookings": bookings,
+        }
+    )
+
+def book_caregiver(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    caregivers = UserProfile.objects.filter(
+        role="Caregiver"
+    )
+
+    active_booking = DirectCaregiverBooking.objects.filter(
+        user=request.user,
+        status__in=["Pending", "Accepted"]
+    ).first()
+
+    return render(
+        request,
+        'dashboard/book_caregiver.html',
+        {
+            'caregivers': caregivers,
+            'active_booking': active_booking,
+        }
+    )
+
+
+def confirm_caregiver_booking(request, caregiver_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    # Check whether the user already has an active caregiver booking
+    active_booking = DirectCaregiverBooking.objects.filter(
+        user=request.user,
+        status__in=["Pending", "Accepted"]
+    ).first()
+
+    if active_booking:
+
+        if active_booking.caregiver_id == caregiver_id:
+
+            messages.warning(
+                request,
+                "You already have an active booking request with this caregiver."
+            )
+
+        else:
+
+            messages.warning(
+                request,
+                "You already have an active caregiver booking. "
+                "You can book another caregiver after the current booking is completed, rejected, or cancelled."
+            )
+
+        return redirect('book_caregiver')
+
+    caregiver = get_object_or_404(
+        User,
+        id=caregiver_id
+    )
+
+    DirectCaregiverBooking.objects.create(
+        user=request.user,
+        caregiver=caregiver,
+        status="Pending"
+    )
+
+    messages.success(
+        request,
+        "Caregiver booking request sent successfully."
+    )
+
+    return redirect('book_caregiver')
+
+
+def my_bookings(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    caregiver_bookings = DirectCaregiverBooking.objects.filter(
+        user=request.user
+    ).order_by('-booked_at')
+
+    volunteer_bookings = DirectVolunteerBooking.objects.filter(
+        user=request.user
+    ).order_by('-booked_at')
+
+    return render(
+        request,
+        'dashboard/my_bookings.html',
+        {
+            'caregiver_bookings': caregiver_bookings,
+            'volunteer_bookings': volunteer_bookings,
         }
     )
 
@@ -834,18 +374,6 @@ def accept_caregiver_booking(request, booking_id):
 
     booking.status = "Accepted"
     booking.save()
-
-    # Update assignment status if this booking came from a Care Representative assignment
-    try:
-        assignment = CaregiverAssignment.objects.get(
-            user=booking.user,
-            caregiver=request.user
-        )
-        assignment.status = "Accepted"
-        assignment.save()
-
-    except CaregiverAssignment.DoesNotExist:
-        pass
 
     messages.success(
         request,
@@ -868,21 +396,408 @@ def reject_caregiver_booking(request, booking_id):
     booking.status = "Rejected"
     booking.save()
 
-    # Update assignment status if this booking came from a Care Representative assignment
-    try:
-        assignment = CaregiverAssignment.objects.get(
-            user=booking.user,
-            caregiver=request.user
-        )
-        assignment.status = "Rejected"
-        assignment.save()
-
-    except CaregiverAssignment.DoesNotExist:
-        pass
-
     messages.success(
         request,
         "Booking rejected."
     )
 
     return redirect('caregiver_dashboard')
+
+
+def service_requests(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if request.method == "POST":
+
+        services = request.POST.getlist("services")
+
+        description = request.POST.get("description")
+
+        priority = request.POST.get("priority")
+
+        ServiceRequest.objects.create(
+
+            user=request.user,
+
+            services=", ".join(services),
+
+            description=description,
+
+            priority=priority
+
+        )
+
+        messages.success(
+            request,
+            "Service request submitted successfully."
+        )
+
+        return redirect("service_requests")
+
+    requests = ServiceRequest.objects.filter(
+        user=request.user
+    ).order_by("-requested_at")
+
+    return render(
+        request,
+        "dashboard/service_requests.html",
+        {
+            "requests": requests
+        }
+    )
+
+def service_choice(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    return render(
+        request,
+        'dashboard/service_choice.html'
+    )
+
+def select_helper(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    mode = request.GET.get(
+        "mode",
+        "direct"
+    )
+
+    if request.method == "POST":
+
+        selected = request.POST.getlist("helper")
+
+        if not selected:
+
+            messages.error(
+                request,
+                "Please select at least one helper."
+            )
+
+            return render(
+                request,
+                "dashboard/select_helper.html",
+                {
+                    "mode": mode
+                }
+            )
+
+        request.session["selected_helpers"] = selected
+
+        request.session["request_mode"] = mode
+
+        return redirect("direct_service_request")
+
+    return render(
+        request,
+        "dashboard/select_helper.html",
+        {
+            "mode": mode
+        }
+    )
+def direct_service_request(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    selected_helpers = request.session.get(
+        "selected_helpers",
+        []
+    )
+
+    mode = request.session.get(
+        "request_mode",
+        "direct"
+    )
+
+    if request.method == "POST":
+
+        caregiver_services = request.POST.getlist(
+            "caregiver_services"
+        )
+
+        volunteer_services = request.POST.getlist(
+            "volunteer_services"
+        )
+
+        description = request.POST.get(
+            "description"
+        )
+
+        priority = request.POST.get(
+            "priority"
+        )
+
+        services = caregiver_services + volunteer_services
+
+        ServiceRequest.objects.create(
+
+            user=request.user,
+
+            services=", ".join(services),
+
+            description=description,
+
+            priority=priority
+
+        )
+        request.session["submitted_helpers"] = selected_helpers
+        request.session["submitted_mode"] = mode
+        messages.success(
+            request,
+            "Service request submitted successfully."
+        )
+
+        return redirect("request_submitted")
+
+    return render(
+        request,
+        "dashboard/direct_service_request.html",
+        {
+            "selected_helpers": selected_helpers,
+            "mode": mode,
+        }
+    )
+def request_submitted(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    helpers = request.session.get(
+        "submitted_helpers",
+        []
+    )
+
+    mode = request.session.get(
+        "submitted_mode",
+        "direct"
+    )
+
+    return render(
+        request,
+        "dashboard/request_submitted.html",
+        {
+            "helpers": helpers,
+            "mode": mode,
+        }
+    )
+
+def book_volunteer(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    volunteers = UserProfile.objects.filter(
+        role="Volunteer"
+    )
+
+    # Check whether the user already has an active volunteer booking
+    active_booking = DirectVolunteerBooking.objects.filter(
+        user=request.user,
+        status__in=["Pending", "Accepted"]
+    ).first()
+
+    booking_status = {}
+
+    if active_booking:
+        booking_status[active_booking.volunteer_id] = active_booking.status
+
+    return render(
+        request,
+        'dashboard/book_volunteer.html',
+        {
+            'volunteers': volunteers,
+            'booking_status': booking_status,
+            'active_booking': active_booking,
+        }
+    )
+
+
+def confirm_volunteer_booking(request, volunteer_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    # Check whether the user already has an active volunteer booking
+    active_booking = DirectVolunteerBooking.objects.filter(
+        user=request.user,
+        status__in=["Pending", "Accepted"]
+    ).first()
+
+    if active_booking:
+
+        if active_booking.volunteer_id == volunteer_id:
+
+            messages.warning(
+                request,
+                "You already have an active booking request with this volunteer."
+            )
+
+        else:
+
+            messages.warning(
+                request,
+                "You already have an active volunteer booking. "
+                "You can book another volunteer after the current booking is completed, rejected, or cancelled."
+            )
+
+        return redirect('book_volunteer')
+
+    volunteer = get_object_or_404(
+        User,
+        id=volunteer_id
+    )
+
+    DirectVolunteerBooking.objects.create(
+        user=request.user,
+        volunteer=volunteer,
+        status="Pending"
+    )
+
+    messages.success(
+        request,
+        "Volunteer booking request sent successfully."
+    )
+
+    return redirect('book_volunteer')
+
+
+def volunteer_dashboard(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = UserProfile.objects.get(
+        user=request.user
+    )
+
+    if profile.role != "Volunteer":
+        return redirect('/dashboard/')
+
+    bookings = DirectVolunteerBooking.objects.filter(
+        volunteer=request.user
+    ).order_by('-booked_at')
+
+    return render(
+        request,
+        'dashboard/volunteer_dashboard.html',
+        {
+            'profile': profile,
+            'bookings': bookings,
+        }
+    )
+
+
+def accept_volunteer_booking(request, booking_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    booking = get_object_or_404(
+        DirectVolunteerBooking,
+        id=booking_id,
+        volunteer=request.user
+    )
+
+    booking.status = "Accepted"
+    booking.save()
+
+    messages.success(
+        request,
+        "Volunteer booking accepted successfully."
+    )
+
+    return redirect('volunteer_dashboard')
+
+def reject_volunteer_booking(request, booking_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    booking = get_object_or_404(
+        DirectVolunteerBooking,
+        id=booking_id,
+        volunteer=request.user
+    )
+
+    booking.status = "Rejected"
+    booking.save()
+
+    messages.success(
+        request,
+        "Volunteer booking rejected."
+    )
+
+    return redirect('volunteer_dashboard')
+
+def caregiver_schedule(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = UserProfile.objects.get(user=request.user)
+
+    if profile.role != "Caregiver":
+        return redirect('/dashboard/')
+
+    bookings = DirectCaregiverBooking.objects.filter(
+        caregiver=request.user,
+        status="Accepted"
+    ).order_by('booked_at')
+
+    return render(
+        request,
+        'dashboard/caregiver_schedule.html',
+        {
+            'bookings': bookings,
+        }
+    )
+
+
+
+def complete_caregiver_service(request, booking_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    booking = get_object_or_404(
+        DirectCaregiverBooking,
+        id=booking_id,
+        caregiver=request.user
+    )
+
+    booking.status = "Completed"
+    booking.save()
+
+    messages.success(
+        request,
+        "Service marked as completed successfully."
+    )
+
+    return redirect('caregiver_dashboard')
+
+def completed_services(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = UserProfile.objects.get(user=request.user)
+
+    bookings = DirectCaregiverBooking.objects.filter(
+        caregiver=request.user,
+        status="Completed"
+    ).order_by('-booked_at')
+
+    return render(
+        request,
+        'dashboard/completed_services.html',
+        {
+            'profile': profile,
+            'bookings': bookings,
+        }
+    )

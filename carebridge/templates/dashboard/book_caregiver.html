@@ -1,90 +1,631 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
+{% load static %}
+
 {% block title %}
-Book Caregiver
+Book a Caregiver
 {% endblock %}
 
 {% block page_title %}
-Book Caregiver
+Book a Caregiver
 {% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===============================
+       MAIN BOOKING PAGE
+    =============================== */
+
+    .booking-page {
+        padding: 30px 35px 50px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    /* ===============================
+       HEADER
+    =============================== */
+
+    .booking-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .booking-header-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1769d1, #43a5f5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        box-shadow: 0 8px 20px rgba(23, 105, 209, 0.20);
+    }
+
+    .booking-header h1 {
+        margin: 0;
+        font-size: 30px;
+        color: #1f2937;
+    }
+
+    .booking-header p {
+        margin: 6px 0 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+
+    /* ===============================
+       MESSAGE
+    =============================== */
+
+    .booking-message {
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        background: #e8f3ff;
+        color: #1559a6;
+        border-left: 5px solid #1769d1;
+        font-weight: 600;
+    }
+
+
+    /* ===============================
+       ACTIVE BOOKING BOX
+    =============================== */
+
+    .active-booking-box {
+        background: linear-gradient(135deg, #eef6ff, #ffffff);
+        border: 1px solid #c9def5;
+        border-left: 5px solid #1769d1;
+        border-radius: 14px;
+        padding: 20px 22px;
+        margin-bottom: 28px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+    }
+
+    .active-booking-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .active-booking-text {
+        color: #4b5563;
+        margin: 5px 0;
+        line-height: 1.5;
+    }
+
+    .active-caregiver-name {
+        font-weight: 700;
+        color: #1769d1;
+    }
+
+
+    /* ===============================
+       CAREGIVER GRID
+    =============================== */
+
+    .caregiver-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+
+    /* ===============================
+       CAREGIVER CARD
+    =============================== */
+
+    .caregiver-card {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 300px;
+    }
+
+    .caregiver-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.11);
+    }
+
+
+    /* ===============================
+       CAREGIVER ICON
+    =============================== */
+
+    .caregiver-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        background: #eaf3ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        margin-bottom: 15px;
+    }
+
+
+    /* ===============================
+       CAREGIVER INFORMATION
+    =============================== */
+
+    .caregiver-info h2 {
+        margin: 0 0 5px;
+        font-size: 22px;
+        color: #1f2937;
+    }
+
+    .caregiver-role {
+        display: inline-block;
+        background: #eaf3ff;
+        color: #1769d1;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .caregiver-details {
+        margin-top: 8px;
+    }
+
+    .caregiver-details div {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 9px 0;
+        color: #4b5563;
+        font-size: 14px;
+    }
+
+    .detail-icon {
+        width: 22px;
+        flex-shrink: 0;
+    }
+
+
+    /* ===============================
+       BOOKING ACTION
+    =============================== */
+
+    .caregiver-action {
+        margin-top: 20px;
+    }
+
+    .booking-button,
+    .booking-pending,
+    .booking-unavailable {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+
+    /* BOOK NOW */
+
+    .booking-button {
+        background: #1769d1;
+        color: white;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .booking-button:hover {
+        background: #0d57b5;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+
+    /* PENDING */
+
+    .booking-pending {
+        background: #f59e0b;
+        color: white;
+        border: none;
+        cursor: not-allowed;
+    }
+
+
+    /* UNAVAILABLE */
+
+    .booking-unavailable {
+        background: #e5e7eb;
+        color: #6b7280;
+        border: none;
+        cursor: not-allowed;
+    }
+
+
+    /* ===============================
+       NO CAREGIVERS
+    =============================== */
+
+    .no-caregivers {
+        background: white;
+        border-radius: 16px;
+        padding: 45px 25px;
+        text-align: center;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+    }
+
+    .no-caregivers-icon {
+        font-size: 50px;
+        margin-bottom: 12px;
+    }
+
+    .no-caregivers h2 {
+        margin: 5px 0;
+        color: #1f2937;
+    }
+
+    .no-caregivers p {
+        color: #6b7280;
+    }
+
+
+    /* ===============================
+       SUPPORT BOX
+    =============================== */
+
+    .booking-support {
+        margin-top: 35px;
+        padding: 20px 22px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #eef7ff, #ffffff);
+        border: 1px solid #d5e8fb;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .booking-support-icon {
+        font-size: 28px;
+    }
+
+    .booking-support h3 {
+        margin: 0 0 6px;
+        color: #1f2937;
+    }
+
+    .booking-support p {
+        margin: 0;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .my-bookings-link {
+        color: #1769d1;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .my-bookings-link:hover {
+        text-decoration: underline;
+    }
+
+
+    /* ===============================
+       MOBILE
+    =============================== */
+
+    @media (max-width: 700px) {
+
+        .booking-page {
+            padding: 20px 15px 40px;
+        }
+
+        .booking-header h1 {
+            font-size: 25px;
+        }
+
+        .caregiver-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-support {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
 
 {% block content %}
 
-<h2>Available Caregivers</h2>
+<div class="booking-page">
 
-{% if messages %}
-{% for message in messages %}
-<div class="success-message">
-    {{ message }}
-</div>
-{% endfor %}
-{% endif %}
 
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <!-- ===============================
+         PAGE HEADER
+    =============================== -->
 
-    <tr>
+    <div class="booking-header">
 
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>Action</th>
+        <div class="booking-header-icon">
+            👨‍⚕️
+        </div>
 
-    </tr>
+        <div>
 
-    {% for caregiver in caregivers %}
+            <h1>
+                Find a Caregiver
+            </h1>
 
-    <tr>
+            <p>
+                Choose a caregiver who can provide
+                the assistance and support you need.
+            </p>
 
-        <td>{{ caregiver.user.username }}</td>
+        </div>
 
-        <td>{{ caregiver.phone }}</td>
+    </div>
 
-        <td>{{ caregiver.address }}</td>
 
-        <td>
+    <!-- ===============================
+         MESSAGES
+    =============================== -->
 
-            {% if caregiver.user.id in booked_ids %}
+    {% if messages %}
 
-            <button style="
-        background:#ffc107;
-        color:black;
-        border:none;
-        padding:8px 18px;
-        border-radius:8px;
-        cursor:not-allowed;
-    " disabled>
+    {% for message in messages %}
 
-                Pending
-
-            </button>
-
-            {% else %}
-
-            <a href="{% url 'confirm_caregiver_booking' caregiver.user.id %}">
-
-                <button style="
-        background:#28a745;
-        color:white;
-        border:none;
-        padding:8px 18px;
-        border-radius:8px;
-        cursor:pointer;
-    ">
-
-                    Book
-
-                </button>
-
-            </a>
-
-            {% endif %}
-
-        </td>
-
-    </tr>
+    <div class="booking-message">
+        {{ message }}
+    </div>
 
     {% endfor %}
 
-</table>
+    {% endif %}
+
+
+    <!-- ===============================
+         ACTIVE BOOKING
+    =============================== -->
+
+    {% if active_booking %}
+
+    <div class="active-booking-box">
+
+        <div class="active-booking-title">
+            🔒 Active Caregiver Booking
+        </div>
+
+        <p class="active-booking-text">
+
+            You currently have an active booking with
+            <span class="active-caregiver-name">
+                {{ active_booking.caregiver.username }}
+            </span>.
+
+        </p>
+
+        <p class="active-booking-text">
+
+            Status:
+            <strong>
+                {{ active_booking.status }}
+            </strong>
+
+        </p>
+
+        <p class="active-booking-text">
+
+            You can book another caregiver after this
+            booking is completed, rejected, or cancelled.
+
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ===============================
+         CAREGIVER LIST
+    =============================== -->
+
+    {% if caregivers %}
+
+    <div class="caregiver-grid">
+
+        {% for caregiver in caregivers %}
+
+        <div class="caregiver-card">
+
+
+            <!-- CAREGIVER ICON -->
+
+            <div class="caregiver-icon">
+                👨‍⚕️
+            </div>
+
+
+            <!-- CAREGIVER INFORMATION -->
+
+            <div class="caregiver-info">
+
+                <h2>
+                    {{ caregiver.user.username }}
+                </h2>
+
+                <span class="caregiver-role">
+                    Professional Caregiver
+                </span>
+
+
+                <div class="caregiver-details">
+
+                    <div>
+
+                        <span class="detail-icon">
+                            📞
+                        </span>
+
+                        <span>
+                            {{ caregiver.phone }}
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="detail-icon">
+                            📍
+                        </span>
+
+                        <span>
+                            {{ caregiver.address }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ===============================
+                         BOOKING ACTION
+                    =============================== -->
+
+            <div class="caregiver-action">
+
+
+                {% if active_booking %}
+
+                {% if active_booking.caregiver.id == caregiver.user.id %}
+
+                {% if active_booking.status == "Pending" %}
+
+                <button class="booking-pending" disabled>
+                    ⏳ Booking Pending
+                </button>
+
+                {% elif active_booking.status == "Accepted" %}
+
+                <button class="booking-pending" disabled>
+                    ✅ Booking Accepted
+                </button>
+
+                {% endif %}
+
+                {% else %}
+
+                <button class="booking-unavailable" disabled>
+                    🔒 Caregiver Unavailable
+                </button>
+
+                {% endif %}
+
+
+                {% else %}
+
+                <a href="{% url 'confirm_caregiver_booking' caregiver.user.id %}" class="booking-button">
+
+                    <span>
+                        📅 Book Now
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% else %}
+
+
+    <!-- ===============================
+             NO CAREGIVERS
+        =============================== -->
+
+    <div class="no-caregivers">
+
+        <div class="no-caregivers-icon">
+            👨‍⚕️
+        </div>
+
+        <h2>
+            No caregivers available
+        </h2>
+
+        <p>
+            There are currently no caregivers available
+            for booking. Please check again later.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ===============================
+         SUPPORT / MY BOOKINGS
+    =============================== -->
+
+    <div class="booking-support">
+
+        <div class="booking-support-icon">
+            💙
+        </div>
+
+        <div>
+
+            <h3>
+                Need help choosing?
+            </h3>
+
+            <p>
+
+                Choose a caregiver based on your assistance
+                needs. You can view and manage your booking
+                from
+
+                <a href="{% url 'my_bookings' %}" class="my-bookings-link">
+                    My Bookings
+                </a>.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
 
 {% endblock %}

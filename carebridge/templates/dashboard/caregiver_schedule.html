@@ -1,0 +1,74 @@
+{% extends 'dashboard/caregiver_base.html' %}
+
+{% block title %}
+Today's Schedule
+{% endblock %}
+
+{% block page_title %}
+Today's Schedule
+{% endblock %}
+
+{% block content %}
+
+<h2>📅 Today's Visits</h2>
+
+<br>
+
+{% if bookings %}
+
+{% for booking in bookings %}
+
+<div style="
+background:white;
+padding:25px;
+border-radius:15px;
+margin-bottom:20px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+">
+
+    <h3>{{ booking.user.username }}</h3>
+
+    <p><strong>📞 Phone:</strong>
+        {{ booking.user.userprofile.phone }}</p>
+
+    <p><strong>📍 Address:</strong>
+        {{ booking.user.userprofile.address }}</p>
+
+    <p><strong>📅 Booking Date:</strong>
+        {{ booking.booked_at }}</p>
+
+    <div style="margin-top:20px;">
+
+        <span style="
+        display:inline-block;
+        background:#4caf50;
+        color:white;
+        padding:8px 18px;
+        border-radius:20px;
+        font-weight:bold;
+    ">
+            ✅ Accepted
+        </span>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div style="
+background:white;
+padding:40px;
+border-radius:15px;
+text-align:center;
+">
+
+    <h3>😊 No visits scheduled today.</h3>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

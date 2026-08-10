@@ -1,0 +1,123 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Select Helper
+{% endblock %}
+
+{% block page_title %}
+Select Helper
+{% endblock %}
+
+{% block content %}
+
+<div class="form-card">
+
+    <h2>Choose Who You Need</h2>
+
+    <p style="margin-bottom:25px;color:#666;">
+        You can choose a Caregiver, a Volunteer, or both.
+    </p>
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div style="
+            background:#f8d7da;
+            color:#721c24;
+            padding:12px;
+            margin-bottom:20px;
+            border-radius:8px;
+            font-weight:bold;
+        ">
+        {{ message }}
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="cards">
+
+            <div class="card">
+
+                <label>
+
+                    <input type="checkbox" name="helper" value="caregiver">
+
+                    <h3>👨‍⚕️ Caregiver</h3>
+
+                </label>
+
+                <hr>
+
+                <p>
+
+                    ✔ Personal Care<br>
+
+                    ✔ Medication Assistance<br>
+
+                    ✔ Meal Preparation<br>
+
+                    ✔ Hospital Visit Assistance<br>
+
+                    ✔ Post-Hospital Recovery<br>
+
+                    ✔ Mobility Assistance<br>
+
+                    ✔ Health Monitoring
+
+                </p>
+
+            </div>
+
+            <div class="card">
+
+                <label>
+
+                    <input type="checkbox" name="helper" value="volunteer">
+
+                    <h3>🙋 Volunteer</h3>
+
+                </label>
+
+                <hr>
+
+                <p>
+
+                    ✔ Grocery Shopping<br>
+
+                    ✔ Household Help<br>
+
+                    ✔ Transportation<br>
+
+                    ✔ Companionship<br>
+
+                    ✔ Bill Payment Assistance<br>
+
+                    ✔ Reading & Conversation<br>
+
+                    ✔ Outdoor Walk
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="submit-btn">
+
+            Continue →
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

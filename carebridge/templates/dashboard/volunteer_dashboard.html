@@ -1,0 +1,191 @@
+{% extends 'dashboard/volunteer_base.html' %}
+
+{% block title %}
+Volunteer Dashboard
+{% endblock %}
+
+{% block page_title %}
+Volunteer Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h2>🙋 Direct Booking Requests</h2>
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div style="
+            background:#d4edda;
+            color:#155724;
+            padding:12px;
+            border-radius:8px;
+            margin-bottom:20px;
+            font-weight:bold;
+        ">
+    ✔ {{ message }}
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+{% if bookings %}
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+    <tr>
+        <th>User</th>
+        <th>Phone</th>
+        <th>Booked On</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for booking in bookings %}
+
+    <tr>
+
+        <td>{{ booking.user.username }}</td>
+
+        <td>{{ booking.user.userprofile.phone }}</td>
+
+        <td>{{ booking.booked_at }}</td>
+
+        <td>{{ booking.status }}</td>
+
+        <td>
+
+            {% if booking.status == "Pending" %}
+
+            <a href="{% url 'accept_volunteer_booking' booking.id %}">
+
+                <button style="
+                        background:#28a745;
+                        color:white;
+                        border:none;
+                        padding:8px 15px;
+                        border-radius:6px;
+                    ">
+                    Accept
+                </button>
+
+            </a>
+
+            <a href="{% url 'reject_volunteer_booking' booking.id %}">
+
+                <button style="
+                        background:#dc3545;
+                        color:white;
+                        border:none;
+                        padding:8px 15px;
+                        border-radius:6px;
+                    ">
+                    Reject
+                </button>
+
+            </a>
+
+            {% else %}
+
+            <strong>{{ booking.status }}</strong>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No volunteer booking requests received.</p>
+
+{% endif %}
+
+<hr style="margin:40px 0;">
+
+<h2>👥 Assigned Users</h2>
+
+{% if assignments %}
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+
+    <tr>
+
+        <th>User</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>Assigned By</th>
+        <th>Status</th>
+
+    </tr>
+
+    {% for assignment in assignments %}
+
+    <tr>
+
+        <td>{{ assignment.user.username }}</td>
+
+        <td>{{ assignment.user.userprofile.phone }}</td>
+
+        <td>{{ assignment.user.userprofile.address }}</td>
+
+        <td>{{ assignment.assigned_by.username }}</td>
+
+        <td>
+
+            {% if assignment.status == "Pending" %}
+
+            <span style="
+                    background:#fff3cd;
+                    color:#856404;
+                    padding:6px 12px;
+                    border-radius:20px;
+                ">
+                🟡 Pending
+            </span>
+
+            {% elif assignment.status == "Accepted" %}
+
+            <span style="
+                    background:#d4edda;
+                    color:#155724;
+                    padding:6px 12px;
+                    border-radius:20px;
+                ">
+                🟢 Accepted
+            </span>
+
+            {% else %}
+
+            <span style="
+                    background:#f8d7da;
+                    color:#721c24;
+                    padding:6px 12px;
+                    border-radius:20px;
+                ">
+                🔴 Rejected
+            </span>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No users have been assigned yet.</p>
+
+{% endif %}
+
+{% endblock %}

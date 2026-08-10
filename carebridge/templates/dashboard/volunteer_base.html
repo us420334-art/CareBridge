@@ -1,0 +1,261 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+    {% load static %}
+
+    <head>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            body {
+                display: flex;
+                background: #f4f7fc;
+                color: #333;
+            }
+
+            .sidebar {
+                width: 270px;
+                height: 100vh;
+                position: fixed;
+                left: 0;
+                top: 0;
+                overflow-y: auto;
+                background: linear-gradient(180deg, #0d47a1, #1976d2, #42a5f5);
+                color: white;
+                box-shadow: 5px 0 20px rgba(0, 0, 0, .15);
+            }
+
+            .logo {
+                text-align: center;
+                padding: 35px 20px;
+                border-bottom: 1px solid rgba(255, 255, 255, .2);
+            }
+
+            .logo h2 {
+                font-size: 28px;
+                margin-bottom: 8px;
+            }
+
+            .logo p {
+                font-size: 14px;
+                opacity: .9;
+            }
+
+            .sidebar ul {
+                list-style: none;
+                margin-top: 20px;
+            }
+
+            .sidebar li {
+                margin: 8px 12px;
+            }
+
+            .sidebar li:hover {
+                background: rgba(255, 255, 255, .18);
+                border-radius: 12px;
+            }
+
+            .sidebar a {
+                display: block;
+                padding: 15px 20px;
+                color: white;
+                text-decoration: none;
+                font-size: 16px;
+                border-radius: 12px;
+                transition: .3s;
+            }
+
+            .sidebar a:hover {
+                padding-left: 28px;
+            }
+
+            .main {
+                margin-left: 270px;
+                flex: 1;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .topbar {
+                background: white;
+                padding: 20px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+            }
+
+            .top-right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .username {
+                color: #1565c0;
+                font-weight: bold;
+            }
+
+            .logout {
+                text-decoration: none;
+                background: #ef5350;
+                color: white;
+                padding: 10px 18px;
+                border-radius: 25px;
+            }
+
+            .content {
+                padding: 35px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                background: white;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+            }
+
+            th {
+                background: #1565c0;
+                color: white;
+                padding: 14px;
+            }
+
+            td {
+                padding: 14px;
+                border-bottom: 1px solid #eee;
+            }
+
+            tr:nth-child(even) {
+                background: #f8fbff;
+            }
+
+            button {
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                color: white;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+</head>
+
+<body>
+
+
+    <div class="sidebar">
+
+        <div class="logo">
+            <h2>❤️ CareBridge</h2>
+            <p>Care Beyond Boundaries</p>
+        </div>
+
+        <ul>
+
+            <li>
+                <a href="/volunteer-dashboard/">
+                    🏠 Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="/volunteer-dashboard/">
+                    📥 Volunteer Requests
+                </a>
+            </li>
+
+            <li>
+                <a href="/volunteer-dashboard/">
+                    👥 Assigned Users
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    🤝 Community Services
+                </a>
+            </li>
+
+            <li>
+                <a href="#">
+                    ✅ Completed Services
+                </a>
+            </li>
+
+            <li>
+                <a href="/profile/">
+                    👤 My Profile
+                </a>
+            </li>
+
+            <li>
+                <a href="/logout/">
+                    🚪 Logout
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+
+    <div class="main">
+
+        <div class="topbar">
+
+            <div>
+
+                <h2>
+
+                    {% block page_title %}
+                    Volunteer Dashboard
+                    {% endblock %}
+
+                </h2>
+
+                <p style="color:#777;margin-top:5px;">
+                    Welcome, {{ request.user.first_name|default:request.user.username }}
+                </p>
+
+            </div>
+
+            <div class="top-right">
+
+                <span class="username">
+                    👋 {{ request.user.username }}
+                </span>
+
+                <a href="/logout/" class="logout">
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="content">
+
+            {% block content %}
+
+            {% endblock %}
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

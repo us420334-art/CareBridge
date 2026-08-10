@@ -1,0 +1,64 @@
+{% extends 'dashboard/caregiver_base.html' %}
+
+{% block title %}
+Completed Services
+{% endblock %}
+
+{% block page_title %}
+Completed Services
+{% endblock %}
+
+{% block content %}
+
+<h2>🏆 Completed Services</h2>
+
+<br>
+
+{% if bookings %}
+
+<table width="100%" border="1" cellpadding="10">
+
+    <tr>
+        <th>User</th>
+        <th>Phone</th>
+        <th>Date</th>
+        <th>Status</th>
+    </tr>
+
+    {% for booking in bookings %}
+
+    <tr>
+
+        <td>{{ booking.user.username }}</td>
+
+        <td>{{ booking.user.userprofile.phone }}</td>
+
+        <td>{{ booking.booked_at }}</td>
+
+        <td>
+
+            <span style="
+                background:#673ab7;
+                color:white;
+                padding:6px 14px;
+                border-radius:20px;
+                font-weight:bold;
+            ">
+                🏆 Completed
+            </span>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% else %}
+
+<p>No completed services yet.</p>
+
+{% endif %}
+
+{% endblock %}
