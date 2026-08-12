@@ -1,0 +1,508 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+
+{% block title %}
+Feedback
+{% endblock %}
+
+
+{% block page_title %}
+Feedback
+{% endblock %}
+
+
+{% block content %}
+
+
+<div style="
+    max-width:900px;
+    margin:30px auto;
+">
+
+
+    <!-- =====================================================
+         FEEDBACK FORM
+    ====================================================== -->
+
+    <div style="
+        background:white;
+        padding:35px;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,0.08);
+    ">
+
+
+        <h1 style="
+            color:#4f46e5;
+            margin-top:0;
+        ">
+            ⭐ Share Your Feedback
+        </h1>
+
+
+        <p style="color:#666;">
+            Your feedback helps us improve CareBridge services.
+        </p>
+
+
+        <!-- MESSAGES -->
+
+        {% if messages %}
+
+        {% for message in messages %}
+
+        <div style="
+            padding:14px;
+            margin:20px 0;
+            border-radius:10px;
+            background:#ecfdf5;
+            color:#047857;
+            border:1px solid #a7f3d0;
+            font-weight:600;
+        ">
+            {{ message }}
+        </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             FORM
+        ====================================================== -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- SERVICE TYPE -->
+
+            <div style="margin-bottom:20px;">
+
+                <label style="
+        display:block;
+        font-weight:700;
+        margin-bottom:8px;
+    ">
+                    Service
+                </label>
+
+                <select name="service_type" id="service_type" required onchange="updateProviders()" style="
+            width:100%;
+            padding:12px;
+            border:1px solid #d1d5db;
+            border-radius:9px;
+            box-sizing:border-box;
+        ">
+
+                    <option value="">
+                        Select Service
+                    </option>
+
+                    <option value="Caregiver">
+                        Caregiver
+                    </option>
+
+                    <option value="Volunteer">
+                        Volunteer
+                    </option>
+
+                    <option value="Service Request">
+                        Service Request
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- PERSON -->
+
+            <div style="margin-bottom:20px;">
+
+                <label style="
+        display:block;
+        font-weight:700;
+        margin-bottom:8px;
+    ">
+                    Select Caregiver / Volunteer
+                </label>
+
+                <select name="service_provider" id="service_provider" style="
+            width:100%;
+            padding:12px;
+            border:1px solid #d1d5db;
+            border-radius:9px;
+            box-sizing:border-box;
+        ">
+
+                    <option value="">
+                        Select a person
+                    </option>
+
+                    {% for caregiver in caregivers %}
+                    <option value="{{ caregiver.id }}" data-type="Caregiver">
+                        {{ caregiver.get_full_name|default:caregiver.username }}
+                    </option>
+                    {% endfor %}
+
+
+                    {% for volunteer in volunteers %}
+                    <option value="{{ volunteer.id }}" data-type="Volunteer">
+                        {{ volunteer.get_full_name|default:volunteer.username }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+                <small style="
+        display:block;
+        margin-top:7px;
+        color:#6b7280;
+    ">
+                    Select the person who provided the service.
+                </small>
+
+            </div>
+
+
+            
+
+
+            <!-- =================================================
+                 RATING
+            ================================================== -->
+
+            <div style="margin-bottom:20px;">
+
+                <label style="
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:8px;
+                ">
+                    Rating
+                </label>
+
+
+                <select name="rating" required style="
+                        width:100%;
+                        padding:12px;
+                        border:1px solid #d1d5db;
+                        border-radius:9px;
+                        box-sizing:border-box;
+                    ">
+
+                    <option value="">
+                        Select Rating
+                    </option>
+
+                    <option value="5">
+                        ⭐⭐⭐⭐⭐ Excellent
+                    </option>
+
+                    <option value="4">
+                        ⭐⭐⭐⭐ Very Good
+                    </option>
+
+                    <option value="3">
+                        ⭐⭐⭐ Good
+                    </option>
+
+                    <option value="2">
+                        ⭐⭐ Fair
+                    </option>
+
+                    <option value="1">
+                        ⭐ Poor
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 COMMENT
+            ================================================== -->
+
+            <div style="margin-bottom:20px;">
+
+                <label style="
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:8px;
+                ">
+                    Your Feedback
+                </label>
+
+
+                <textarea name="comment" rows="5" required placeholder="Tell us about your experience..." style="
+                        width:100%;
+                        padding:12px;
+                        border:1px solid #d1d5db;
+                        border-radius:9px;
+                        box-sizing:border-box;
+                        resize:vertical;
+                    "></textarea>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button type="submit" style="
+                    background:#4f46e5;
+                    color:white;
+                    border:none;
+                    padding:13px 30px;
+                    border-radius:9px;
+                    font-size:15px;
+                    font-weight:700;
+                    cursor:pointer;
+                ">
+                ⭐ Submit Feedback
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FEEDBACK HISTORY
+    ====================================================== -->
+
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,0.08);
+        margin-top:25px;
+    ">
+
+
+        <h2 style="
+            color:#1f2937;
+            margin-top:0;
+        ">
+            📋 My Previous Feedback
+        </h2>
+
+
+        {% if feedbacks %}
+
+
+        {% for item in feedbacks %}
+
+
+        <div style="
+            padding:18px;
+            margin-bottom:12px;
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+        ">
+
+
+            <!-- TOP ROW -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+            ">
+
+
+                <div>
+
+                    <strong style="
+                        color:#4f46e5;
+                        font-size:16px;
+                    ">
+                        {{ item.service_type }}
+                    </strong>
+
+
+                    {% if item.service_provider %}
+
+                    <div style="
+                        margin-top:5px;
+                        color:#374151;
+                        font-weight:600;
+                    ">
+                        👤 {{ item.service_provider.get_full_name|default:item.service_provider.username }}
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- RATING -->
+
+                <span>
+
+                    {% if item.rating == 5 %}
+                    ⭐⭐⭐⭐⭐
+
+                    {% elif item.rating == 4 %}
+                    ⭐⭐⭐⭐
+
+                    {% elif item.rating == 3 %}
+                    ⭐⭐⭐
+
+                    {% elif item.rating == 2 %}
+                    ⭐⭐
+
+                    {% else %}
+                    ⭐
+
+                    {% endif %}
+
+                </span>
+
+
+            </div>
+
+
+            <!-- COMMENT -->
+
+            <p style="
+                color:#4b5563;
+                margin:12px 0;
+            ">
+                {{ item.comment }}
+            </p>
+
+
+            <!-- DATE + DELETE -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:15px;
+            ">
+
+
+                <small style="color:#6b7280;">
+                    {{ item.created_at|date:"d M Y, h:i A" }}
+                </small>
+
+
+                <form method="POST" action="{% url 'delete_feedback' item.id %}" style="margin:0;"
+                    onsubmit="return confirm('Are you sure you want to delete this feedback?');">
+
+                    {% csrf_token %}
+
+
+                    <button type="submit" style="
+                            background:#fee2e2;
+                            color:#b91c1c;
+                            border:1px solid #fecaca;
+                            padding:7px 12px;
+                            border-radius:8px;
+                            font-weight:700;
+                            cursor:pointer;
+                        ">
+                        🗑️ Delete
+                    </button>
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+        {% else %}
+
+
+        <!-- EMPTY STATE -->
+
+        <div style="
+            text-align:center;
+            padding:30px;
+            color:#6b7280;
+        ">
+
+            <div style="font-size:40px;">
+                ⭐
+            </div>
+
+
+            <h3>
+                No feedback yet
+            </h3>
+
+
+            <p>
+                Your submitted feedback will appear here.
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+    function updateProviders() {
+
+        const serviceType =
+            document.getElementById("service_type").value;
+
+        const providerSelect =
+            document.getElementById("service_provider");
+
+        const options =
+            providerSelect.querySelectorAll("option");
+
+        providerSelect.value = "";
+
+        options.forEach(function (option) {
+
+            if (option.value === "") {
+                option.style.display = "block";
+                return;
+            }
+
+            if (option.dataset.type === serviceType) {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+
+        });
+
+    }
+
+</script>
+
+{% endblock %}

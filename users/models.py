@@ -236,3 +236,57 @@ class EmergencySOS(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - Emergency SOS - {self.status}"
+
+class Feedback(models.Model):
+
+    RATING_CHOICES = [
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars'),
+    ]
+
+    SERVICE_CHOICES = [
+        ('Caregiver', 'Caregiver'),
+        ('Volunteer', 'Volunteer'),
+        ('Service Request', 'Service Request'),
+        ('Other', 'Other'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='feedbacks'
+    )
+
+    service_type = models.CharField(
+        max_length=30,
+        choices=SERVICE_CHOICES,
+        default='Other'
+    )
+
+    # The caregiver or volunteer being reviewed
+    service_provider = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='received_feedbacks',
+        null=True,
+        blank=True
+    )
+
+    rating = models.IntegerField(
+        choices=RATING_CHOICES
+    )
+
+    comment = models.TextField()
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        if self.service_provider:
+            return f"{self.user.username} → {self.service_provider.username} - {self.rating} Stars"
+
+        return f"{self.user.username} - {self.rating} Stars"

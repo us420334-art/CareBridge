@@ -187,4 +187,17 @@ urlpatterns = [
         views.edit_medicine_reminder,
         name='edit_medicine_reminder'
     ),
+    # Feedback
+
+path(
+    'feedback/',
+    views.feedback,
+    name='feedback'
+),
+
+path(
+    'delete-feedback/<int:feedback_id>/',
+    views.delete_feedback,
+    name='delete_feedback'
+),
 ]

@@ -12,6 +12,7 @@ from .models import (
     ServiceRequest,
     MedicineReminder,
     EmergencySOS,
+     Feedback,
 )
 
 def home(request):
@@ -1053,3 +1054,117 @@ def delete_emergency_sos(request, sos_id):
     )
 
     return redirect("emergency_sos")
+
+def feedback(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    caregivers = User.objects.filter(
+        userprofile__role="Caregiver"
+    )
+
+    volunteers = User.objects.filter(
+        userprofile__role="Volunteer"
+    )
+
+    if request.method == "POST":
+
+        service_type = request.POST.get("service_type")
+        service_provider_id = request.POST.get("service_provider")
+        rating = request.POST.get("rating")
+        comment = request.POST.get("comment")
+
+        if not rating or not comment:
+            messages.error(
+                request,
+                "Please provide a rating and feedback."
+            )
+
+            return redirect("feedback")
+
+        if service_type in ["Caregiver", "Volunteer"]:
+
+            if not service_provider_id:
+                messages.error(
+                    request,
+                    "Please select the person who provided the service."
+                )
+
+                return redirect("feedback")
+
+            service_provider = get_object_or_404(
+                User,
+                id=service_provider_id
+            )
+
+            # Make sure selected person has the correct role
+            if service_type == "Caregiver":
+                if not hasattr(service_provider, "userprofile") or service_provider.userprofile.role != "Caregiver":
+                    messages.error(
+                        request,
+                        "Invalid caregiver selected."
+                    )
+                    return redirect("feedback")
+
+            if service_type == "Volunteer":
+                if not hasattr(service_provider, "userprofile") or service_provider.userprofile.role != "Volunteer":
+                    messages.error(
+                        request,
+                        "Invalid volunteer selected."
+                    )
+                    return redirect("feedback")
+
+        else:
+            service_provider = None
+
+        Feedback.objects.create(
+            user=request.user,
+            service_type=service_type,
+            service_provider=service_provider,
+            rating=rating,
+            comment=comment
+        )
+
+        messages.success(
+            request,
+            "Your feedback has been submitted successfully."
+        )
+
+        return redirect("feedback")
+
+    feedbacks = Feedback.objects.filter(
+        user=request.user
+    ).select_related(
+        "service_provider"
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "dashboard/feedback.html",
+        {
+            "feedbacks": feedbacks,
+            "caregivers": caregivers,
+            "volunteers": volunteers,
+        }
+    )
+
+def delete_feedback(request, feedback_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    feedback = get_object_or_404(
+        Feedback,
+        id=feedback_id,
+        user=request.user
+    )
+
+    feedback.delete()
+
+    messages.success(
+        request,
+        "Feedback deleted successfully."
+    )
+
+    return redirect("feedback")
