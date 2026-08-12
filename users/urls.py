@@ -15,6 +15,18 @@ urlpatterns = [
 
     path('edit-profile/', views.edit_profile, name='edit_profile'),
 
+    path(
+    'emergency-sos/',
+    views.emergency_sos,
+    name='emergency_sos'
+),
+
+    path(
+    'delete-emergency-sos/<int:sos_id>/',
+    views.delete_emergency_sos,
+    name='delete_emergency_sos'
+),
+
     # Care Representative
     path(
         'care-rep-dashboard/',

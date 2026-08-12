@@ -31,10 +31,12 @@ Dashboard
         <p>Check your latest updates and reminders.</p>
     </div>
 
-    <div class="card">
-        <h3>🚨 Emergency SOS</h3>
-        <p>Send emergency alerts instantly.</p>
-    </div>
+    <a href="{% url 'emergency_sos' %}" style="text-decoration:none;color:inherit;">
+        <div class="card">
+            <h3>🚨 Emergency SOS</h3>
+            <p>Send emergency alerts instantly.</p>
+        </div>
+    </a>
 
     <a href="{% url 'book_caregiver' %}" style="text-decoration:none;color:inherit;">
         <div class="card">

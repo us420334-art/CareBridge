@@ -11,6 +11,7 @@ from .models import (
     DirectVolunteerBooking,
     ServiceRequest,
     MedicineReminder,
+    EmergencySOS,
 )
 
 def home(request):
@@ -979,3 +980,76 @@ def edit_medicine_reminder(request, reminder_id):
             'reminder': reminder
         }
     )
+
+def emergency_sos(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = UserProfile.objects.get(
+        user=request.user
+    )
+
+    if request.method == "POST":
+
+        emergency_name = profile.emergency_contact_name.strip()
+        emergency_phone = profile.emergency_contact_phone.strip()
+
+        # Check whether emergency contact details exist
+        if not emergency_name or not emergency_phone:
+
+            messages.error(
+                request,
+                "Please add an emergency contact in your profile before using Emergency SOS."
+            )
+
+            return redirect("emergency_sos")
+
+        # Record the SOS activation
+        EmergencySOS.objects.create(
+            user=request.user,
+            emergency_contact_name=emergency_name,
+            emergency_contact_phone=emergency_phone,
+            status="Activated"
+        )
+
+        messages.success(
+            request,
+            "Emergency SOS activated successfully."
+        )
+
+        return redirect("emergency_sos")
+
+    # Get previous SOS alerts for this user
+    sos_history = EmergencySOS.objects.filter(
+        user=request.user
+    ).order_by("-triggered_at")
+
+    return render(
+        request,
+        "dashboard/emergency_sos.html",
+        {
+            "profile": profile,
+            "sos_history": sos_history,
+        }
+    )
+
+def delete_emergency_sos(request, sos_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    sos = get_object_or_404(
+        EmergencySOS,
+        id=sos_id,
+        user=request.user
+    )
+
+    sos.delete()
+
+    messages.success(
+        request,
+        "SOS history record deleted successfully."
+    )
+
+    return redirect("emergency_sos")

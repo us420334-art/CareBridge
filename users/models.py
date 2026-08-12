@@ -206,3 +206,33 @@ class MedicineReminder(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.medicine_name}"
+
+class EmergencySOS(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='emergency_sos_alerts'
+    )
+
+    emergency_contact_name = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    emergency_contact_phone = models.CharField(
+        max_length=15,
+        blank=True
+    )
+
+    triggered_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    status = models.CharField(
+        max_length=20,
+        default='Activated'
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - Emergency SOS - {self.status}"

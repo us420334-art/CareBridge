@@ -1,0 +1,341 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Emergency SOS
+{% endblock %}
+
+{% block page_title %}
+Emergency SOS
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    max-width:800px;
+    margin:30px auto;
+">
+
+    <!-- SOS MAIN CARD -->
+
+    <div style="
+        background:white;
+        padding:40px;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,0.08);
+        text-align:center;
+    ">
+
+        <div style="
+            font-size:60px;
+            margin-bottom:10px;
+        ">
+            🚨
+        </div>
+
+        <h1 style="
+            color:#dc2626;
+            margin-bottom:10px;
+        ">
+            Emergency SOS
+        </h1>
+
+        <p style="
+            color:#666;
+            font-size:16px;
+        ">
+            Use this feature when you need immediate assistance.
+        </p>
+
+
+        <!-- MESSAGES -->
+
+        {% if messages %}
+
+        {% for message in messages %}
+
+        <div style="
+                    padding:15px;
+                    border-radius:10px;
+                    margin:20px 0;
+                    font-weight:600;
+
+                    {% if message.tags == 'error' %}
+                        background:#fef2f2;
+                        color:#b91c1c;
+                        border:1px solid #fecaca;
+                    {% else %}
+                        background:#ecfdf5;
+                        color:#047857;
+                        border:1px solid #a7f3d0;
+                    {% endif %}
+                ">
+
+            {% if message.tags == 'error' %}
+            ⚠️
+            {% else %}
+            ✅
+            {% endif %}
+
+            {{ message }}
+
+        </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+
+        <!-- EMERGENCY CONTACT -->
+
+        <div style="
+            background:#fef2f2;
+            padding:20px;
+            border-radius:12px;
+            margin:25px 0;
+            text-align:left;
+            border:1px solid #fecaca;
+        ">
+
+            <h3 style="
+                text-align:center;
+                color:#991b1b;
+                margin-top:0;
+            ">
+                Emergency Contact
+            </h3>
+
+            <p>
+                <strong>Name:</strong>
+
+                {% if profile.emergency_contact_name %}
+                {{ profile.emergency_contact_name }}
+                {% else %}
+                <span style="color:#dc2626;">
+                    Not Added
+                </span>
+                {% endif %}
+
+            </p>
+
+
+            <p>
+                <strong>Phone:</strong>
+
+                {% if profile.emergency_contact_phone %}
+                {{ profile.emergency_contact_phone }}
+                {% else %}
+                <span style="color:#dc2626;">
+                    Not Added
+                </span>
+                {% endif %}
+
+            </p>
+
+        </div>
+
+
+        <!-- SEND SOS BUTTON -->
+
+        {% if profile.emergency_contact_name and profile.emergency_contact_phone %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <button type="submit" onclick="return confirmSOS();" style="
+                        background:#dc2626;
+                        color:white;
+                        border:none;
+                        padding:15px 40px;
+                        border-radius:10px;
+                        font-size:18px;
+                        font-weight:bold;
+                        cursor:pointer;
+                    ">
+                🚨 SEND EMERGENCY SOS
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <div style="
+                background:#fff7ed;
+                color:#c2410c;
+                border:1px solid #fed7aa;
+                padding:15px;
+                border-radius:10px;
+                font-weight:600;
+            ">
+            ⚠️ Please add an emergency contact in your profile
+            before using Emergency SOS.
+        </div>
+
+        {% endif %}
+
+
+        <p style="
+            margin-top:20px;
+            color:#777;
+            font-size:13px;
+        ">
+            The SOS activation will be recorded with the current
+            date and time.
+        </p>
+
+    </div>
+
+
+    <!-- SOS HISTORY -->
+
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,0.08);
+        margin-top:25px;
+    ">
+
+        <h2 style="
+            color:#1f2937;
+            margin-top:0;
+            margin-bottom:20px;
+        ">
+            📋 SOS History
+        </h2>
+
+
+        {% if sos_history %}
+
+        {% for sos in sos_history %}
+
+        <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:20px;
+                    padding:18px;
+                    margin-bottom:12px;
+                    background:#f9fafb;
+                    border:1px solid #e5e7eb;
+                    border-radius:12px;
+                ">
+
+            <div>
+
+                <div style="
+                            font-weight:700;
+                            color:#dc2626;
+                            font-size:16px;
+                        ">
+                    🚨 Emergency SOS
+                </div>
+
+                <div style="
+                            color:#6b7280;
+                            margin-top:5px;
+                            font-size:14px;
+                        ">
+                    {{ sos.triggered_at|date:"d M Y, h:i A" }}
+                </div>
+
+                <div style="
+                            color:#6b7280;
+                            margin-top:4px;
+                            font-size:13px;
+                        ">
+                    Contact:
+                    {{ sos.emergency_contact_name }}
+                </div>
+
+            </div>
+
+
+            <div style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+">
+
+                <!-- SOS Status -->
+                <div style="
+        background:#fee2e2;
+        color:#b91c1c;
+        padding:7px 12px;
+        border-radius:20px;
+        font-size:12px;
+        font-weight:700;
+        white-space:nowrap;
+    ">
+                    {{ sos.status }}
+                </div>
+
+                <!-- Delete Button -->
+                <form method="POST" action="{% url 'delete_emergency_sos' sos.id %}" style="margin:0;"
+                    onsubmit="return confirm('Are you sure you want to delete this SOS history record?');">
+
+                    {% csrf_token %}
+
+                    <button type="submit" style="
+            background:#fee2e2;
+            color:#b91c1c;
+            border:1px solid #fecaca;
+            padding:7px 12px;
+            border-radius:8px;
+            font-size:12px;
+            font-weight:700;
+            cursor:pointer;
+            white-space:nowrap;
+        ">
+                        🗑️ Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+        {% else %}
+
+        <div style="
+                text-align:center;
+                padding:30px;
+                color:#6b7280;
+            ">
+            <div style="font-size:40px;">
+                📋
+            </div>
+
+            <h3>
+                No SOS alerts yet
+            </h3>
+
+            <p>
+                Your Emergency SOS history will appear here.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function confirmSOS() {
+
+        return confirm(
+            "Are you sure you want to activate Emergency SOS?"
+        );
+
+    }
+
+</script>
+
+{% endblock %}
