@@ -2,12 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from datetime import datetime
+from django.http import JsonResponse
 
 from .models import (
     UserProfile,
     DirectCaregiverBooking,
     DirectVolunteerBooking,
     ServiceRequest,
+    MedicineReminder,
 )
 
 def home(request):
@@ -799,5 +802,180 @@ def completed_services(request):
         {
             'profile': profile,
             'bookings': bookings,
+        }
+    )
+
+
+def medicine_alerts(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if request.method == "POST":
+
+        medicine_name = request.POST.get("medicine_name")
+        dosage = request.POST.get("dosage")
+        reminder_time = request.POST.get("reminder_time")
+        start_date = request.POST.get("start_date")
+        instructions = request.POST.get("instructions")
+
+        MedicineReminder.objects.create(
+            user=request.user,
+            medicine_name=medicine_name,
+            dosage=dosage,
+            reminder_time=reminder_time,
+            start_date=start_date,
+            instructions=instructions
+        )
+
+        messages.success(
+            request,
+            "Medicine reminder added successfully."
+        )
+
+        return redirect("medicine_alerts")
+
+    reminders = MedicineReminder.objects.filter(
+        user=request.user
+    ).order_by("reminder_time")
+
+    current_time = datetime.now().time()
+
+    due_reminders = []
+
+    for reminder in reminders:
+
+        if (
+            reminder.status == "Pending"
+            and reminder.start_date <= datetime.now().date()
+            and reminder.reminder_time <= current_time
+        ):
+            due_reminders.append(reminder)
+
+    return render(
+        request,
+        "dashboard/medicine_alerts.html",
+        {
+            "reminders": reminders,
+            "due_reminders": due_reminders,
+        }
+    )
+
+def medicine_alerts_status(request):
+
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "authenticated": False
+        })
+
+    reminders = MedicineReminder.objects.filter(
+        user=request.user,
+        status="Pending"
+    )
+
+    current_date = datetime.now().date()
+    current_time = datetime.now().time()
+
+    due_reminders = []
+
+    for reminder in reminders:
+
+        if (
+            reminder.start_date <= current_date
+            and reminder.reminder_time <= current_time
+        ):
+            due_reminders.append({
+                "id": reminder.id,
+                "medicine_name": reminder.medicine_name,
+                "dosage": reminder.dosage,
+                "instructions": reminder.instructions or ""
+            })
+
+    return JsonResponse({
+        "authenticated": True,
+        "due_reminders": due_reminders
+    })
+
+
+def mark_medicine_taken(request, reminder_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    reminder = get_object_or_404(
+        MedicineReminder,
+        id=reminder_id,
+        user=request.user
+    )
+
+    reminder.status = 'Taken'
+    reminder.save()
+
+    messages.success(
+        request,
+        f"{reminder.medicine_name} marked as taken."
+    )
+
+    return redirect('medicine_alerts')
+
+def delete_medicine_reminder(request, reminder_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    reminder = get_object_or_404(
+        MedicineReminder,
+        id=reminder_id,
+        user=request.user
+    )
+
+    medicine_name = reminder.medicine_name
+
+    reminder.delete()
+
+    messages.success(
+        request,
+        f"{medicine_name} reminder deleted successfully."
+    )
+
+    return redirect('medicine_alerts')
+
+def edit_medicine_reminder(request, reminder_id):
+    if not request.user.is_authenticated:
+        return redirect('user_login')
+
+    reminder = get_object_or_404(
+        MedicineReminder,
+        id=reminder_id,
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        medicine_name = request.POST.get('medicine_name')
+        dosage = request.POST.get('dosage')
+        reminder_time = request.POST.get('reminder_time')
+        start_date = request.POST.get('start_date')
+        instructions = request.POST.get('instructions')
+
+        reminder.medicine_name = medicine_name
+        reminder.dosage = dosage
+        reminder.reminder_time = reminder_time
+        reminder.start_date = start_date
+        reminder.instructions = instructions
+
+        reminder.save()
+
+        messages.success(
+            request,
+            'Medicine reminder updated successfully.'
+        )
+
+        return redirect('medicine_alerts')
+
+    return render(
+        request,
+        'dashboard/edit_medicine_reminder.html',
+        {
+            'reminder': reminder
         }
     )

@@ -145,4 +145,34 @@ urlpatterns = [
         views.user_logout,
         name='logout'
     ),
+
+    # Medicine Alerts
+    path(
+        'medicine-alerts/',
+        views.medicine_alerts,
+        name='medicine_alerts'
+    ),
+    path(
+    'medicine-alerts-status/',
+    views.medicine_alerts_status,
+    name='medicine_alerts_status'
+   ),
+
+    path(
+        'mark-medicine-taken/<int:reminder_id>/',
+        views.mark_medicine_taken,
+        name='mark_medicine_taken'
+    ),
+
+    path(
+        'delete-medicine-reminder/<int:reminder_id>/',
+        views.delete_medicine_reminder,
+        name='delete_medicine_reminder'
+    ),
+
+    path(
+        'edit-medicine-reminder/<int:reminder_id>/',
+        views.edit_medicine_reminder,
+        name='edit_medicine_reminder'
+    ),
 ]

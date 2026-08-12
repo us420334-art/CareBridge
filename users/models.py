@@ -163,3 +163,46 @@ class ServiceRequest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.priority}"
+
+class MedicineReminder(models.Model):
+
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Taken', 'Taken'),
+        ('Missed', 'Missed'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='medicine_reminders'
+    )
+
+    medicine_name = models.CharField(
+        max_length=100
+    )
+
+    dosage = models.CharField(
+        max_length=100
+    )
+
+    reminder_time = models.TimeField()
+
+    start_date = models.DateField()
+
+    instructions = models.TextField(
+        blank=True
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='Pending'
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.medicine_name}"

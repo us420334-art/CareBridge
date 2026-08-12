@@ -1,0 +1,486 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Edit Medicine Reminder
+{% endblock %}
+
+{% block page_title %}
+Edit Medicine Reminder
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    /* =========================================================
+   PAGE
+========================================================= */
+
+    .edit-medicine-page {
+        max-width: 850px;
+
+        margin: 0 auto;
+
+        padding: 35px;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+   CARD
+========================================================= */
+
+    .edit-medicine-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 35px;
+
+        border: 1px solid #e5e7eb;
+
+        box-shadow:
+            0 8px 25px rgba(0, 0, 0, 0.07);
+
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+   HEADER
+========================================================= */
+
+    .edit-medicine-header {
+        display: flex;
+
+        align-items: center;
+
+        gap: 15px;
+
+        padding-bottom: 25px;
+
+        margin-bottom: 28px;
+
+        border-bottom: 1px solid #eeeeee;
+    }
+
+    .edit-medicine-icon {
+        width: 55px;
+
+        height: 55px;
+
+        border-radius: 15px;
+
+        background: #eef2ff;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 28px;
+
+        flex-shrink: 0;
+    }
+
+    .edit-medicine-header h1 {
+        margin: 0;
+
+        color: #1f2937;
+
+        font-size: 27px;
+    }
+
+    .edit-medicine-header p {
+        margin: 5px 0 0;
+
+        color: #6b7280;
+
+        font-size: 14px;
+    }
+
+
+    /* =========================================================
+   FORM
+========================================================= */
+
+    .edit-medicine-form {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 22px;
+    }
+
+
+    /* =========================================================
+   FORM GROUP
+========================================================= */
+
+    .edit-form-group {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+    .edit-form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .edit-form-group label {
+        color: #374151;
+
+        font-size: 14px;
+
+        font-weight: 700;
+    }
+
+    .edit-form-group input,
+    .edit-form-group textarea {
+        width: 100%;
+
+        box-sizing: border-box;
+
+        padding: 13px 14px;
+
+        border: 1px solid #d1d5db;
+
+        border-radius: 9px;
+
+        background: white;
+
+        color: #1f2937;
+
+        font-size: 14px;
+
+        outline: none;
+    }
+
+    .edit-form-group input:focus,
+    .edit-form-group textarea:focus {
+        border-color: #6366f1;
+
+        box-shadow:
+            0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+
+    .edit-form-group textarea {
+        min-height: 110px;
+
+        resize: vertical;
+    }
+
+
+    /* =========================================================
+   ACTION AREA
+   SAVE + CANCEL ALWAYS TOGETHER
+========================================================= */
+
+    .edit-form-actions {
+        grid-column: 1 / -1;
+
+        display: flex;
+
+        flex-direction: row;
+
+        align-items: center;
+
+        justify-content: flex-end;
+
+        gap: 12px;
+
+        padding-top: 24px;
+
+        margin-top: 5px;
+
+        border-top: 1px solid #eeeeee;
+    }
+
+
+    /* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+    .save-medicine-button {
+        height: 46px;
+
+        padding: 0 22px;
+
+        border: none;
+
+        border-radius: 9px;
+
+        background: #4f46e5;
+
+        color: white;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        white-space: nowrap;
+
+        box-sizing: border-box;
+    }
+
+    .save-medicine-button:hover {
+        background: #4338ca;
+    }
+
+
+    /* =========================================================
+   CANCEL BUTTON
+========================================================= */
+
+    .cancel-medicine-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        height: 46px;
+
+        padding: 0 22px;
+
+        border-radius: 9px;
+
+        background: #f3f4f6;
+
+        color: #374151;
+
+        text-decoration: none;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        box-sizing: border-box;
+    }
+
+    .cancel-medicine-button:hover {
+        background: #e5e7eb;
+    }
+
+
+    /* =========================================================
+   BACK LINK
+========================================================= */
+
+    .back-to-medicines {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 7px;
+
+        margin-top: 22px;
+
+        color: #4f46e5;
+
+        text-decoration: none;
+
+        font-size: 14px;
+
+        font-weight: 700;
+    }
+
+    .back-to-medicines:hover {
+        text-decoration: underline;
+    }
+
+
+    /* =========================================================
+   MOBILE
+========================================================= */
+
+    @media (max-width: 700px) {
+
+        .edit-medicine-page {
+            padding: 20px 15px 40px;
+        }
+
+        .edit-medicine-card {
+            padding: 24px 20px;
+        }
+
+        .edit-medicine-form {
+            grid-template-columns: 1fr;
+        }
+
+        .edit-form-group.full-width {
+            grid-column: auto;
+        }
+
+        .edit-form-actions {
+            grid-column: auto;
+
+            justify-content: flex-end;
+
+            flex-wrap: wrap;
+        }
+
+    }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="edit-medicine-page">
+
+
+    <div class="edit-medicine-card">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="edit-medicine-header">
+
+            <div class="edit-medicine-icon">
+                💊
+            </div>
+
+            <div>
+
+                <h1>
+                    Edit Medicine Reminder
+                </h1>
+
+                <p>
+                    Update your medicine details and reminder time.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <form method="POST" class="edit-medicine-form">
+
+            {% csrf_token %}
+
+
+            <!-- MEDICINE NAME -->
+
+            <div class="edit-form-group">
+
+                <label for="medicine_name">
+                    Medicine Name
+                </label>
+
+                <input type="text" id="medicine_name" name="medicine_name" value="{{ reminder.medicine_name }}"
+                    placeholder="Example: Paracetamol" required>
+
+            </div>
+
+
+            <!-- DOSAGE -->
+
+            <div class="edit-form-group">
+
+                <label for="dosage">
+                    Dosage
+                </label>
+
+                <input type="text" id="dosage" name="dosage" value="{{ reminder.dosage }}" placeholder="Example: 500 mg"
+                    required>
+
+            </div>
+
+
+            <!-- TIME -->
+
+            <div class="edit-form-group">
+
+                <label for="reminder_time">
+                    Reminder Time
+                </label>
+
+                <input type="time" id="reminder_time" name="reminder_time"
+                    value="{{ reminder.reminder_time|time:'H:i' }}" required>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="edit-form-group">
+
+                <label for="start_date">
+                    Start Date
+                </label>
+
+                <input type="date" id="start_date" name="start_date" value="{{ reminder.start_date|date:'Y-m-d' }}"
+                    required>
+
+            </div>
+
+
+            <!-- INSTRUCTIONS -->
+
+            <div class="edit-form-group full-width">
+
+                <label for="instructions">
+                    Instructions
+                </label>
+
+                <textarea id="instructions" name="instructions"
+                    placeholder="Example: Take after breakfast">{{ reminder.instructions }}</textarea>
+
+            </div>
+
+
+            <!-- =================================================
+                 SAVE + CANCEL
+            ================================================== -->
+
+            <div class="edit-form-actions">
+
+                <button type="submit" class="save-medicine-button">
+
+                    💾 Save Changes
+
+                </button>
+
+
+                <a href="{% url 'medicine_alerts' %}" class="cancel-medicine-button">
+
+                    ✖ Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+
+        <!-- BACK -->
+
+        <a href="{% url 'medicine_alerts' %}" class="back-to-medicines">
+
+            ← Back to Medicine Alerts
+
+        </a>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

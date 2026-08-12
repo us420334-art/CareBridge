@@ -1,0 +1,1468 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+{% block title %}
+Medicine Alerts
+{% endblock %}
+
+{% block page_title %}
+Medicine Alerts
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    /* =========================================================
+   MAIN PAGE
+========================================================= */
+
+    .medicine-page {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 30px 35px 50px;
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+   HEADER
+========================================================= */
+
+    .medicine-header {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .medicine-header-icon {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 32px;
+
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.20);
+
+        flex-shrink: 0;
+    }
+
+    .medicine-header h1 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 30px;
+    }
+
+    .medicine-header p {
+        margin: 6px 0 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+
+    /* =========================================================
+   MESSAGES
+========================================================= */
+
+    .medicine-message {
+        padding: 14px 18px;
+        margin-bottom: 22px;
+
+        border-radius: 10px;
+
+        background: #eef2ff;
+        color: #4338ca;
+
+        border-left: 5px solid #4f46e5;
+
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+   MEDICINE ALERT
+========================================================= */
+
+    .medicine-alert {
+        background: #fff7ed;
+
+        border: 1px solid #fed7aa;
+        border-left: 6px solid #f97316;
+
+        border-radius: 14px;
+
+        padding: 20px 22px;
+
+        margin-bottom: 28px;
+
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+
+    .medicine-alert-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .medicine-alert-icon {
+        font-size: 30px;
+    }
+
+    .medicine-alert-title {
+        margin: 0;
+        color: #9a3412;
+        font-size: 20px;
+    }
+
+    .medicine-alert-subtitle {
+        margin: 4px 0 0;
+        color: #7c2d12;
+        font-size: 14px;
+    }
+
+    .due-medicine-card {
+        background: white;
+
+        border-radius: 10px;
+
+        padding: 14px 16px;
+
+        margin-top: 10px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+    }
+
+    .due-medicine-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .due-medicine-name {
+        color: #1f2937;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .due-medicine-details {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .due-taken-button {
+        background: #059669;
+        color: white;
+
+        border: none;
+
+        border-radius: 8px;
+
+        padding: 10px 15px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        white-space: nowrap;
+    }
+
+    .due-taken-button:hover {
+        background: #047857;
+    }
+
+
+    /* =========================================================
+   ADD MEDICINE CARD
+========================================================= */
+
+    .medicine-form-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 28px;
+
+        margin-bottom: 35px;
+
+        border: 1px solid #e5e7eb;
+
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+
+        box-sizing: border-box;
+    }
+
+    .medicine-form-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin-bottom: 22px;
+    }
+
+    .medicine-form-title h2 {
+        margin: 0;
+        font-size: 21px;
+        color: #1f2937;
+    }
+
+
+    /* =========================================================
+   ADD FORM
+========================================================= */
+
+    .medicine-form {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+
+        box-sizing: border-box;
+
+        padding: 12px 14px;
+
+        border: 1px solid #d1d5db;
+
+        border-radius: 9px;
+
+        font-size: 14px;
+
+        color: #1f2937;
+
+        background: white;
+
+        outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: #6366f1;
+
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+
+    .form-group textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+
+    /* =========================================================
+   ADD BUTTON
+========================================================= */
+
+    .add-medicine-button {
+        grid-column: 1 / -1;
+
+        margin-top: 5px;
+
+        padding: 13px 22px;
+
+        border: none;
+
+        border-radius: 10px;
+
+        background: #4f46e5;
+
+        color: white;
+
+        font-size: 15px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .add-medicine-button:hover {
+        background: #4338ca;
+    }
+
+
+    /* =========================================================
+   REMINDERS TITLE
+========================================================= */
+
+    .reminders-heading {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 18px;
+    }
+
+    .reminders-heading h2 {
+        margin: 0;
+
+        color: #1f2937;
+
+        font-size: 23px;
+    }
+
+    .reminders-count {
+        background: #eef2ff;
+
+        color: #4338ca;
+
+        padding: 6px 12px;
+
+        border-radius: 20px;
+
+        font-size: 13px;
+
+        font-weight: 700;
+    }
+
+
+    /* =========================================================
+   REMINDER GRID
+========================================================= */
+
+    .reminder-grid {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 22px;
+
+        align-items: stretch;
+    }
+
+
+    /* =========================================================
+   REMINDER CARD
+========================================================= */
+
+    .reminder-card {
+        background: white;
+
+        border-radius: 16px;
+
+        padding: 22px;
+
+        border: 1px solid #e5e7eb;
+
+        box-shadow: 0 7px 20px rgba(0, 0, 0, 0.06);
+
+        display: flex;
+
+        flex-direction: column;
+
+        min-width: 0;
+
+        box-sizing: border-box;
+    }
+
+    .reminder-card:hover {
+        box-shadow: 0 11px 25px rgba(0, 0, 0, 0.09);
+    }
+
+
+    /* =========================================================
+   REMINDER TOP
+========================================================= */
+
+    .reminder-top {
+        display: flex;
+
+        align-items: flex-start;
+
+        justify-content: space-between;
+
+        gap: 12px;
+
+        margin-bottom: 18px;
+    }
+
+    .medicine-name-area {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        min-width: 0;
+    }
+
+    .medicine-icon {
+        width: 45px;
+
+        height: 45px;
+
+        border-radius: 12px;
+
+        background: #eef2ff;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 23px;
+
+        flex-shrink: 0;
+    }
+
+    .medicine-name {
+        margin: 0;
+
+        font-size: 19px;
+
+        color: #1f2937;
+
+        word-break: break-word;
+    }
+
+    .medicine-dosage {
+        margin: 4px 0 0;
+
+        color: #6b7280;
+
+        font-size: 13px;
+    }
+
+
+    /* =========================================================
+   STATUS
+========================================================= */
+
+    .status-badge {
+        padding: 6px 10px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        flex-shrink: 0;
+    }
+
+    .status-pending {
+        background: #fff7ed;
+
+        color: #c2410c;
+    }
+
+    .status-taken {
+        background: #ecfdf5;
+
+        color: #047857;
+    }
+
+    .status-missed {
+        background: #fef2f2;
+
+        color: #dc2626;
+    }
+
+
+    /* =========================================================
+   DETAILS
+========================================================= */
+
+    .reminder-details {
+        border-top: 1px solid #f0f0f0;
+
+        padding-top: 15px;
+
+        margin-top: 5px;
+    }
+
+    .reminder-detail {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin: 10px 0;
+
+        color: #4b5563;
+
+        font-size: 14px;
+    }
+
+    .detail-label {
+        font-weight: 700;
+
+        color: #374151;
+    }
+
+    .reminder-instructions {
+        margin-top: 15px;
+
+        padding: 12px 14px;
+
+        border-radius: 9px;
+
+        background: #f9fafb;
+
+        color: #6b7280;
+
+        font-size: 13px;
+
+        line-height: 1.5;
+
+        min-height: 44px;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =========================================================
+   ACTION AREA
+   CORRECTED BUTTON ALIGNMENT
+========================================================= */
+
+    .reminder-actions {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        gap: 10px;
+
+        width: 100%;
+
+        margin-top: auto;
+
+        padding-top: 18px;
+
+        border-top: 1px solid #f0f0f0;
+
+        box-sizing: border-box;
+
+        flex-wrap: nowrap;
+    }
+
+
+    /* =========================================================
+   TAKEN FORM
+========================================================= */
+
+    .taken-form {
+        display: flex;
+
+        align-items: center;
+
+        margin: 0;
+
+        padding: 0;
+
+        flex: 0 0 auto;
+    }
+
+    .taken-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        height: 44px;
+
+        padding: 0 16px;
+
+        border: none;
+
+        border-radius: 9px;
+
+        background: #059669;
+
+        color: white;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        white-space: nowrap;
+
+        box-sizing: border-box;
+    }
+
+    .taken-button:hover {
+        background: #047857;
+    }
+
+
+    /* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+    .reminder-actions .edit-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        height: 44px;
+
+        min-width: 82px;
+
+        padding: 0 18px;
+
+        margin: 0;
+
+        border-radius: 9px;
+
+        background: #eef2ff;
+
+        color: #4338ca;
+
+        text-decoration: none;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        white-space: nowrap;
+
+        box-sizing: border-box;
+
+        flex: 0 0 auto;
+    }
+
+    .reminder-actions .edit-button:hover {
+        background: #e0e7ff;
+    }
+
+
+    /* =========================================================
+   DELETE FORM
+========================================================= */
+
+    .delete-form {
+        display: flex;
+
+        align-items: center;
+
+        margin: 0;
+
+        padding: 0;
+
+        flex: 0 0 auto;
+    }
+
+
+    /* =========================================================
+   DELETE BUTTON
+========================================================= */
+
+    .reminder-actions .delete-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        height: 44px;
+
+        min-width: 82px;
+
+        padding: 0 18px;
+
+        margin: 0;
+
+        border: none;
+
+        border-radius: 9px;
+
+        background: #fee2e2;
+
+        color: #b91c1c;
+
+        font-size: 14px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        white-space: nowrap;
+
+        box-sizing: border-box;
+
+        flex: 0 0 auto;
+    }
+
+    .reminder-actions .delete-button:hover {
+        background: #fecaca;
+    }
+
+
+    /* =========================================================
+   EMPTY STATE
+========================================================= */
+
+    .no-reminders {
+        background: white;
+
+        border-radius: 16px;
+
+        padding: 45px 25px;
+
+        text-align: center;
+
+        border: 1px solid #e5e7eb;
+
+        box-shadow: 0 7px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .no-reminders-icon {
+        font-size: 50px;
+
+        margin-bottom: 12px;
+    }
+
+    .no-reminders h3 {
+        margin: 5px 0 8px;
+
+        color: #1f2937;
+    }
+
+    .no-reminders p {
+        margin: 0;
+
+        color: #6b7280;
+    }
+
+
+    /* =========================================================
+   SUPPORT
+========================================================= */
+
+    .medicine-support {
+        margin-top: 35px;
+
+        padding: 20px 22px;
+
+        border-radius: 14px;
+
+        background: linear-gradient(135deg, #eef2ff, #ffffff);
+
+        border: 1px solid #dfe3ff;
+
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 14px;
+    }
+
+    .medicine-support-icon {
+        font-size: 27px;
+    }
+
+    .medicine-support h3 {
+        margin: 0 0 6px;
+
+        color: #1f2937;
+    }
+
+    .medicine-support p {
+        margin: 0;
+
+        color: #6b7280;
+
+        line-height: 1.6;
+
+        font-size: 14px;
+    }
+
+
+    /* =========================================================
+   TABLET
+========================================================= */
+
+    @media (max-width: 800px) {
+
+        .reminder-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+
+    /* =========================================================
+   MOBILE
+========================================================= */
+
+    @media (max-width: 650px) {
+
+        .medicine-page {
+            padding: 20px 15px 40px;
+        }
+
+        .medicine-form {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full-width {
+            grid-column: auto;
+        }
+
+        .add-medicine-button {
+            grid-column: auto;
+        }
+
+        .medicine-header h1 {
+            font-size: 25px;
+        }
+
+        .reminder-top {
+            flex-direction: column;
+        }
+
+        /*
+       Buttons remain together in one row
+    */
+
+        .reminder-actions {
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: row;
+
+            align-items: center;
+
+            justify-content: flex-start;
+
+            gap: 6px;
+
+            flex-wrap: nowrap;
+
+            overflow-x: auto;
+        }
+
+        .taken-form {
+            display: flex;
+
+            flex: 0 0 auto;
+
+            width: auto;
+
+            margin: 0;
+        }
+
+        .taken-button {
+            width: auto;
+
+            height: 44px;
+
+            padding: 0 10px;
+        }
+
+        .reminder-actions .edit-button,
+        .reminder-actions .delete-button {
+            flex: 0 0 auto;
+
+            min-width: 75px;
+
+            height: 44px;
+
+            padding: 0 10px;
+        }
+
+        .delete-form {
+            display: flex;
+
+            flex: 0 0 auto;
+
+            width: auto;
+
+            margin: 0;
+        }
+
+        .due-medicine-card {
+            flex-direction: column;
+
+            align-items: stretch;
+        }
+
+        .due-taken-button {
+            width: 100%;
+        }
+
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="medicine-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="medicine-header">
+
+        <div class="medicine-header-icon">
+            💊
+        </div>
+
+        <div>
+
+            <h1>
+                Medicine Alerts
+            </h1>
+
+            <p>
+                Manage your medicines and keep track of your
+                daily medication reminders.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="medicine-message">
+        {{ message }}
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         DUE MEDICINE ALERT
+    ====================================================== -->
+
+    {% if due_reminders %}
+
+    <div class="medicine-alert">
+
+        <div class="medicine-alert-header">
+
+            <div class="medicine-alert-icon">
+                🔔
+            </div>
+
+            <div>
+
+                <h2 class="medicine-alert-title">
+                    Medicine Reminder
+                </h2>
+
+                <p class="medicine-alert-subtitle">
+                    You have medicine scheduled for now.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        {% for reminder in due_reminders %}
+
+        <div class="due-medicine-card">
+
+            <div class="due-medicine-info">
+
+                <div class="due-medicine-name">
+                    💊 {{ reminder.medicine_name }}
+                </div>
+
+                <div class="due-medicine-details">
+
+                    Dosage:
+                    {{ reminder.dosage }}
+
+                    &nbsp; | &nbsp;
+
+                    Time:
+                    {{ reminder.reminder_time|time:"g:i A" }}
+
+                </div>
+
+            </div>
+
+
+            <form method="POST" action="{% url 'mark_medicine_taken' reminder.id %}">
+
+                {% csrf_token %}
+
+                <button type="submit" class="due-taken-button">
+
+                    ✓ Mark as Taken
+
+                </button>
+
+            </form>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         ADD MEDICINE
+    ====================================================== -->
+
+    <div class="medicine-form-card">
+
+        <div class="medicine-form-title">
+
+            <span style="font-size: 24px;">
+                ➕
+            </span>
+
+            <h2>
+                Add Medicine Reminder
+            </h2>
+
+        </div>
+
+
+        <form method="POST" class="medicine-form">
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label for="medicine_name">
+                    Medicine Name
+                </label>
+
+                <input type="text" id="medicine_name" name="medicine_name" placeholder="Example: Paracetamol" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="dosage">
+                    Dosage
+                </label>
+
+                <input type="text" id="dosage" name="dosage" placeholder="Example: 500 mg" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="reminder_time">
+                    Reminder Time
+                </label>
+
+                <input type="time" id="reminder_time" name="reminder_time" required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="start_date">
+                    Start Date
+                </label>
+
+                <input type="date" id="start_date" name="start_date" required>
+
+            </div>
+
+
+            <div class="form-group full-width">
+
+                <label for="instructions">
+                    Instructions
+                </label>
+
+                <textarea id="instructions" name="instructions" placeholder="Example: Take after breakfast"></textarea>
+
+            </div>
+
+
+            <button type="submit" class="add-medicine-button">
+
+                💊 Add Medicine Reminder
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         REMINDER TITLE
+    ====================================================== -->
+
+    <div class="reminders-heading">
+
+        <h2>
+            My Medicine Reminders
+        </h2>
+
+        <span class="reminders-count">
+
+            {{ reminders|length }}
+            Reminder{{ reminders|length|pluralize }}
+
+        </span>
+
+    </div>
+
+
+    <!-- =====================================================
+         REMINDERS
+    ====================================================== -->
+
+    {% if reminders %}
+
+    <div class="reminder-grid">
+
+        {% for reminder in reminders %}
+
+        <div class="reminder-card">
+
+
+            <!-- TOP -->
+
+            <div class="reminder-top">
+
+                <div class="medicine-name-area">
+
+                    <div class="medicine-icon">
+                        💊
+                    </div>
+
+                    <div>
+
+                        <h3 class="medicine-name">
+                            {{ reminder.medicine_name }}
+                        </h3>
+
+                        <p class="medicine-dosage">
+                            {{ reminder.dosage }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                {% if reminder.status == "Pending" %}
+
+                <span class="status-badge status-pending">
+                    ⏳ Pending
+                </span>
+
+                {% elif reminder.status == "Taken" %}
+
+                <span class="status-badge status-taken">
+                    ✓ Taken
+                </span>
+
+                {% elif reminder.status == "Missed" %}
+
+                <span class="status-badge status-missed">
+                    ✕ Missed
+                </span>
+
+                {% else %}
+
+                <span class="status-badge status-pending">
+                    {{ reminder.status }}
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- DETAILS -->
+
+            <div class="reminder-details">
+
+                <div class="reminder-detail">
+
+                    <span>
+                        🕐
+                    </span>
+
+                    <span>
+
+                        <span class="detail-label">
+                            Time:
+                        </span>
+
+                        {{ reminder.reminder_time|time:"g:i A" }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="reminder-detail">
+
+                    <span>
+                        📅
+                    </span>
+
+                    <span>
+
+                        <span class="detail-label">
+                            Start Date:
+                        </span>
+
+                        {{ reminder.start_date|date:"d M Y" }}
+
+                    </span>
+
+                </div>
+
+
+                {% if reminder.instructions %}
+
+                <div class="reminder-instructions">
+
+                    <strong>
+                        Instructions:
+                    </strong>
+
+                    {{ reminder.instructions }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                         BUTTON ROW
+                    ================================================== -->
+
+            <div class="reminder-actions">
+
+
+                {% if reminder.status == "Pending" %}
+
+                <form method="POST" action="{% url 'mark_medicine_taken' reminder.id %}" class="taken-form">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="taken-button">
+
+                        ✓ Mark as Taken
+
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+
+                <a href="{% url 'edit_medicine_reminder' reminder.id %}" class="edit-button">
+
+                    ✏️ Edit
+
+                </a>
+
+
+                <form method="POST" action="{% url 'delete_medicine_reminder' reminder.id %}" class="delete-form"
+                    onsubmit="return confirm('Are you sure you want to delete this medicine reminder?');">
+
+                    {% csrf_token %}
+
+                    <button type="submit" class="delete-button">
+
+                        🗑 Delete
+
+                    </button>
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    {% else %}
+
+
+    <!-- EMPTY -->
+
+    <div class="no-reminders">
+
+        <div class="no-reminders-icon">
+            💊
+        </div>
+
+        <h3>
+            No medicine reminders yet
+        </h3>
+
+        <p>
+            Add your first medicine reminder above
+            to keep track of your medication.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         SUPPORT
+    ====================================================== -->
+
+    <div class="medicine-support">
+
+        <div class="medicine-support-icon">
+            💙
+        </div>
+
+        <div>
+
+            <h3>
+                Stay on schedule
+            </h3>
+
+            <p>
+                Medicine reminders help you keep track
+                of your medication. Remember to take your
+                medicines according to your doctor's
+                instructions.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    function checkMedicineAlerts() {
+
+        fetch("{% url 'medicine_alerts_status' %}")
+            .then(response => response.json())
+            .then(data => {
+
+                if (!data.authenticated) {
+                    return;
+                }
+
+                if (data.due_reminders.length > 0) {
+
+                    data.due_reminders.forEach(reminder => {
+
+                        const alertKey = "medicine_alert_" + reminder.id;
+
+                        /*
+                         * Prevent the same reminder from
+                         * showing repeatedly every 30 seconds.
+                         */
+
+                        if (!sessionStorage.getItem(alertKey)) {
+
+                            alert(
+                                "💊 Medicine Reminder\n\n" +
+                                "Medicine: " + reminder.medicine_name + "\n" +
+                                "Dosage: " + reminder.dosage +
+                                (reminder.instructions
+                                    ? "\nInstructions: " + reminder.instructions
+                                    : "")
+                            );
+
+                            sessionStorage.setItem(
+                                alertKey,
+                                "shown"
+                            );
+                        }
+
+                    });
+
+                }
+
+            })
+            .catch(error => {
+                console.log("Medicine alert check failed:", error);
+            });
+    }
+
+
+    /*
+     * Check immediately when the page loads.
+     */
+
+    checkMedicineAlerts();
+
+
+    /*
+     * Check automatically every 30 seconds.
+     */
+
+    setInterval(
+        checkMedicineAlerts,
+        30000
+    );
+
+</script>
+
+{% endblock %}
