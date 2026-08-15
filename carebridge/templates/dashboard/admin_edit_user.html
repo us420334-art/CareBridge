@@ -1,0 +1,302 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+Edit User
+{% endblock %}
+
+{% block page_title %}
+Edit User
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+">
+
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:16px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    ">
+
+        <h2 style="
+            margin-top:0;
+            color:#6a5acd;
+        ">
+            ✏️ Edit User
+        </h2>
+
+        <p style="color:#777;">
+            Update the user's CareBridge account information.
+        </p>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <h3>
+                Account Information
+            </h3>
+
+
+            <!-- USERNAME -->
+
+            <label>
+                Username
+            </label>
+
+            <input type="text" value="{{ user_obj.username }}" disabled style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    background:#eee;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- EMAIL -->
+
+            <label>
+                Email
+            </label>
+
+            <input type="email" name="email" value="{{ user_obj.email }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- FIRST NAME -->
+
+            <label>
+                First Name
+            </label>
+
+            <input type="text" name="first_name" value="{{ user_obj.first_name }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- LAST NAME -->
+
+            <label>
+                Last Name
+            </label>
+
+            <input type="text" name="last_name" value="{{ user_obj.last_name }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- PROFILE INFORMATION -->
+
+            <h3 style="margin-top:25px;">
+                Profile Information
+            </h3>
+
+
+            <!-- ROLE -->
+
+            <label>
+                Role
+            </label>
+
+            <select name="role" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                    background:white;
+                ">
+
+                <option value="Elderly Person" {% if profile.role == "Elderly Person" %} selected {% endif %}>
+                    Elderly Person
+                </option>
+
+
+                <option value="Person with Mobility Impairment" {% if profile.role == "Person with Mobility Impairment" %}
+                    selected {% endif %}>
+                    Person with Mobility Impairment
+                </option>
+
+
+                <option value="Person with Hearing Impairment" {% if profile.role == "Person with Hearing Impairment" %}
+                    selected {% endif %}>
+                    Person with Hearing Impairment
+                </option>
+
+
+                <option value="Care Representative" {% if profile.role == "Care Representative" %} selected {% endif %}>
+                    Care Representative
+                </option>
+
+
+                <option value="Caregiver" {% if profile.role == "Caregiver" %} selected {% endif %}>
+                    Caregiver
+                </option>
+
+
+                <option value="Volunteer" {% if profile.role == "Volunteer" %} selected {% endif %}>
+                    Volunteer
+                </option>
+
+            </select>
+
+
+            <!-- PHONE -->
+
+            <label>
+                Phone
+            </label>
+
+            <input type="text" name="phone" value="{{ profile.phone }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- ADDRESS -->
+
+            <label>
+                Address
+            </label>
+
+            <textarea name="address" rows="3" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">{{ profile.address }}</textarea>
+
+
+            <!-- EMERGENCY CONTACT NAME -->
+
+            <label>
+                Emergency Contact Name
+            </label>
+
+            <input type="text" name="emergency_contact_name" value="{{ profile.emergency_contact_name }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- EMERGENCY CONTACT PHONE -->
+
+            <label>
+                Emergency Contact Phone
+            </label>
+
+            <input type="text" name="emergency_contact_phone" value="{{ profile.emergency_contact_phone }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- BLOOD GROUP -->
+
+            <label>
+                Blood Group
+            </label>
+
+            <input type="text" name="blood_group" value="{{ profile.blood_group }}" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 15px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">
+
+
+            <!-- MEDICAL CONDITIONS -->
+
+            <label>
+                Medical Conditions
+            </label>
+
+            <textarea name="medical_conditions" rows="4" style="
+                    width:100%;
+                    padding:12px;
+                    margin:8px 0 20px;
+                    box-sizing:border-box;
+                    border:1px solid #ddd;
+                    border-radius:7px;
+                ">{{ profile.medical_conditions }}</textarea>
+
+
+            <!-- SAVE -->
+
+            <button type="submit" style="
+                    padding:12px 22px;
+                    background:#6a5acd;
+                    color:white;
+                    border:none;
+                    border-radius:8px;
+                    font-weight:bold;
+                    cursor:pointer;
+                ">
+                💾 Save Changes
+            </button>
+
+
+            <!-- CANCEL -->
+
+            <a href="{% url 'admin_users' %}" style="
+                    display:inline-block;
+                    padding:12px 22px;
+                    margin-left:10px;
+                    background:#777;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:8px;
+                ">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

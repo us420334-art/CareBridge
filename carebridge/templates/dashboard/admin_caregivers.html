@@ -1,0 +1,256 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+Manage Caregivers
+{% endblock %}
+
+{% block page_title %}
+Manage Caregivers
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    padding:20px;
+">
+
+    <!-- HEADER -->
+
+    <div style="
+        background:linear-gradient(135deg,#6a5acd,#836fff);
+        color:white;
+        padding:25px;
+        border-radius:16px;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="
+            margin:0 0 8px 0;
+        ">
+            👨‍⚕️ Caregiver Management
+        </h2>
+
+        <p style="
+            margin:0;
+        ">
+            View all registered CareBridge caregivers.
+        </p>
+
+    </div>
+
+
+    <!-- TOTAL CAREGIVERS -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    ">
+
+        <h3 style="
+            margin-top:0;
+        ">
+            Total Caregivers
+        </h3>
+
+        <div style="
+            font-size:32px;
+            font-weight:bold;
+            color:#6a5acd;
+        ">
+            {{ caregivers|length }}
+        </div>
+
+    </div>
+
+
+    <!-- CAREGIVER TABLE -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        overflow-x:auto;
+    ">
+
+        <h2 style="
+            margin-top:0;
+        ">
+            👨‍⚕️ All Caregivers
+        </h2>
+
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            min-width:850px;
+        ">
+
+            <thead>
+
+                <tr style="
+                    background:#f4f4f8;
+                ">
+
+                    <th style="padding:12px;text-align:left;">
+                        ID
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Username
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Email
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Phone
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Address
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Status
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Joined
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for caregiver in caregivers %}
+
+                <tr style="
+                    border-bottom:1px solid #eee;
+                ">
+
+                    <!-- ID -->
+
+                    <td style="padding:12px;">
+                        {{ caregiver.id }}
+                    </td>
+
+
+                    <!-- USERNAME -->
+
+                    <td style="padding:12px;">
+
+                        <strong>
+                            {{ caregiver.username }}
+                        </strong>
+
+                    </td>
+
+
+                    <!-- EMAIL -->
+
+                    <td style="padding:12px;">
+
+                        {{ caregiver.email|default:"Not provided" }}
+
+                    </td>
+
+
+                    <!-- PHONE -->
+
+                    <td style="padding:12px;">
+
+                        {{ caregiver.userprofile.phone|default:"Not provided" }}
+
+                    </td>
+
+
+                    <!-- ADDRESS -->
+
+                    <td style="padding:12px;">
+
+                        {{ caregiver.userprofile.address|default:"Not provided" }}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td style="padding:12px;">
+
+                        {% if caregiver.is_active %}
+
+                        <span style="
+                            background:#dff7e5;
+                            color:#198754;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Active
+                        </span>
+
+                        {% else %}
+
+                        <span style="
+                            background:#ffe0e0;
+                            color:#dc3545;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Inactive
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- JOINED -->
+
+                    <td style="padding:12px;">
+
+                        {{ caregiver.date_joined|date:"d M Y" }}
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="7" style="
+                        padding:30px;
+                        text-align:center;
+                        color:#777;
+                    ">
+
+                        No caregivers found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

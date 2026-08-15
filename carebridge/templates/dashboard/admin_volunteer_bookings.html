@@ -1,0 +1,319 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+Volunteer Bookings
+{% endblock %}
+
+{% block page_title %}
+Volunteer Bookings
+{% endblock %}
+
+{% block content %}
+
+<div style="padding:20px;">
+
+    <!-- HEADER -->
+
+    <div style="
+        background:linear-gradient(135deg,#6a5acd,#836fff);
+        color:white;
+        padding:25px;
+        border-radius:16px;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="margin:0 0 8px 0;">
+            📋 Volunteer Booking Management
+        </h2>
+
+        <p style="margin:0;">
+            View all volunteer bookings made through CareBridge.
+        </p>
+
+    </div>
+
+
+    <!-- COUNT -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    ">
+
+        <h3 style="margin-top:0;">
+            Total Volunteer Bookings
+        </h3>
+
+        <div style="
+            font-size:32px;
+            font-weight:bold;
+            color:#6a5acd;
+        ">
+            {{ bookings|length }}
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        overflow-x:auto;
+    ">
+
+        <h2 style="margin-top:0;">
+            All Volunteer Bookings
+        </h2>
+
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            min-width:1000px;
+        ">
+
+            <thead>
+
+                <tr style="background:#f4f4f8;">
+
+                    <th style="padding:12px;text-align:left;">
+                        ID
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        User
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Volunteer
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Service
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Booking Date
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Time
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Priority
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Status
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Booked On
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for booking in bookings %}
+
+                <tr style="border-bottom:1px solid #eee;">
+
+                    <td style="padding:12px;">
+                        {{ booking.id }}
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        <strong>
+                            {{ booking.user.username }}
+                        </strong>
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {{ booking.volunteer.username }}
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {{ booking.service|default:"-" }}
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {{ booking.booking_date|date:"d M Y"|default:"-" }}
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {{ booking.booking_time|time:"h:i A"|default:"-" }}
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {% if booking.priority == "Emergency" %}
+
+                        <span style="
+                            background:#fee2e2;
+                            color:#dc2626;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            🚨 Emergency
+                        </span>
+
+                        {% elif booking.priority == "High" %}
+
+                        <span style="
+                            background:#ffedd5;
+                            color:#ea580c;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            High
+                        </span>
+
+                        {% else %}
+
+                        <span style="
+                            background:#eef2ff;
+                            color:#4f46e5;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            {{ booking.priority }}
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {% if booking.status == "Accepted" %}
+
+                        <span style="
+                            background:#dff7e5;
+                            color:#198754;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Accepted
+                        </span>
+
+                        {% elif booking.status == "Pending" %}
+
+                        <span style="
+                            background:#fff3cd;
+                            color:#856404;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Pending
+                        </span>
+
+                        {% elif booking.status == "Completed" %}
+
+                        <span style="
+                            background:#dbeafe;
+                            color:#1d4ed8;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Completed
+                        </span>
+
+                        {% elif booking.status == "Rejected" %}
+
+                        <span style="
+                            background:#ffe0e0;
+                            color:#dc3545;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Rejected
+                        </span>
+
+                        {% else %}
+
+                        {{ booking.status }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td style="padding:12px;">
+
+                        {{ booking.booked_at|date:"d M Y, h:i A" }}
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="9" style="
+                        padding:40px;
+                        text-align:center;
+                        color:#777;
+                    ">
+
+                        📋 No volunteer bookings found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

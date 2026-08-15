@@ -1,0 +1,258 @@
+{% extends 'dashboard/base_dashboard.html' %}
+
+
+{% block title %}
+Notifications
+{% endblock %}
+
+
+{% block page_title %}
+Notifications
+{% endblock %}
+
+
+{% block content %}
+
+
+<div style="
+    max-width:900px;
+    margin:30px auto;
+">
+
+
+    <!-- NOTIFICATIONS CARD -->
+
+    <div style="
+        background:white;
+        padding:35px;
+        border-radius:18px;
+        box-shadow:0 8px 25px rgba(0,0,0,0.08);
+    ">
+
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:25px;
+        ">
+
+            <div>
+
+                <h1 style="
+                    color:#4f46e5;
+                    margin:0;
+                ">
+                    🔔 Notifications
+                </h1>
+
+                <p style="
+                    color:#666;
+                    margin-top:8px;
+                ">
+                    Stay updated about your CareBridge activities.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- MESSAGES -->
+
+        {% if messages %}
+
+        {% for message in messages %}
+
+        <div style="
+            padding:14px;
+            margin-bottom:20px;
+            border-radius:10px;
+            background:#ecfdf5;
+            color:#047857;
+            border:1px solid #a7f3d0;
+            font-weight:600;
+        ">
+            {{ message }}
+        </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+
+
+        <!-- NOTIFICATION LIST -->
+
+        {% if notifications %}
+
+
+        {% for notification in notifications %}
+
+
+        <div style="
+            display:flex;
+            align-items:flex-start;
+            gap:15px;
+            padding:20px;
+            margin-bottom:14px;
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+        ">
+
+
+            <!-- ICON -->
+
+            <div style="
+                width:45px;
+                height:45px;
+                border-radius:50%;
+                background:#eef2ff;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:22px;
+                flex-shrink:0;
+            ">
+
+                {% if notification.notification_type == "Booking" %}
+
+                📋
+
+                {% elif notification.notification_type == "SOS" %}
+
+                🚨
+
+                {% elif notification.notification_type == "Medicine" %}
+
+                💊
+
+                {% elif notification.notification_type == "Service" %}
+
+                🛠️
+
+                {% elif notification.notification_type == "Feedback" %}
+
+                ⭐
+
+                {% else %}
+
+                🔔
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- CONTENT -->
+
+            <div style="
+                flex:1;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <h3 style="
+                        margin:0;
+                        color:#1f2937;
+                        font-size:16px;
+                    ">
+                        {{ notification.title }}
+                    </h3>
+
+
+                    {% if not notification.is_read %}
+
+                    <span style="
+                        background:#4f46e5;
+                        color:white;
+                        padding:4px 9px;
+                        border-radius:12px;
+                        font-size:11px;
+                        font-weight:700;
+                    ">
+                        NEW
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <p style="
+                    color:#4b5563;
+                    margin:8px 0;
+                    line-height:1.5;
+                ">
+                    {{ notification.message }}
+                </p>
+
+
+
+                <small style="
+                    color:#6b7280;
+                ">
+                    {{ notification.created_at|date:"d M Y, h:i A" }}
+                </small>
+
+            </div>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+        {% else %}
+
+
+        <!-- EMPTY STATE -->
+
+
+        <div style="
+            text-align:center;
+            padding:60px 20px;
+            color:#6b7280;
+        ">
+
+            <div style="
+                font-size:55px;
+                margin-bottom:15px;
+            ">
+                🔔
+            </div>
+
+
+            <h2 style="
+                color:#374151;
+            ">
+                No notifications yet
+            </h2>
+
+
+            <p>
+                Your CareBridge updates and alerts will appear here.
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+{% endblock %}

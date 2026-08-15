@@ -1,0 +1,214 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+Manage Volunteers
+{% endblock %}
+
+{% block page_title %}
+Manage Volunteers
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    padding:20px;
+">
+
+    <!-- HEADER -->
+
+    <div style="
+        background:linear-gradient(135deg,#6a5acd,#836fff);
+        color:white;
+        padding:25px;
+        border-radius:16px;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="margin:0 0 8px 0;">
+            🤝 Volunteer Management
+        </h2>
+
+        <p style="margin:0;">
+            View all registered CareBridge volunteers.
+        </p>
+
+    </div>
+
+
+    <!-- COUNT -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    ">
+
+        <h3 style="margin-top:0;">
+            Total Volunteers
+        </h3>
+
+        <div style="
+            font-size:32px;
+            font-weight:bold;
+            color:#6a5acd;
+        ">
+            {{ volunteers|length }}
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        overflow-x:auto;
+    ">
+
+        <h2 style="margin-top:0;">
+            All Volunteers
+        </h2>
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            min-width:800px;
+        ">
+
+            <thead>
+
+                <tr style="
+                    background:#f4f4f8;
+                ">
+
+                    <th style="padding:12px;text-align:left;">
+                        ID
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Username
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Email
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Phone
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Status
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Joined
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for volunteer in volunteers %}
+
+                <tr style="
+                    border-bottom:1px solid #eee;
+                ">
+
+                    <td style="padding:12px;">
+                        {{ volunteer.id }}
+                    </td>
+
+                    <td style="padding:12px;">
+                        <strong>
+                            {{ volunteer.username }}
+                        </strong>
+                    </td>
+
+                    <td style="padding:12px;">
+                        {{ volunteer.email|default:"Not provided" }}
+                    </td>
+
+                    <td style="padding:12px;">
+
+                        {% if volunteer.userprofile.phone %}
+                        {{ volunteer.userprofile.phone }}
+                        {% else %}
+                        -
+                        {% endif %}
+
+                    </td>
+
+                    <td style="padding:12px;">
+
+                        {% if volunteer.is_active %}
+
+                        <span style="
+                            background:#dff7e5;
+                            color:#198754;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Active
+                        </span>
+
+                        {% else %}
+
+                        <span style="
+                            background:#ffe0e0;
+                            color:#dc3545;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            Inactive
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td style="padding:12px;">
+                        {{ volunteer.date_joined|date:"d M Y" }}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6" style="
+                        padding:30px;
+                        text-align:center;
+                        color:#777;
+                    ">
+
+                        No volunteers found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

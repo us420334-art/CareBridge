@@ -11,6 +11,73 @@ urlpatterns = [
 
     path('dashboard/', views.dashboard, name='dashboard'),
 
+    path(
+    'admin-dashboard/',
+    views.admin_dashboard,
+    name='admin_dashboard'
+),
+path(
+    'admin-users/',
+    views.admin_users,
+    name='admin_users'
+),
+path(
+    'admin-users/edit/<int:user_id>/',
+    views.admin_edit_user,
+    name='admin_edit_user'
+),
+
+path(
+    'admin-users/toggle/<int:user_id>/',
+    views.admin_toggle_user,
+    name='admin_toggle_user'
+),
+
+path(
+    'admin-users/delete/<int:user_id>/',
+    views.admin_delete_user,
+    name='admin_delete_user'
+),
+path(
+    'admin-caregivers/',
+    views.admin_caregivers,
+    name='admin_caregivers'
+),
+path(
+    'admin-volunteers/',
+    views.admin_volunteers,
+    name='admin_volunteers'
+),
+path(
+    'admin-care-representatives/',
+    views.admin_care_representatives,
+    name='admin_care_representatives'
+),
+path(
+    'admin-caregiver-bookings/',
+    views.admin_caregiver_bookings,
+    name='admin_caregiver_bookings'
+),
+path(
+    'admin-volunteer-bookings/',
+    views.admin_volunteer_bookings,
+    name='admin_volunteer_bookings'
+),
+path(
+    'admin-sos/',
+    views.admin_sos,
+    name='admin_sos'
+),
+path(
+    'admin-feedback/',
+    views.admin_feedback,
+    name='admin_feedback'
+),
+path(
+    'admin-notifications/',
+    views.admin_notifications,
+    name='admin_notifications'
+),
     path('profile/', views.profile, name='profile'),
 
     path('edit-profile/', views.edit_profile, name='edit_profile'),
@@ -78,10 +145,10 @@ urlpatterns = [
     ),
 
     path(
-        'complete-caregiver-service/<int:booking_id>/',
-        views.complete_caregiver_service,
-        name='complete_caregiver_service'
-    ),
+    'complete-caregiver-service/<int:booking_id>/',
+    views.complete_caregiver_service,
+    name='complete_caregiver_booking'
+),
 
     path(
         'completed-services/',
@@ -138,6 +205,11 @@ urlpatterns = [
         views.volunteer_dashboard,
         name='volunteer_dashboard'
     ),
+    path(
+    'volunteer-booking/<int:booking_id>/<str:status>/',
+    views.update_volunteer_booking_status,
+    name='update_volunteer_booking_status'
+),
 
     path(
         'accept-volunteer-booking/<int:booking_id>/',
@@ -199,5 +271,16 @@ path(
     'delete-feedback/<int:feedback_id>/',
     views.delete_feedback,
     name='delete_feedback'
+),
+path(
+    'notifications/',
+    views.notifications,
+    name='notifications'
+),
+
+path(
+    'notifications/read/<int:notification_id>/',
+    views.mark_notification_read,
+    name='mark_notification_read'
 ),
 ]

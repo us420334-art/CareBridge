@@ -13,6 +13,7 @@ from .models import (
     MedicineReminder,
     EmergencySOS,
      Feedback,
+     Notification,
 )
 
 def home(request):
@@ -92,6 +93,10 @@ def user_login(request):
 
             login(request, user)
 
+            # Admin / Staff user
+            if user.is_staff:
+                return redirect("admin_dashboard")
+
             try:
 
                 profile = UserProfile.objects.get(
@@ -129,6 +134,7 @@ def user_login(request):
         request,
         "login.html"
     )
+
 
 def dashboard(request):
 
@@ -276,21 +282,70 @@ def book_caregiver(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    caregivers = UserProfile.objects.filter(
-        role="Caregiver"
-    )
-
     active_booking = DirectCaregiverBooking.objects.filter(
         user=request.user,
         status__in=["Pending", "Accepted"]
     ).first()
 
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    caregivers = UserProfile.objects.filter(
+        role="Caregiver"
+    )
+
+    if request.method == "POST":
+
+        caregiver_id = request.POST.get("caregiver_id")
+        service = request.POST.get("service")
+        address = request.POST.get("address")
+        booking_date = request.POST.get("booking_date")
+        booking_time = request.POST.get("booking_time")
+        priority = request.POST.get("priority")
+        description = request.POST.get("description", "")
+
+        if active_booking:
+
+            messages.warning(
+                request,
+                "You already have an active caregiver booking."
+            )
+
+            return redirect("book_caregiver")
+
+        caregiver = get_object_or_404(
+            User,
+            id=caregiver_id
+        )
+
+        DirectCaregiverBooking.objects.create(
+            user=request.user,
+            caregiver=caregiver,
+            service=service,
+            address=address,
+            booking_date=booking_date,
+            booking_time=booking_time,
+            priority=priority,
+            description=description,
+            status="Pending"
+        )
+
+        messages.success(
+            request,
+            "Caregiver booking request sent successfully."
+        )
+
+        return redirect("book_caregiver")
+
     return render(
         request,
-        'dashboard/book_caregiver.html',
+        "dashboard/book_caregiver.html",
         {
-            'caregivers': caregivers,
-            'active_booking': active_booking,
+            "caregivers": caregivers,
+            "profile": profile,
+            "active_booking": active_booking,
         }
     )
 
@@ -320,29 +375,65 @@ def confirm_caregiver_booking(request, caregiver_id):
             messages.warning(
                 request,
                 "You already have an active caregiver booking. "
-                "You can book another caregiver after the current booking is completed, rejected, or cancelled."
+                "You can book another caregiver after the current booking "
+                "is completed, rejected, or cancelled."
             )
 
         return redirect('book_caregiver')
 
+    # Get selected caregiver
     caregiver = get_object_or_404(
         User,
         id=caregiver_id
     )
 
-    DirectCaregiverBooking.objects.create(
-        user=request.user,
-        caregiver=caregiver,
-        status="Pending"
+    # Get the logged-in user's profile
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
     )
 
-    messages.success(
+    # If the booking form was submitted
+    if request.method == "POST":
+
+        service = request.POST.get("service")
+        booking_date = request.POST.get("booking_date")
+        booking_time = request.POST.get("booking_time")
+        priority = request.POST.get("priority")
+        description = request.POST.get("description")
+
+        # Use the user's registered address
+        address = profile.address
+
+        # Create the booking
+        DirectCaregiverBooking.objects.create(
+            user=request.user,
+            caregiver=caregiver,
+            service=service,
+            address=address,
+            booking_date=booking_date,
+            booking_time=booking_time,
+            priority=priority,
+            description=description,
+            status="Pending"
+        )
+
+        messages.success(
+            request,
+            "Caregiver booking request sent successfully."
+        )
+
+        return redirect('book_caregiver')
+
+    # Show booking form
+    return render(
         request,
-        "Caregiver booking request sent successfully."
+        "dashboard/confirm_caregiver_booking.html",
+        {
+            "caregiver": caregiver,
+            "profile": profile,
+        }
     )
-
-    return redirect('book_caregiver')
-
 
 def my_bookings(request):
 
@@ -357,12 +448,18 @@ def my_bookings(request):
         user=request.user
     ).order_by('-booked_at')
 
+    # Latest booking status for sidebar
+    latest_caregiver_booking = caregiver_bookings.first()
+    latest_volunteer_booking = volunteer_bookings.first()
+
     return render(
         request,
         'dashboard/my_bookings.html',
         {
             'caregiver_bookings': caregiver_bookings,
             'volunteer_bookings': volunteer_bookings,
+            'latest_caregiver_booking': latest_caregiver_booking,
+            'latest_volunteer_booking': latest_volunteer_booking,
         }
     )
 
@@ -379,6 +476,13 @@ def accept_caregiver_booking(request, booking_id):
 
     booking.status = "Accepted"
     booking.save()
+
+    create_notification(
+        booking.user,
+        "Booking",
+        "Caregiver Booking Accepted",
+        f"Your caregiver booking with {request.user.get_full_name() or request.user.username} has been accepted."
+    )
 
     messages.success(
         request,
@@ -400,6 +504,13 @@ def reject_caregiver_booking(request, booking_id):
 
     booking.status = "Rejected"
     booking.save()
+
+    create_notification(
+        booking.user,
+        "Booking",
+        "Caregiver Booking Rejected",
+        f"Your caregiver booking with {request.user.get_full_name() or request.user.username} has been rejected."
+    )
 
     messages.success(
         request,
@@ -597,28 +708,70 @@ def book_volunteer(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    volunteers = UserProfile.objects.filter(
-        role="Volunteer"
-    )
-
-    # Check whether the user already has an active volunteer booking
     active_booking = DirectVolunteerBooking.objects.filter(
         user=request.user,
         status__in=["Pending", "Accepted"]
     ).first()
 
-    booking_status = {}
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
 
-    if active_booking:
-        booking_status[active_booking.volunteer_id] = active_booking.status
+    volunteers = UserProfile.objects.filter(
+        role="Volunteer"
+    )
+
+    if request.method == "POST":
+
+        volunteer_id = request.POST.get("volunteer_id")
+        service = request.POST.get("service")
+        address = request.POST.get("address")
+        booking_date = request.POST.get("booking_date")
+        booking_time = request.POST.get("booking_time")
+        priority = request.POST.get("priority")
+        description = request.POST.get("description", "")
+
+        if active_booking:
+
+            messages.warning(
+                request,
+                "You already have an active volunteer booking."
+            )
+
+            return redirect("book_volunteer")
+
+        volunteer = get_object_or_404(
+            User,
+            id=volunteer_id
+        )
+
+        DirectVolunteerBooking.objects.create(
+            user=request.user,
+            volunteer=volunteer,
+            service=service,
+            address=address,
+            booking_date=booking_date,
+            booking_time=booking_time,
+            priority=priority,
+            description=description,
+            status="Pending"
+        )
+
+        messages.success(
+            request,
+            "Volunteer booking request sent successfully."
+        )
+
+        return redirect("book_volunteer")
 
     return render(
         request,
-        'dashboard/book_volunteer.html',
+        "dashboard/book_volunteer.html",
         {
-            'volunteers': volunteers,
-            'booking_status': booking_status,
-            'active_booking': active_booking,
+            "volunteers": volunteers,
+            "profile": profile,
+            "active_booking": active_booking,
         }
     )
 
@@ -648,28 +801,80 @@ def confirm_volunteer_booking(request, volunteer_id):
             messages.warning(
                 request,
                 "You already have an active volunteer booking. "
-                "You can book another volunteer after the current booking is completed, rejected, or cancelled."
+                "You can book another volunteer after the current booking "
+                "is completed, rejected, or cancelled."
             )
 
         return redirect('book_volunteer')
 
+    # Get selected volunteer
     volunteer = get_object_or_404(
         User,
         id=volunteer_id
     )
 
-    DirectVolunteerBooking.objects.create(
-        user=request.user,
-        volunteer=volunteer,
-        status="Pending"
+    # Get logged-in user's profile
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
     )
 
-    messages.success(
+    # =========================
+    # FORM SUBMISSION
+    # =========================
+
+    if request.method == "POST":
+
+        service = request.POST.get("service")
+        booking_date = request.POST.get("booking_date")
+        booking_time = request.POST.get("booking_time")
+        priority = request.POST.get("priority")
+        description = request.POST.get("description", "")
+
+        # Use registered address
+        address = profile.address
+
+        # Create volunteer booking
+        booking = DirectVolunteerBooking.objects.create(
+            user=request.user,
+            volunteer=volunteer,
+            service=service,
+            address=address,
+            booking_date=booking_date,
+            booking_time=booking_time,
+            priority=priority,
+            description=description,
+            status="Pending"
+        )
+
+        # Notification to volunteer
+        create_notification(
+            volunteer,
+            "Booking",
+            "New Volunteer Booking",
+            f"You have received a new volunteer booking request "
+            f"from {request.user.get_full_name() or request.user.username}."
+        )
+
+        messages.success(
+            request,
+            "Volunteer booking request sent successfully."
+        )
+
+        return redirect('book_volunteer')
+
+    # =========================
+    # SHOW CONFIRMATION FORM
+    # =========================
+
+    return render(
         request,
-        "Volunteer booking request sent successfully."
+        "dashboard/confirm_volunteer_booking.html",
+        {
+            "volunteer": volunteer,
+            "profile": profile,
+        }
     )
-
-    return redirect('book_volunteer')
 
 
 def volunteer_dashboard(request):
@@ -697,6 +902,104 @@ def volunteer_dashboard(request):
         }
     )
 
+def update_volunteer_booking_status(request, booking_id, status):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role != "Volunteer":
+        return redirect('/dashboard/')
+
+    booking = get_object_or_404(
+        DirectVolunteerBooking,
+        id=booking_id,
+        volunteer=request.user
+    )
+
+    # =========================
+    # ACCEPT BOOKING
+    # =========================
+
+    if status == "Accepted":
+
+        if booking.status == "Pending":
+
+            booking.status = "Accepted"
+            booking.save()
+
+            create_notification(
+                booking.user,
+                "Booking",
+                "Volunteer Booking Accepted",
+                f"Your volunteer booking with "
+                f"{request.user.get_full_name() or request.user.username} "
+                f"has been accepted."
+            )
+
+            messages.success(
+                request,
+                "Volunteer booking accepted successfully."
+            )
+
+
+    # =========================
+    # REJECT BOOKING
+    # =========================
+
+    elif status == "Rejected":
+
+        if booking.status == "Pending":
+
+            booking.status = "Rejected"
+            booking.save()
+
+            create_notification(
+                booking.user,
+                "Booking",
+                "Volunteer Booking Rejected",
+                f"Your volunteer booking with "
+                f"{request.user.get_full_name() or request.user.username} "
+                f"has been rejected."
+            )
+
+            messages.warning(
+                request,
+                "Volunteer booking rejected."
+            )
+
+
+    # =========================
+    # COMPLETE BOOKING
+    # =========================
+
+    elif status == "Completed":
+
+        if booking.status == "Accepted":
+
+            booking.status = "Completed"
+            booking.save()
+
+            create_notification(
+                booking.user,
+                "Booking",
+                "Volunteer Service Completed",
+                f"Your volunteer service with "
+                f"{request.user.get_full_name() or request.user.username} "
+                f"has been completed successfully."
+            )
+
+            messages.success(
+                request,
+                "Volunteer service marked as completed."
+            )
+
+    return redirect('volunteer_dashboard')
+
 
 def accept_volunteer_booking(request, booking_id):
 
@@ -711,6 +1014,14 @@ def accept_volunteer_booking(request, booking_id):
 
     booking.status = "Accepted"
     booking.save()
+
+    # Send notification to the user who made the booking
+    create_notification(
+        booking.user,
+        "Booking",
+        "Volunteer Booking Accepted",
+        f"Your volunteer booking with {request.user.get_full_name() or request.user.username} has been accepted."
+    )
 
     messages.success(
         request,
@@ -733,12 +1044,21 @@ def reject_volunteer_booking(request, booking_id):
     booking.status = "Rejected"
     booking.save()
 
+    # Send notification to the user who made the booking
+    create_notification(
+        booking.user,
+        "Booking",
+        "Volunteer Booking Rejected",
+        f"Your volunteer booking with {request.user.get_full_name() or request.user.username} has been rejected."
+    )
+
     messages.success(
         request,
         "Volunteer booking rejected."
     )
 
     return redirect('volunteer_dashboard')
+
 
 def caregiver_schedule(request):
 
@@ -776,8 +1096,24 @@ def complete_caregiver_service(request, booking_id):
         caregiver=request.user
     )
 
+    print("COMPLETE BUTTON CLICKED")
+    print("BOOKING:", booking.id)
+    print("USER WHO BOOKED:", booking.user.username)
+    print("CURRENT STATUS:", booking.status)
+
     booking.status = "Completed"
     booking.save()
+
+    create_notification(
+        booking.user,
+        "Booking",
+        "Caregiver Service Completed",
+        f"Your caregiver service with "
+        f"{request.user.get_full_name() or request.user.username} "
+        f"has been completed successfully."
+    )
+
+    print("COMPLETION NOTIFICATION CREATED FOR:", booking.user.username)
 
     messages.success(
         request,
@@ -785,6 +1121,7 @@ def complete_caregiver_service(request, booking_id):
     )
 
     return redirect('caregiver_dashboard')
+
 
 def completed_services(request):
 
@@ -841,18 +1178,28 @@ def medicine_alerts(request):
         user=request.user
     ).order_by("reminder_time")
 
+    current_date = datetime.now().date()
     current_time = datetime.now().time()
 
     due_reminders = []
 
     for reminder in reminders:
 
+        # Medicine is due
         if (
             reminder.status == "Pending"
-            and reminder.start_date <= datetime.now().date()
+            and reminder.start_date <= current_date
             and reminder.reminder_time <= current_time
         ):
+
             due_reminders.append(reminder)
+
+            create_notification(
+                request.user,
+                "Medicine",
+                "Medicine Reminder Due",
+                f"Your medicine '{reminder.medicine_name}' is due now. Dosage: {reminder.dosage}."
+            )
 
     return render(
         request,
@@ -862,6 +1209,7 @@ def medicine_alerts(request):
             "due_reminders": due_reminders,
         }
     )
+
 
 def medicine_alerts_status(request):
 
@@ -1014,6 +1362,14 @@ def emergency_sos(request):
             status="Activated"
         )
 
+        # Create notification
+        create_notification(
+            request.user,
+            "Emergency SOS",
+            "Emergency SOS Activated",
+            "Your Emergency SOS alert has been activated successfully."
+        )
+
         messages.success(
             request,
             "Emergency SOS activated successfully."
@@ -1034,6 +1390,7 @@ def emergency_sos(request):
             "sos_history": sos_history,
         }
     )
+
 
 def delete_emergency_sos(request, sos_id):
 
@@ -1060,14 +1417,17 @@ def feedback(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
+    # Get all caregivers
     caregivers = User.objects.filter(
         userprofile__role="Caregiver"
     )
 
+    # Get all volunteers
     volunteers = User.objects.filter(
         userprofile__role="Volunteer"
     )
 
+    # Handle feedback submission
     if request.method == "POST":
 
         service_type = request.POST.get("service_type")
@@ -1075,6 +1435,7 @@ def feedback(request):
         rating = request.POST.get("rating")
         comment = request.POST.get("comment")
 
+        # Check rating and comment
         if not rating or not comment:
             messages.error(
                 request,
@@ -1083,9 +1444,12 @@ def feedback(request):
 
             return redirect("feedback")
 
+        # Caregiver or Volunteer feedback
         if service_type in ["Caregiver", "Volunteer"]:
 
+            # Make sure a person is selected
             if not service_provider_id:
+
                 messages.error(
                     request,
                     "Please select the person who provided the service."
@@ -1093,37 +1457,62 @@ def feedback(request):
 
                 return redirect("feedback")
 
+            # Get selected user
             service_provider = get_object_or_404(
                 User,
                 id=service_provider_id
             )
 
-            # Make sure selected person has the correct role
+            # Check selected person's role
             if service_type == "Caregiver":
-                if not hasattr(service_provider, "userprofile") or service_provider.userprofile.role != "Caregiver":
+
+                if (
+                    not hasattr(service_provider, "userprofile")
+                    or service_provider.userprofile.role != "Caregiver"
+                ):
+
                     messages.error(
                         request,
                         "Invalid caregiver selected."
                     )
+
                     return redirect("feedback")
 
-            if service_type == "Volunteer":
-                if not hasattr(service_provider, "userprofile") or service_provider.userprofile.role != "Volunteer":
+            elif service_type == "Volunteer":
+
+                if (
+                    not hasattr(service_provider, "userprofile")
+                    or service_provider.userprofile.role != "Volunteer"
+                ):
+
                     messages.error(
                         request,
                         "Invalid volunteer selected."
                     )
+
                     return redirect("feedback")
 
         else:
+
+            # Service Request / Other
             service_provider = None
 
+        # Create feedback
         Feedback.objects.create(
             user=request.user,
             service_type=service_type,
             service_provider=service_provider,
             rating=rating,
             comment=comment
+        )
+
+        # Create notification
+        create_notification(
+            request.user,
+            "Feedback",
+            "Feedback Submitted",
+            "Your feedback has been submitted successfully. "
+            "Thank you for helping us improve CareBridge."
         )
 
         messages.success(
@@ -1133,11 +1522,14 @@ def feedback(request):
 
         return redirect("feedback")
 
+    # Get user's previous feedback
     feedbacks = Feedback.objects.filter(
         user=request.user
     ).select_related(
         "service_provider"
-    ).order_by("-created_at")
+    ).order_by(
+        "-created_at"
+    )
 
     return render(
         request,
@@ -1148,6 +1540,7 @@ def feedback(request):
             "volunteers": volunteers,
         }
     )
+
 
 def delete_feedback(request, feedback_id):
 
@@ -1168,3 +1561,668 @@ def delete_feedback(request, feedback_id):
     )
 
     return redirect("feedback")
+
+def create_notification(user, notification_type, title, message):
+    Notification.objects.create(
+        user=user,
+        notification_type=notification_type,
+        title=title,
+        message=message
+    )
+
+def notifications(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    notification_list = Notification.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    return render(
+        request,
+        "dashboard/notifications.html",
+        {
+            "notifications": notification_list,
+        }
+    )
+
+
+def mark_notification_read(request, notification_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    notification = get_object_or_404(
+        Notification,
+        id=notification_id,
+        user=request.user
+    )
+
+    notification.is_read = True
+    notification.save()
+
+    return redirect("notifications")
+
+def assign_service_request(request, request_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    service_request = get_object_or_404(
+        ServiceRequest,
+        id=request_id
+    )
+
+    service_request.status = "Assigned"
+    service_request.save()
+
+    create_notification(
+        service_request.user,
+        "Service Request",
+        "Service Request Assigned",
+        "Your service request has been assigned successfully."
+    )
+
+    messages.success(
+        request,
+        "Service request assigned successfully."
+    )
+
+    return redirect('service_requests')
+
+def complete_service_request(request, request_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    service_request = get_object_or_404(
+        ServiceRequest,
+        id=request_id
+    )
+
+    service_request.status = "Completed"
+    service_request.save()
+
+    create_notification(
+        service_request.user,
+        "Service Request",
+        "Service Request Completed",
+        "Your service request has been completed successfully."
+    )
+
+    messages.success(
+        request,
+        "Service request marked as completed."
+    )
+
+    return redirect('service_requests')
+
+
+# ==============================
+# ADMIN DASHBOARD
+# ==============================
+
+def admin_dashboard(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    # --------------------------
+    # User statistics
+    # --------------------------
+
+    total_users = User.objects.count()
+
+    elderly_users = UserProfile.objects.filter(
+        role="Elderly Person"
+    ).count()
+
+    mobility_users = UserProfile.objects.filter(
+        role="Person with Mobility Impairment"
+    ).count()
+
+    hearing_users = UserProfile.objects.filter(
+        role="Person with Hearing Impairment"
+    ).count()
+
+    caregivers = UserProfile.objects.filter(
+        role="Caregiver"
+    ).count()
+
+    volunteers = UserProfile.objects.filter(
+        role="Volunteer"
+    ).count()
+
+    care_representatives = UserProfile.objects.filter(
+        role="Care Representative"
+    ).count()
+
+    # --------------------------
+    # Booking statistics
+    # --------------------------
+
+    total_caregiver_bookings = DirectCaregiverBooking.objects.count()
+
+    total_volunteer_bookings = DirectVolunteerBooking.objects.count()
+
+    pending_caregiver_bookings = DirectCaregiverBooking.objects.filter(
+        status="Pending"
+    ).count()
+
+    pending_volunteer_bookings = DirectVolunteerBooking.objects.filter(
+        status="Pending"
+    ).count()
+
+    accepted_caregiver_bookings = DirectCaregiverBooking.objects.filter(
+        status="Accepted"
+    ).count()
+
+    accepted_volunteer_bookings = DirectVolunteerBooking.objects.filter(
+        status="Accepted"
+    ).count()
+
+    completed_caregiver_bookings = DirectCaregiverBooking.objects.filter(
+        status="Completed"
+    ).count()
+
+    completed_volunteer_bookings = DirectVolunteerBooking.objects.filter(
+        status="Completed"
+    ).count()
+
+    # --------------------------
+    # Other statistics
+    # --------------------------
+
+    total_service_requests = ServiceRequest.objects.count()
+
+    total_feedback = Feedback.objects.count()
+
+    total_sos = EmergencySOS.objects.count()
+
+    total_notifications = Notification.objects.count()
+
+    unread_notifications = Notification.objects.filter(
+        is_read=False
+    ).count()
+
+    # --------------------------
+    # Recent users
+    # --------------------------
+
+    recent_users = User.objects.order_by(
+        "-date_joined"
+    )[:10]
+
+    # --------------------------
+    # Recent caregiver bookings
+    # --------------------------
+
+    recent_caregiver_bookings = DirectCaregiverBooking.objects.select_related(
+        "user",
+        "caregiver"
+    ).order_by("-booked_at")[:5]
+
+    # --------------------------
+    # Recent volunteer bookings
+    # --------------------------
+
+    recent_volunteer_bookings = DirectVolunteerBooking.objects.select_related(
+        "user",
+        "volunteer"
+    ).order_by("-booked_at")[:5]
+
+    # --------------------------
+    # Recent notifications
+    # --------------------------
+
+    recent_notifications = Notification.objects.select_related(
+        "user"
+    ).order_by("-created_at")[:5]
+
+    return render(
+        request,
+        "dashboard/admin_dashboard.html",
+        {
+            "total_users": total_users,
+
+            "elderly_users": elderly_users,
+            "mobility_users": mobility_users,
+            "hearing_users": hearing_users,
+            "caregivers": caregivers,
+            "volunteers": volunteers,
+            "care_representatives": care_representatives,
+
+            "total_caregiver_bookings": total_caregiver_bookings,
+            "total_volunteer_bookings": total_volunteer_bookings,
+
+            "pending_caregiver_bookings": pending_caregiver_bookings,
+            "pending_volunteer_bookings": pending_volunteer_bookings,
+
+            "accepted_caregiver_bookings": accepted_caregiver_bookings,
+            "accepted_volunteer_bookings": accepted_volunteer_bookings,
+
+            "completed_caregiver_bookings": completed_caregiver_bookings,
+            "completed_volunteer_bookings": completed_volunteer_bookings,
+
+            "total_service_requests": total_service_requests,
+            "total_feedback": total_feedback,
+            "total_sos": total_sos,
+
+            "total_notifications": total_notifications,
+            "unread_notifications": unread_notifications,
+
+            "recent_users": recent_users,
+            "recent_caregiver_bookings": recent_caregiver_bookings,
+            "recent_volunteer_bookings": recent_volunteer_bookings,
+            "recent_notifications": recent_notifications,
+        }
+    )
+
+# ==============================
+# ADMIN - MANAGE USERS
+# ==============================
+
+def admin_users(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    users = User.objects.select_related(
+        'userprofile'
+    ).order_by('-date_joined')
+
+    return render(
+        request,
+        'dashboard/admin_users.html',
+        {
+            'users': users,
+        }
+    )
+
+# ==============================
+# ADMIN - EDIT USER
+# ==============================
+
+def admin_edit_user(request, user_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    user = get_object_or_404(
+        User,
+        id=user_id
+    )
+
+    # Do not allow editing the main administrator
+    if user.is_superuser:
+        messages.warning(
+            request,
+            "The administrator account cannot be edited here."
+        )
+
+        return redirect('admin_users')
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=user
+    )
+
+    if request.method == "POST":
+
+        user.email = request.POST.get(
+            "email"
+        )
+
+        user.first_name = request.POST.get(
+            "first_name"
+        )
+
+        user.last_name = request.POST.get(
+            "last_name"
+        )
+
+        user.save()
+
+
+        profile.phone = request.POST.get(
+            "phone"
+        )
+
+        profile.address = request.POST.get(
+            "address"
+        )
+
+        profile.role = request.POST.get(
+            "role"
+        )
+
+        profile.emergency_contact_name = request.POST.get(
+            "emergency_contact_name"
+        )
+
+        profile.emergency_contact_phone = request.POST.get(
+            "emergency_contact_phone"
+        )
+
+        profile.blood_group = request.POST.get(
+            "blood_group"
+        )
+
+        profile.medical_conditions = request.POST.get(
+            "medical_conditions"
+        )
+
+        profile.save()
+
+
+        messages.success(
+            request,
+            "User details updated successfully."
+        )
+
+        return redirect('admin_users')
+
+
+    return render(
+        request,
+        'dashboard/admin_edit_user.html',
+        {
+            'user_obj': user,
+            'profile': profile,
+        }
+    )
+
+# ==============================
+# ADMIN - ENABLE / DISABLE USER
+# ==============================
+
+def admin_toggle_user(request, user_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    user = get_object_or_404(
+        User,
+        id=user_id
+    )
+
+    if user.is_superuser:
+
+        messages.warning(
+            request,
+            "The administrator account cannot be disabled."
+        )
+
+        return redirect('admin_users')
+
+    user.is_active = not user.is_active
+
+    user.save()
+
+    if user.is_active:
+
+        messages.success(
+            request,
+            f"{user.username} has been enabled."
+        )
+
+    else:
+
+        messages.warning(
+            request,
+            f"{user.username} has been disabled."
+        )
+
+    return redirect('admin_users')
+
+# ==============================
+# ADMIN - DELETE USER
+# ==============================
+
+def admin_delete_user(request, user_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    user = get_object_or_404(
+        User,
+        id=user_id
+    )
+
+    if user.is_superuser:
+
+        messages.error(
+            request,
+            "The administrator account cannot be deleted."
+        )
+
+        return redirect('admin_users')
+
+    username = user.username
+
+    user.delete()
+
+    messages.success(
+        request,
+        f"User {username} deleted successfully."
+    )
+
+    return redirect('admin_users')
+
+# ==============================
+# ADMIN - MANAGE CAREGIVERS
+# ==============================
+
+def admin_caregivers(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    caregivers = User.objects.select_related(
+        'userprofile'
+    ).filter(
+        userprofile__role='Caregiver'
+    ).order_by('-date_joined')
+
+    return render(
+        request,
+        'dashboard/admin_caregivers.html',
+        {
+            'caregivers': caregivers,
+        }
+    )
+
+# ==============================
+# ADMIN - MANAGE VOLUNTEERS
+# ==============================
+
+def admin_volunteers(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    volunteers = User.objects.filter(
+        userprofile__role="Volunteer"
+    ).select_related(
+        'userprofile'
+    ).order_by('-date_joined')
+
+    return render(
+        request,
+        'dashboard/admin_volunteers.html',
+        {
+            'volunteers': volunteers,
+        }
+    )
+
+# ==============================
+# ADMIN - MANAGE CARE REPRESENTATIVES
+# ==============================
+
+def admin_care_representatives(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    care_representatives = User.objects.filter(
+        userprofile__role="Care Representative",
+        is_superuser=False
+    ).select_related(
+        'userprofile'
+    ).order_by('-date_joined')
+
+    return render(
+        request,
+        'dashboard/admin_care_representatives.html',
+        {
+            'care_representatives': care_representatives,
+        }
+    )
+
+# ==============================
+# ADMIN - CAREGIVER BOOKINGS
+# ==============================
+
+def admin_caregiver_bookings(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    bookings = DirectCaregiverBooking.objects.select_related(
+        'user',
+        'caregiver'
+    ).order_by('-booked_at')
+
+    return render(
+        request,
+        'dashboard/admin_caregiver_bookings.html',
+        {
+            'bookings': bookings,
+        }
+    )
+
+# ==============================
+# ADMIN - VOLUNTEER BOOKINGS
+# ==============================
+
+def admin_volunteer_bookings(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    bookings = DirectVolunteerBooking.objects.select_related(
+        'user',
+        'volunteer'
+    ).order_by('-booked_at')
+
+    return render(
+        request,
+        'dashboard/admin_volunteer_bookings.html',
+        {
+            'bookings': bookings,
+        }
+    )
+
+# ==============================
+# ADMIN - SOS ALERTS
+# ==============================
+
+def admin_sos(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    sos_alerts = EmergencySOS.objects.select_related(
+        'user'
+    ).order_by('-triggered_at')
+
+    return render(
+        request,
+        'dashboard/admin_sos.html',
+        {
+            'sos_alerts': sos_alerts,
+        }
+    )
+
+# ==============================
+# ADMIN - FEEDBACK
+# ==============================
+
+def admin_feedback(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    feedbacks = Feedback.objects.select_related(
+        'user',
+        'service_provider'
+    ).order_by('-created_at')
+
+    return render(
+        request,
+        'dashboard/admin_feedback.html',
+        {
+            'feedbacks': feedbacks,
+        }
+    )
+
+# ==============================
+# ADMIN - MANAGE NOTIFICATIONS
+# ==============================
+
+def admin_notifications(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    notifications = Notification.objects.select_related(
+        'user'
+    ).order_by('-created_at')
+
+    return render(
+        request,
+        'dashboard/admin_notifications.html',
+        {
+            'notifications': notifications,
+        }
+    )

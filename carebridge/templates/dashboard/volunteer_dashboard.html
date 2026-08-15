@@ -10,182 +10,502 @@ Volunteer Dashboard
 
 {% block content %}
 
-<h2>🙋 Direct Booking Requests</h2>
+<style>
+    .booking-container {
+        padding: 10px 5px 40px;
+    }
 
-{% if messages %}
+    .booking-title {
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
 
-{% for message in messages %}
+    .message {
+        padding: 14px 18px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        background: #d4edda;
+        color: #155724;
+        font-weight: 600;
+    }
 
-<div style="
-            background:#d4edda;
-            color:#155724;
-            padding:12px;
-            border-radius:8px;
-            margin-bottom:20px;
-            font-weight:bold;
-        ">
-    ✔ {{ message }}
-</div>
+    .booking-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 22px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
 
-{% endfor %}
+    .booking-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        gap: 15px;
+    }
 
-{% endif %}
+    .user-name {
+        font-size: 21px;
+        font-weight: 700;
+        color: #1f2937;
+    }
 
-{% if bookings %}
+    .status {
+        padding: 7px 14px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 13px;
+    }
 
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
 
-    <tr>
-        <th>User</th>
-        <th>Phone</th>
-        <th>Booked On</th>
-        <th>Status</th>
-        <th>Action</th>
-    </tr>
+    .status-accepted {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-completed {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-cancelled {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .detail-box {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 13px;
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    .detail-value {
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .description-box {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .description-box p {
+        margin: 7px 0 0;
+        color: #4b5563;
+        line-height: 1.6;
+    }
+
+    .priority-high {
+        color: #dc2626;
+    }
+
+    .priority-emergency {
+        color: #b91c1c;
+        font-weight: 800;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 18px;
+    }
+
+    .action-button {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+    }
+
+    .accept-button {
+        background: #28a745;
+    }
+
+    .accept-button:hover {
+        background: #218838;
+    }
+
+    .reject-button {
+        background: #dc3545;
+    }
+
+    .reject-button:hover {
+        background: #c82333;
+    }
+
+    .complete-button {
+        background: #1769d1;
+    }
+
+    .complete-button:hover {
+        background: #0d57b5;
+    }
+
+    .completed-message {
+        color: #1d4ed8;
+        font-weight: 700;
+    }
+
+    .empty-message {
+        background: white;
+        padding: 30px;
+        border-radius: 14px;
+        text-align: center;
+        color: #64748b;
+    }
+
+    @media (max-width: 700px) {
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+    }
+</style>
+
+
+<div class="booking-container">
+
+    <h2 class="booking-title">
+        🙋 Direct Booking Requests
+    </h2>
+
+
+    <!-- MESSAGES -->
+
+    {% if messages %}
+
+    {% for message in messages %}
+
+    <div class="message">
+        ✔ {{ message }}
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <!-- DIRECT BOOKINGS -->
+
+    {% if bookings %}
 
     {% for booking in bookings %}
 
-    <tr>
+    <div class="booking-card">
 
-        <td>{{ booking.user.username }}</td>
 
-        <td>{{ booking.user.userprofile.phone }}</td>
+        <!-- HEADER -->
 
-        <td>{{ booking.booked_at }}</td>
+        <div class="booking-card-header">
 
-        <td>{{ booking.status }}</td>
+            <div class="user-name">
+                👤
+                {{ booking.user.get_full_name|default:booking.user.username }}
+            </div>
 
-        <td>
 
             {% if booking.status == "Pending" %}
 
-            <a href="{% url 'accept_volunteer_booking' booking.id %}">
-
-                <button style="
-                        background:#28a745;
-                        color:white;
-                        border:none;
-                        padding:8px 15px;
-                        border-radius:6px;
-                    ">
-                    Accept
-                </button>
-
-            </a>
-
-            <a href="{% url 'reject_volunteer_booking' booking.id %}">
-
-                <button style="
-                        background:#dc3545;
-                        color:white;
-                        border:none;
-                        padding:8px 15px;
-                        border-radius:6px;
-                    ">
-                    Reject
-                </button>
-
-            </a>
-
-            {% else %}
-
-            <strong>{{ booking.status }}</strong>
-
-            {% endif %}
-
-        </td>
-
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-{% else %}
-
-<p>No volunteer booking requests received.</p>
-
-{% endif %}
-
-<hr style="margin:40px 0;">
-
-<h2>👥 Assigned Users</h2>
-
-{% if assignments %}
-
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
-
-    <tr>
-
-        <th>User</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>Assigned By</th>
-        <th>Status</th>
-
-    </tr>
-
-    {% for assignment in assignments %}
-
-    <tr>
-
-        <td>{{ assignment.user.username }}</td>
-
-        <td>{{ assignment.user.userprofile.phone }}</td>
-
-        <td>{{ assignment.user.userprofile.address }}</td>
-
-        <td>{{ assignment.assigned_by.username }}</td>
-
-        <td>
-
-            {% if assignment.status == "Pending" %}
-
-            <span style="
-                    background:#fff3cd;
-                    color:#856404;
-                    padding:6px 12px;
-                    border-radius:20px;
-                ">
+            <span class="status status-pending">
                 🟡 Pending
             </span>
 
-            {% elif assignment.status == "Accepted" %}
+            {% elif booking.status == "Accepted" %}
 
-            <span style="
-                    background:#d4edda;
-                    color:#155724;
-                    padding:6px 12px;
-                    border-radius:20px;
-                ">
+            <span class="status status-accepted">
                 🟢 Accepted
             </span>
 
-            {% else %}
+            {% elif booking.status == "Completed" %}
 
-            <span style="
-                    background:#f8d7da;
-                    color:#721c24;
-                    padding:6px 12px;
-                    border-radius:20px;
-                ">
+            <span class="status status-completed">
+                🔵 Completed
+            </span>
+
+            {% elif booking.status == "Rejected" %}
+
+            <span class="status status-rejected">
                 🔴 Rejected
+            </span>
+
+            {% elif booking.status == "Cancelled" %}
+
+            <span class="status status-cancelled">
+                ⚪ Cancelled
             </span>
 
             {% endif %}
 
-        </td>
+        </div>
 
-    </tr>
+
+        <!-- DETAILS -->
+
+        <div class="details-grid">
+
+
+            <!-- PHONE -->
+
+            <div class="detail-box">
+
+                <span class="detail-label">
+                    📞 Phone
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.user.userprofile.phone }}
+                </span>
+
+            </div>
+
+
+            <!-- SERVICE -->
+
+            <div class="detail-box">
+
+                <span class="detail-label">
+                    🛠️ Service Required
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.service }}
+                </span>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="detail-box">
+
+                <span class="detail-label">
+                    📅 Service Date
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.booking_date }}
+                </span>
+
+            </div>
+
+
+            <!-- TIME -->
+
+            <div class="detail-box">
+
+                <span class="detail-label">
+                    🕐 Service Time
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.booking_time }}
+                </span>
+
+            </div>
+
+
+            <!-- PRIORITY -->
+
+            <div class="detail-box">
+
+                <span class="detail-label">
+                    ⚠️ Priority
+                </span>
+
+                <span class="detail-value
+                        {% if booking.priority == 'High' %}
+                            priority-high
+                        {% elif booking.priority == 'Emergency' %}
+                            priority-emergency
+                        {% endif %}
+                    ">
+                    {{ booking.priority }}
+                </span>
+
+            </div>
+
+
+            <!-- BOOKED ON -->
+
+            <div class="detail-box">
+
+                <span class="detail-label">
+                    🕒 Request Received
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.booked_at }}
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ADDRESS -->
+
+        <div class="detail-box" style="margin-bottom:15px;">
+
+            <span class="detail-label">
+                📍 Service Address
+            </span>
+
+            <span class="detail-value">
+                {{ booking.address }}
+            </span>
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <div class="description-box">
+
+            <span class="detail-label">
+                📝 Additional Requirements
+            </span>
+
+            {% if booking.description %}
+
+            <p>
+                {{ booking.description }}
+            </p>
+
+            {% else %}
+
+            <p>
+                No additional requirements provided.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+
+            {% if booking.status == "Pending" %}
+
+
+            <!-- ACCEPT -->
+
+            <a href="{% url 'update_volunteer_booking_status' booking.id 'Accepted' %}"
+                class="action-button accept-button">
+                ✅ Accept Booking
+            </a>
+
+
+            <!-- REJECT -->
+
+            <a href="{% url 'update_volunteer_booking_status' booking.id 'Rejected' %}"
+                class="action-button reject-button">
+                ❌ Reject
+            </a>
+
+
+            {% elif booking.status == "Accepted" %}
+
+
+            <!-- COMPLETE -->
+
+            <a href="{% url 'update_volunteer_booking_status' booking.id 'Completed' %}"
+                class="action-button complete-button">
+                ✅ Mark as Completed
+            </a>
+
+
+            {% elif booking.status == "Completed" %}
+
+            <span class="completed-message">
+                ✅ Service Completed
+            </span>
+
+
+            {% elif booking.status == "Rejected" %}
+
+            <span>
+                ❌ Booking Rejected
+            </span>
+
+
+            {% elif booking.status == "Cancelled" %}
+
+            <span>
+                ⚪ Booking Cancelled
+            </span>
+
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
 
     {% endfor %}
 
-</table>
 
-{% else %}
+    {% else %}
 
-<p>No users have been assigned yet.</p>
+    <div class="empty-message">
 
-{% endif %}
+        <h3>
+            No volunteer booking requests
+        </h3>
+
+        <p>
+            New booking requests from users will appear here.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

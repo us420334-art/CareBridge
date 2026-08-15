@@ -1,0 +1,252 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+Feedback
+{% endblock %}
+
+{% block page_title %}
+Feedback
+{% endblock %}
+
+{% block content %}
+
+<div style="padding:20px;">
+
+    <!-- HEADER -->
+
+    <div style="
+        background:linear-gradient(135deg,#f59e0b,#fbbf24);
+        color:white;
+        padding:25px;
+        border-radius:16px;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="margin:0 0 8px 0;">
+            ⭐ User Feedback
+        </h2>
+
+        <p style="margin:0;">
+            View feedback and ratings submitted by CareBridge users.
+        </p>
+
+    </div>
+
+
+    <!-- TOTAL FEEDBACK -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    ">
+
+        <h3 style="margin-top:0;">
+            Total Feedback
+        </h3>
+
+        <div style="
+            font-size:32px;
+            font-weight:bold;
+            color:#f59e0b;
+        ">
+            {{ feedbacks|length }}
+        </div>
+
+    </div>
+
+
+    <!-- FEEDBACK TABLE -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        overflow-x:auto;
+    ">
+
+        <h2 style="margin-top:0;">
+            All Feedback
+        </h2>
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            min-width:1000px;
+        ">
+
+            <thead>
+
+                <tr style="
+                    background:#fffbeb;
+                ">
+
+                    <th style="padding:12px;text-align:left;">
+                        ID
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        User
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Service Type
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Provider
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Rating
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Comment
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Submitted
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for feedback in feedbacks %}
+
+                <tr style="
+                    border-bottom:1px solid #eee;
+                ">
+
+                    <!-- ID -->
+
+                    <td style="padding:12px;">
+                        {{ feedback.id }}
+                    </td>
+
+
+                    <!-- USER -->
+
+                    <td style="padding:12px;">
+
+                        <strong>
+                            {{ feedback.user.username }}
+                        </strong>
+
+                    </td>
+
+
+                    <!-- SERVICE TYPE -->
+
+                    <td style="padding:12px;">
+
+                        {{ feedback.service_type }}
+
+                    </td>
+
+
+                    <!-- PROVIDER -->
+
+                    <td style="padding:12px;">
+
+                        {% if feedback.service_provider %}
+
+                        {{ feedback.service_provider.username }}
+
+                        {% else %}
+
+                        Not applicable
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- RATING -->
+
+                    <td style="
+                        padding:12px;
+                        white-space:nowrap;
+                    ">
+
+                        {% if feedback.rating == 5 %}
+                        ⭐⭐⭐⭐⭐
+                        {% elif feedback.rating == 4 %}
+                        ⭐⭐⭐⭐
+                        {% elif feedback.rating == 3 %}
+                        ⭐⭐⭐
+                        {% elif feedback.rating == 2 %}
+                        ⭐⭐
+                        {% elif feedback.rating == 1 %}
+                        ⭐
+                        {% endif %}
+
+                        <br>
+
+                        <small style="color:#777;">
+                            {{ feedback.rating }}/5
+                        </small>
+
+                    </td>
+
+
+                    <!-- COMMENT -->
+
+                    <td style="
+                        padding:12px;
+                        max-width:300px;
+                    ">
+
+                        {{ feedback.comment }}
+
+                    </td>
+
+
+                    <!-- DATE -->
+
+                    <td style="
+                        padding:12px;
+                        white-space:nowrap;
+                    ">
+
+                        {{ feedback.created_at|date:"d M Y, h:i A" }}
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="7" style="
+                        padding:40px;
+                        text-align:center;
+                        color:#777;
+                    ">
+
+                        ⭐ No feedback found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

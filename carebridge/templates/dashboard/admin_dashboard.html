@@ -1,0 +1,677 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+CareBridge Admin Dashboard
+{% endblock %}
+
+{% block page_title %}
+Admin Dashboard
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .admin-container {
+        padding: 10px;
+    }
+
+    /* Welcome */
+
+    .admin-welcome {
+        background: linear-gradient(135deg, #6a5acd, #836fff);
+        color: white;
+        padding: 25px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+    }
+
+    .admin-welcome h2 {
+        margin: 0 0 8px 0;
+    }
+
+    .admin-welcome p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+
+    /* Statistics */
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 22px;
+        border-radius: 14px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-icon {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card h3 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .stat-card p {
+        margin: 5px 0 0;
+        color: #777;
+    }
+
+
+    /* Sections */
+
+    .admin-section {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    }
+
+    .admin-section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+
+    /* User table */
+
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+
+    .admin-table th {
+        background: #f5f5f5;
+    }
+
+
+    /* Status */
+
+    .status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .status-active {
+        background: #dff7e5;
+        color: #198754;
+    }
+
+    .status-inactive {
+        background: #ffe0e0;
+        color: #dc3545;
+    }
+
+
+    /* Booking cards */
+
+    .booking-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .booking-box {
+        padding: 20px;
+        border-radius: 12px;
+        background: #f8f9ff;
+    }
+
+    .booking-box h3 {
+        margin-top: 0;
+    }
+
+
+    /* Notification */
+
+    .notification-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-title {
+        font-weight: bold;
+    }
+
+    .notification-message {
+        color: #666;
+        margin-top: 5px;
+    }
+
+
+    /* Quick actions */
+
+    .quick-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .admin-button {
+        display: inline-block;
+        padding: 12px 18px;
+        background: #6a5acd;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .admin-button:hover {
+        opacity: 0.9;
+    }
+
+
+    /* Responsive */
+
+    @media (max-width: 1000px) {
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .booking-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media (max-width: 600px) {
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+</style>
+
+
+<div class="admin-container">
+
+
+    <!-- Welcome -->
+
+    <div class="admin-welcome">
+
+        <h2>Welcome, Administrator 👋</h2>
+
+        <p>
+            Manage CareBridge users, bookings, services,
+            notifications and platform activity from one place.
+        </p>
+
+    </div>
+
+
+    <!-- USER STATISTICS -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <h3>{{ total_users }}</h3>
+            <p>Total Users</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">👴</div>
+            <h3>{{ elderly_users }}</h3>
+            <p>Elderly Users</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">♿</div>
+            <h3>{{ mobility_users }}</h3>
+            <p>Mobility Users</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">🦻</div>
+            <h3>{{ hearing_users }}</h3>
+            <p>Hearing Users</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">👨‍⚕️</div>
+            <h3>{{ caregivers }}</h3>
+            <p>Caregivers</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">🤝</div>
+            <h3>{{ volunteers }}</h3>
+            <p>Volunteers</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">👔</div>
+            <h3>{{ care_representatives }}</h3>
+            <p>Care Representatives</p>
+        </div>
+
+
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <h3>{{ total_service_requests }}</h3>
+            <p>Service Requests</p>
+        </div>
+
+    </div>
+
+
+    <!-- BOOKING STATISTICS -->
+
+    <div class="admin-section">
+
+        <h2>📊 Booking Overview</h2>
+
+        <div class="booking-grid">
+
+            <div class="booking-box">
+
+                <h3>👨‍⚕️ Caregiver Bookings</h3>
+
+                <p>
+                    Total:
+                    <strong>{{ total_caregiver_bookings }}</strong>
+                </p>
+
+                <p>
+                    Pending:
+                    <strong>{{ pending_caregiver_bookings }}</strong>
+                </p>
+
+                <p>
+                    Accepted:
+                    <strong>{{ accepted_caregiver_bookings }}</strong>
+                </p>
+
+                <p>
+                    Completed:
+                    <strong>{{ completed_caregiver_bookings }}</strong>
+                </p>
+
+            </div>
+
+
+            <div class="booking-box">
+
+                <h3>🤝 Volunteer Bookings</h3>
+
+                <p>
+                    Total:
+                    <strong>{{ total_volunteer_bookings }}</strong>
+                </p>
+
+                <p>
+                    Pending:
+                    <strong>{{ pending_volunteer_bookings }}</strong>
+                </p>
+
+                <p>
+                    Accepted:
+                    <strong>{{ accepted_volunteer_bookings }}</strong>
+                </p>
+
+                <p>
+                    Completed:
+                    <strong>{{ completed_volunteer_bookings }}</strong>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECENT USERS -->
+
+    <div class="admin-section">
+
+        <h2>👥 Recent Users</h2>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for user in recent_users %}
+
+                <tr>
+
+                    <td>
+                        {{ user.username }}
+                    </td>
+
+                    <td>
+                        {{ user.email }}
+                    </td>
+
+                    <td>
+                        {{ user.date_joined|date:"d M Y" }}
+                    </td>
+
+                    <td>
+
+                        {% if user.is_active %}
+
+                        <span class="status status-active">
+                            Active
+                        </span>
+
+                        {% else %}
+
+                        <span class="status status-inactive">
+                            Inactive
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="4">
+                        No users found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- RECENT CAREGIVER BOOKINGS -->
+
+    <div class="admin-section">
+
+        <h2>👨‍⚕️ Recent Caregiver Bookings</h2>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>User</th>
+                    <th>Caregiver</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for booking in recent_caregiver_bookings %}
+
+                <tr>
+
+                    <td>
+                        {{ booking.user.username }}
+                    </td>
+
+                    <td>
+                        {{ booking.caregiver.username }}
+                    </td>
+
+                    <td>
+                        {{ booking.service }}
+                    </td>
+
+                    <td>
+                        {{ booking.status }}
+                    </td>
+
+                    <td>
+                        {{ booking.booked_at|date:"d M Y" }}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5">
+                        No caregiver bookings.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- RECENT VOLUNTEER BOOKINGS -->
+
+    <div class="admin-section">
+
+        <h2>🤝 Recent Volunteer Bookings</h2>
+
+        <table class="admin-table">
+
+            <thead>
+
+                <tr>
+                    <th>User</th>
+                    <th>Volunteer</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for booking in recent_volunteer_bookings %}
+
+                <tr>
+
+                    <td>
+                        {{ booking.user.username }}
+                    </td>
+
+                    <td>
+                        {{ booking.volunteer.username }}
+                    </td>
+
+                    <td>
+                        {{ booking.service }}
+                    </td>
+
+                    <td>
+                        {{ booking.status }}
+                    </td>
+
+                    <td>
+                        {{ booking.booked_at|date:"d M Y" }}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5">
+                        No volunteer bookings.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <div class="admin-section">
+
+        <h2>🔔 Recent Notifications</h2>
+
+        <p>
+            Total Notifications:
+            <strong>{{ total_notifications }}</strong>
+        </p>
+
+        <p>
+            Unread:
+            <strong>{{ unread_notifications }}</strong>
+        </p>
+
+
+        {% for notification in recent_notifications %}
+
+        <div class="notification-item">
+
+            <div class="notification-title">
+
+                {{ notification.title }}
+
+            </div>
+
+            <div class="notification-message">
+
+                {{ notification.message }}
+
+            </div>
+
+            <small>
+
+                For:
+                {{ notification.user.username }}
+
+                —
+                {{ notification.created_at|date:"d M Y H:i" }}
+
+            </small>
+
+        </div>
+
+        {% empty %}
+
+        <p>No notifications found.</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- OTHER STATISTICS -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">⭐</div>
+
+            <h3>{{ total_feedback }}</h3>
+
+            <p>Total Feedback</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">🚨</div>
+
+            <h3>{{ total_sos }}</h3>
+
+            <p>SOS Alerts</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">🔔</div>
+
+            <h3>{{ total_notifications }}</h3>
+
+            <p>Notifications</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">📨</div>
+
+            <h3>{{ unread_notifications }}</h3>
+
+            <p>Unread Notifications</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+{% endblock %}

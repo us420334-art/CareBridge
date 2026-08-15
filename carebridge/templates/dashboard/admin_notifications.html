@@ -1,0 +1,192 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+Admin Notifications
+{% endblock %}
+
+{% block page_title %}
+Notifications
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    padding:20px;
+">
+
+    <!-- HEADER -->
+
+    <div style="
+        background:linear-gradient(135deg, #6a5acd, #836fff);
+        color:white;
+        padding:25px;
+        border-radius:16px;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="margin:0 0 8px 0;">
+            🔔 Notifications
+        </h2>
+
+        <p style="margin:0;">
+            View all notifications generated in CareBridge.
+        </p>
+
+    </div>
+
+
+    <!-- NOTIFICATION COUNT -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    ">
+
+        <h3 style="margin-top:0;">
+            Total Notifications
+        </h3>
+
+        <div style="
+            font-size:32px;
+            font-weight:bold;
+            color:#6a5acd;
+        ">
+            {{ notifications|length }}
+        </div>
+
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <div style="
+        background:white;
+        padding:25px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    ">
+
+        <h2 style="margin-top:0;">
+            All Notifications
+        </h2>
+
+
+        {% for notification in notifications %}
+
+        <div style="
+            padding:18px;
+            margin-top:15px;
+            background:#f8f9ff;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+        ">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+            ">
+
+                <h3 style="
+                    margin:0;
+                    color:#1f2937;
+                ">
+                    {{ notification.title }}
+                </h3>
+
+
+                {% if notification.is_read %}
+
+                <span style="
+                    background:#dff7e5;
+                    color:#198754;
+                    padding:5px 10px;
+                    border-radius:15px;
+                    font-size:11px;
+                    font-weight:bold;
+                ">
+                    Read
+                </span>
+
+                {% else %}
+
+                <span style="
+                    background:#ffe0e0;
+                    color:#dc3545;
+                    padding:5px 10px;
+                    border-radius:15px;
+                    font-size:11px;
+                    font-weight:bold;
+                ">
+                    Unread
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <p style="
+                color:#555;
+                margin:10px 0;
+            ">
+                {{ notification.message }}
+            </p>
+
+
+            <div style="
+                color:#777;
+                font-size:13px;
+            ">
+
+                <strong>User:</strong>
+                {{ notification.user.username }}
+
+                &nbsp; | &nbsp;
+
+                <strong>Type:</strong>
+                {{ notification.notification_type }}
+
+                &nbsp; | &nbsp;
+
+                <strong>Date:</strong>
+                {{ notification.created_at|date:"d M Y, h:i A" }}
+
+            </div>
+
+        </div>
+
+
+        {% empty %}
+
+        <div style="
+            text-align:center;
+            padding:50px;
+            color:#777;
+        ">
+
+            <div style="font-size:50px;">
+                🔔
+            </div>
+
+            <h3>
+                No notifications found
+            </h3>
+
+            <p>
+                Notifications will appear here when generated.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

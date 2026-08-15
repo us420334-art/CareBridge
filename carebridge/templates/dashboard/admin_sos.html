@@ -1,0 +1,248 @@
+{% extends 'dashboard/base_admin.html' %}
+
+{% block title %}
+SOS Alerts
+{% endblock %}
+
+{% block page_title %}
+SOS Alerts
+{% endblock %}
+
+{% block content %}
+
+<div style="padding:20px;">
+
+    <!-- HEADER -->
+
+    <div style="
+        background:linear-gradient(135deg,#dc2626,#ef4444);
+        color:white;
+        padding:25px;
+        border-radius:16px;
+        margin-bottom:25px;
+    ">
+
+        <h2 style="margin:0 0 8px 0;">
+            🚨 SOS Alerts
+        </h2>
+
+        <p style="margin:0;">
+            Monitor emergency alerts raised by CareBridge users.
+        </p>
+
+    </div>
+
+
+    <!-- TOTAL ALERTS -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom:25px;
+    ">
+
+        <h3 style="margin-top:0;">
+            Total SOS Alerts
+        </h3>
+
+        <div style="
+            font-size:32px;
+            font-weight:bold;
+            color:#dc2626;
+        ">
+            {{ sos_alerts|length }}
+        </div>
+
+    </div>
+
+
+    <!-- ALERT TABLE -->
+
+    <div style="
+        background:white;
+        padding:20px;
+        border-radius:14px;
+        box-shadow:0 4px 15px rgba(0,0,0,0.08);
+        overflow-x:auto;
+    ">
+
+        <h2 style="margin-top:0;">
+            Emergency Alerts
+        </h2>
+
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            min-width:800px;
+        ">
+
+            <thead>
+
+                <tr style="
+                    background:#fef2f2;
+                ">
+
+                    <th style="padding:12px;text-align:left;">
+                        ID
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        User
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Emergency Contact
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Contact Phone
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Status
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Triggered At
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for alert in sos_alerts %}
+
+                <tr style="
+                    border-bottom:1px solid #eee;
+                ">
+
+                    <!-- ID -->
+
+                    <td style="padding:12px;">
+                        {{ alert.id }}
+                    </td>
+
+
+                    <!-- USER -->
+
+                    <td style="padding:12px;">
+
+                        <strong>
+                            {{ alert.user.username }}
+                        </strong>
+
+                    </td>
+
+
+                    <!-- EMERGENCY CONTACT -->
+
+                    <td style="padding:12px;">
+
+                        {% if alert.emergency_contact_name %}
+
+                        {{ alert.emergency_contact_name }}
+
+                        {% else %}
+
+                        Not provided
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- PHONE -->
+
+                    <td style="padding:12px;">
+
+                        {% if alert.emergency_contact_phone %}
+
+                        {{ alert.emergency_contact_phone }}
+
+                        {% else %}
+
+                        Not provided
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td style="padding:12px;">
+
+                        {% if alert.status == "Activated" %}
+
+                        <span style="
+                            background:#fee2e2;
+                            color:#dc2626;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            🚨 Activated
+                        </span>
+
+                        {% else %}
+
+                        <span style="
+                            background:#dff7e5;
+                            color:#198754;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                        ">
+                            {{ alert.status }}
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- TIME -->
+
+                    <td style="padding:12px;">
+
+                        {{ alert.triggered_at|date:"d M Y, h:i A" }}
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6" style="
+                        padding:40px;
+                        text-align:center;
+                        color:#777;
+                    ">
+
+                        🚨 No SOS alerts found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

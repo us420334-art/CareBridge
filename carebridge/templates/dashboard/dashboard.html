@@ -26,10 +26,12 @@ Dashboard
         </div>
     </a>
 
-    <div class="card">
-        <h3>🔔 Notifications</h3>
-        <p>Check your latest updates and reminders.</p>
-    </div>
+    <a href="{% url 'notifications' %}" style="text-decoration:none;color:inherit;">
+        <div class="card">
+            <h3>🔔 Notifications</h3>
+            <p>Check your latest updates and reminders.</p>
+        </div>
+    </a>
 
     <a href="{% url 'emergency_sos' %}" style="text-decoration:none;color:inherit;">
         <div class="card">

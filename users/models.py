@@ -62,6 +62,20 @@ class DirectCaregiverBooking(models.Model):
         ('Cancelled', 'Cancelled'),
     ]
 
+    PRIORITY_CHOICES = [
+        ('Low', 'Low'),
+        ('Medium', 'Medium'),
+        ('High', 'High'),
+        ('Emergency', 'Emergency'),
+    ]
+
+    SERVICE_CHOICES = [
+    ('Home Support', 'Home Support'),
+    ('Hospital Assistance', 'Hospital Assistance'),
+    ('Medication Support', 'Medication Support'),
+    ('Health & Wellness Support', 'Health & Wellness Support'),
+    ('Post-Hospital Care', 'Post-Hospital Care'),
+]
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -72,6 +86,39 @@ class DirectCaregiverBooking(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='caregiver_direct_bookings'
+    )
+
+    service = models.CharField(
+        max_length=50,
+        choices=SERVICE_CHOICES,
+        blank=True,
+        default=''
+    )
+
+    address = models.TextField(
+        blank=True,
+        default=''
+    )
+
+    booking_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    booking_time = models.TimeField(
+        null=True,
+        blank=True
+    )
+
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default='Medium'
+    )
+
+    description = models.TextField(
+        blank=True,
+        default=''
     )
 
     status = models.CharField(
@@ -87,6 +134,7 @@ class DirectCaregiverBooking(models.Model):
     def __str__(self):
         return f"{self.user.username} booked {self.caregiver.username}"
 
+    
 class DirectVolunteerBooking(models.Model):
 
     STATUS_CHOICES = [
@@ -95,6 +143,21 @@ class DirectVolunteerBooking(models.Model):
         ('Rejected', 'Rejected'),
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
+    ]
+
+    PRIORITY_CHOICES = [
+        ('Low', 'Low'),
+        ('Medium', 'Medium'),
+        ('High', 'High'),
+        ('Emergency', 'Emergency'),
+    ]
+
+    SERVICE_CHOICES = [
+        ('Shopping Assistance', 'Shopping Assistance'),
+        ('Bank Assistance', 'Bank Assistance'),
+        ('Transport Assistance', 'Transport Assistance'),
+        ('Hospital Accompaniment', 'Hospital Accompaniment'),
+        ('General Support', 'General Support'),
     ]
 
     user = models.ForeignKey(
@@ -107,6 +170,39 @@ class DirectVolunteerBooking(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='volunteer_direct_bookings'
+    )
+
+    service = models.CharField(
+        max_length=50,
+        choices=SERVICE_CHOICES,
+        blank=True,
+        default=''
+    )
+
+    address = models.TextField(
+        blank=True,
+        default=''
+    )
+
+    booking_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    booking_time = models.TimeField(
+        null=True,
+        blank=True
+    )
+
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default='Medium'
+    )
+
+    description = models.TextField(
+        blank=True,
+        default=''
     )
 
     status = models.CharField(
@@ -122,6 +218,8 @@ class DirectVolunteerBooking(models.Model):
     def __str__(self):
         return f"{self.user.username} booked {self.volunteer.username}"
 
+    
+    
 class ServiceRequest(models.Model):
 
     PRIORITY_CHOICES = [
@@ -290,3 +388,41 @@ class Feedback(models.Model):
             return f"{self.user.username} → {self.service_provider.username} - {self.rating} Stars"
 
         return f"{self.user.username} - {self.rating} Stars"
+
+class Notification(models.Model):
+
+    NOTIFICATION_TYPES = [
+        ('Booking', 'Booking'),
+        ('Service', 'Service'),
+        ('Medicine', 'Medicine'),
+        ('SOS', 'SOS'),
+        ('Feedback', 'Feedback'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+
+    notification_type = models.CharField(
+        max_length=20,
+        choices=NOTIFICATION_TYPES
+    )
+
+    title = models.CharField(
+        max_length=200
+    )
+
+    message = models.TextField()
+
+    is_read = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.title}"
