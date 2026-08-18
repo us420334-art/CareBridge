@@ -1,4 +1,4 @@
-{% extends 'dashboard/base_dashboard.html' %}
+{% extends base_template %}
 
 {% block title %}
 My Profile
@@ -10,23 +10,311 @@ My Profile
 {% endblock %}
 
 
+{% block extra_css %}
+
+<style>
+
+/* =========================================
+   PROFILE CONTAINER
+========================================= */
+
+.profile-container {
+
+    width: 100%;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+}
+
+
+/* =========================================
+   PROFILE HEADER
+========================================= */
+
+.profile-header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #eaf5fb,
+            #ffffff
+        );
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    margin-bottom: 25px;
+
+    border: 1px solid #dceaf2;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.06);
+}
+
+
+.profile-icon {
+
+    width: 65px;
+
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #dff1fa;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 32px;
+
+    flex-shrink: 0;
+}
+
+
+.profile-header h2 {
+
+    margin: 0;
+
+    color: #1b6ca8;
+
+    font-size: 23px;
+}
+
+
+.profile-header p {
+
+    margin-top: 5px;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   PROFILE CARD
+========================================= */
+
+.profile-card {
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.07);
+
+    border:
+        1px solid #e8eef2;
+}
+
+
+.profile-card h3 {
+
+    color: #1b6ca8;
+
+    margin-bottom: 20px;
+
+    padding-bottom: 10px;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    font-size: 19px;
+}
+
+
+/* =========================================
+   INFORMATION ROW
+========================================= */
+
+.info-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 20px;
+
+    padding: 14px 0;
+
+    border-bottom:
+        1px solid #f0f0f0;
+}
+
+
+.info-row:last-child {
+
+    border-bottom: none;
+}
+
+
+.info-row span {
+
+    color: #6b7280;
+
+    font-weight: 600;
+
+    flex-shrink: 0;
+}
+
+
+.info-row strong {
+
+    color: #374151;
+
+    text-align: right;
+
+    max-width: 65%;
+
+    word-break: break-word;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.edit-button {
+
+    margin-bottom: 15px;
+}
+
+
+.edit-button a {
+
+    display: inline-block;
+
+    padding: 12px 20px;
+
+    background: #1b6ca8;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+    transition: 0.2s ease;
+}
+
+
+.edit-button a:hover {
+
+    background: #155a8a;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px
+        rgba(27,108,168,0.20);
+}
+
+
+/* =========================================
+   CARE REPRESENTATIVE INFO
+========================================= */
+
+.care-rep-note {
+
+    background: #eef8fd;
+
+    border-left:
+        4px solid #1b6ca8;
+
+    padding: 14px 16px;
+
+    border-radius: 8px;
+
+    color: #555;
+
+    margin-bottom: 18px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+    .profile-container {
+
+        padding: 10px;
+
+    }
+
+
+    .profile-header {
+
+        padding: 20px;
+
+    }
+
+
+    .info-row {
+
+        flex-direction: column;
+
+        gap: 6px;
+
+    }
+
+
+    .info-row strong {
+
+        max-width: 100%;
+
+        text-align: left;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
 
 {% block content %}
-
-
-<!-- Refresh trigger (hidden) -->
-<div style="display:none;">
-    PROFILE TEMPLATE LOADED
-</div>
-
 
 
 <div class="profile-container">
 
 
-    <!-- Profile Header -->
+    <!-- =====================================
+         PROFILE HEADER
+    ====================================== -->
 
     <div class="profile-header">
+
 
         <div class="profile-icon">
             👤
@@ -50,10 +338,9 @@ My Profile
 
 
 
-
-
-    <!-- Personal Information -->
-
+    <!-- =====================================
+         PERSONAL INFORMATION
+    ====================================== -->
 
     <div class="profile-card">
 
@@ -76,7 +363,6 @@ My Profile
         </div>
 
 
-
         <div class="info-row">
 
             <span>
@@ -88,8 +374,6 @@ My Profile
             </strong>
 
         </div>
-
-
 
 
         <div class="info-row">
@@ -105,8 +389,6 @@ My Profile
         </div>
 
 
-
-
         <div class="info-row">
 
             <span>
@@ -118,8 +400,6 @@ My Profile
             </strong>
 
         </div>
-
-
 
 
         <div class="info-row">
@@ -139,133 +419,313 @@ My Profile
 
 
 
+    <!-- =====================================
+         CARE REPRESENTATIVE
+         REPRESENTED PERSON
+    ====================================== -->
+
+    {% if profile.role == "Care Representative" %}
 
 
+        {% if request.user.represented_person %}
 
 
-    <!-- Emergency Information -->
+        <div class="profile-card">
 
 
-    <div class="profile-card">
+            <h3>
+                💙 Person I Represent
+            </h3>
 
 
-        <h3>
-            🚨 Emergency Information
-        </h3>
+            <div class="care-rep-note">
+
+                You are managing CareBridge services on
+                behalf of this person. Their details are
+                maintained separately from your account.
+
+            </div>
 
 
+            <div class="info-row">
 
-        <div class="info-row">
+                <span>
+                    Name
+                </span>
 
-            <span>
-                Contact Name
-            </span>
+                <strong>
+                    {{ request.user.represented_person.full_name }}
+                </strong>
 
-            <strong>
-                {{ profile.emergency_contact_name|default:"Not Added" }}
-            </strong>
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Age
+                </span>
+
+                <strong>
+                    {{ request.user.represented_person.age }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Person Type
+                </span>
+
+                <strong>
+                    {{ request.user.represented_person.person_type }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Relationship
+                </span>
+
+                <strong>
+                    {{ request.user.represented_person.relationship }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Phone
+                </span>
+
+                <strong>
+                    {{ request.user.represented_person.phone }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Address
+                </span>
+
+                <strong>
+                    {{ request.user.represented_person.address }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Blood Group
+                </span>
+
+                <strong>
+
+                    {% if request.user.represented_person.blood_group %}
+
+                        {{ request.user.represented_person.blood_group }}
+
+                    {% else %}
+
+                        Not Added
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Medical Conditions
+                </span>
+
+                <strong>
+
+                    {% if request.user.represented_person.medical_conditions %}
+
+                        {{ request.user.represented_person.medical_conditions }}
+
+                    {% else %}
+
+                        Not Added
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="edit-button">
+
+                <a href="{% url 'care_circle' %}">
+                    💙 Manage Care Circle
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        {% else %}
+
+
+        <div class="profile-card">
+
+            <h3>
+                💙 Person I Represent
+            </h3>
+
+            <p style="color:#777; margin-bottom:20px;">
+                No represented person details were found.
+            </p>
+
+            <div class="edit-button">
+
+                <a href="{% url 'care_circle' %}">
+                    Add Represented Person
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {% endif %}
+
+
+    {% else %}
+
+
+        <!-- =====================================
+             EMERGENCY INFORMATION
+             OTHER ROLES
+        ====================================== -->
+
+        <div class="profile-card">
+
+
+            <h3>
+                🚨 Emergency Information
+            </h3>
+
+
+            <div class="info-row">
+
+                <span>
+                    Contact Name
+                </span>
+
+                <strong>
+                    {{ profile.emergency_contact_name|default:"Not Added" }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Contact Phone
+                </span>
+
+                <strong>
+                    {{ profile.emergency_contact_phone|default:"Not Added" }}
+                </strong>
+
+            </div>
+
 
         </div>
 
 
 
+        <!-- =====================================
+             MEDICAL INFORMATION
+             OTHER ROLES
+        ====================================== -->
 
-        <div class="info-row">
+        <div class="profile-card">
 
-            <span>
-                Contact Phone
-            </span>
 
-            <strong>
-                {{ profile.emergency_contact_phone|default:"Not Added" }}
-            </strong>
+            <h3>
+                🏥 Medical Information
+            </h3>
+
+
+            <div class="info-row">
+
+                <span>
+                    Blood Group
+                </span>
+
+                <strong>
+                    {{ profile.blood_group|default:"Not Added" }}
+                </strong>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span>
+                    Medical Conditions
+                </span>
+
+                <strong>
+                    {{ profile.medical_conditions|default:"Not Added" }}
+                </strong>
+
+            </div>
+
 
         </div>
 
 
+        <!-- =====================================
+             MEDICINE REMINDERS
+        ====================================== -->
 
-    </div>
+        <div class="edit-button">
 
-
-
-
-
-
-
-
-    <!-- Medical Information -->
-
-
-    <div class="profile-card">
-
-
-        <h3>
-            🏥 Medical Information
-        </h3>
-
-
-
-
-        <div class="info-row">
-
-            <span>
-                Blood Group
-            </span>
-
-            <strong>
-                {{ profile.blood_group|default:"Not Added" }}
-            </strong>
+            <a href="{% url 'medicine_alerts' %}">
+                💊 Medicine Reminders
+            </a>
 
         </div>
 
 
+    {% endif %}
 
 
 
-        <div class="info-row">
-
-            <span>
-                Medical Conditions
-            </span>
-
-            <strong>
-                {{ profile.medical_conditions|default:"Not Added" }}
-            </strong>
-
-        </div>
-
-
-
-
-    </div>
-
-    <!-- Medicine Reminders -->
+    <!-- =====================================
+         EDIT PROFILE
+    ====================================== -->
 
     <div class="edit-button">
 
-        <a href="{% url 'medicine_alerts' %}">
-            💊 Medicine Reminders
-        </a>
-
-    </div>
-
-
-
-
-
-    <!-- Edit Button -->
-
-
-    <div class="edit-button">
-
-        <a href="/edit-profile/">
-
+        <a href="{% url 'edit_profile' %}">
             ✏️ Edit Profile
-
         </a>
 
     </div>
-
 
 
 </div>

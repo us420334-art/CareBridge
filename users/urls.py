@@ -94,12 +94,27 @@ path(
     name='delete_emergency_sos'
 ),
 
-    # Care Representative
-    path(
-        'care-rep-dashboard/',
-        views.care_rep_dashboard,
-        name='care_rep_dashboard'
-    ),
+    # =========================
+# Care Representative
+# =========================
+
+path(
+    'care-rep-dashboard/',
+    views.care_rep_dashboard,
+    name='care_rep_dashboard'
+),
+
+path(
+    'care-circle/',
+    views.care_circle,
+    name='care_circle'
+),
+
+path(
+    'care-timeline/',
+    views.care_timeline,
+    name='care_timeline'
+),
 
     # Caregiver
     path(

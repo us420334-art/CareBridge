@@ -1,0 +1,535 @@
+{% extends 'dashboard/care_rep_base.html' %}
+
+{% block title %}
+My Care Circle
+{% endblock %}
+
+{% block page_title %}
+💙 My Care Circle
+{% endblock %}
+
+{% block content %}
+
+<div class="care-circle-container">
+
+    <div class="header">
+
+        <h2>
+            💙 My Care Circle
+        </h2>
+
+        <p>
+            Manage the details of the person you represent.
+        </p>
+
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="success">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <div class="care-card">
+
+        <div class="person-header">
+
+            <div class="avatar">
+                👤
+            </div>
+
+            <div>
+
+                <h2>
+                    {{ represented_person.full_name }}
+                </h2>
+
+                <p>
+                    {{ represented_person.person_type }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <div class="grid">
+
+                <!-- Full Name -->
+
+                <div>
+
+                    <label>
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="full_name"
+                        value="{{ represented_person.full_name }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Age -->
+
+                <div>
+
+                    <label>
+                        Age
+                    </label>
+
+                    <input
+                        type="number"
+                        name="age"
+                        value="{{ represented_person.age }}"
+                        min="1"
+                        max="120"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Person Type -->
+
+                <div>
+
+                    <label>
+                        Person Type
+                    </label>
+
+                    <select
+                        name="person_type"
+                        required
+                    >
+
+                        <option
+                            value="Elderly Person"
+                            {% if represented_person.person_type == "Elderly Person" %}
+                            selected
+                            {% endif %}
+                        >
+                            Elderly Person
+                        </option>
+
+
+                        <option
+                            value="Person with Mobility Impairment"
+                            {% if represented_person.person_type == "Person with Mobility Impairment" %}
+                            selected
+                            {% endif %}
+                        >
+                            Person with Mobility Impairment
+                        </option>
+
+
+                        <option
+                            value="Person with Hearing Impairment"
+                            {% if represented_person.person_type == "Person with Hearing Impairment" %}
+                            selected
+                            {% endif %}
+                        >
+                            Person with Hearing Impairment
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Relationship -->
+
+                <div>
+
+                    <label>
+                        Relationship
+                    </label>
+
+                    <select
+                        name="relationship"
+                        required
+                    >
+
+                        <option
+                            value="Parent"
+                            {% if represented_person.relationship == "Parent" %}
+                            selected
+                            {% endif %}
+                        >
+                            Parent
+                        </option>
+
+
+                        <option
+                            value="Child"
+                            {% if represented_person.relationship == "Child" %}
+                            selected
+                            {% endif %}
+                        >
+                            Child
+                        </option>
+
+
+                        <option
+                            value="Spouse"
+                            {% if represented_person.relationship == "Spouse" %}
+                            selected
+                            {% endif %}
+                        >
+                            Spouse
+                        </option>
+
+
+                        <option
+                            value="Sibling"
+                            {% if represented_person.relationship == "Sibling" %}
+                            selected
+                            {% endif %}
+                        >
+                            Sibling
+                        </option>
+
+
+                        <option
+                            value="Relative"
+                            {% if represented_person.relationship == "Relative" %}
+                            selected
+                            {% endif %}
+                        >
+                            Relative
+                        </option>
+
+
+                        <option
+                            value="Guardian"
+                            {% if represented_person.relationship == "Guardian" %}
+                            selected
+                            {% endif %}
+                        >
+                            Guardian
+                        </option>
+
+
+                        <option
+                            value="Friend"
+                            {% if represented_person.relationship == "Friend" %}
+                            selected
+                            {% endif %}
+                        >
+                            Friend
+                        </option>
+
+
+                        <option
+                            value="Other"
+                            {% if represented_person.relationship == "Other" %}
+                            selected
+                            {% endif %}
+                        >
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Phone -->
+
+                <div>
+
+                    <label>
+                        Phone
+                    </label>
+
+                    <input
+                        type="text"
+                        name="phone"
+                        value="{{ represented_person.phone }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Blood Group -->
+
+                <div>
+
+                    <label>
+                        Blood Group
+                    </label>
+
+                    <select
+                        name="blood_group"
+                    >
+
+                        <option value="">
+                            Select
+                        </option>
+
+
+                        <option
+                            value="A+"
+                            {% if represented_person.blood_group == "A+" %}
+                            selected
+                            {% endif %}
+                        >
+                            A+
+                        </option>
+
+
+                        <option
+                            value="A-"
+                            {% if represented_person.blood_group == "A-" %}
+                            selected
+                            {% endif %}
+                        >
+                            A-
+                        </option>
+
+
+                        <option
+                            value="B+"
+                            {% if represented_person.blood_group == "B+" %}
+                            selected
+                            {% endif %}
+                        >
+                            B+
+                        </option>
+
+
+                        <option
+                            value="B-"
+                            {% if represented_person.blood_group == "B-" %}
+                            selected
+                            {% endif %}
+                        >
+                            B-
+                        </option>
+
+
+                        <option
+                            value="AB+"
+                            {% if represented_person.blood_group == "AB+" %}
+                            selected
+                            {% endif %}
+                        >
+                            AB+
+                        </option>
+
+
+                        <option
+                            value="AB-"
+                            {% if represented_person.blood_group == "AB-" %}
+                            selected
+                            {% endif %}
+                        >
+                            AB-
+                        </option>
+
+
+                        <option
+                            value="O+"
+                            {% if represented_person.blood_group == "O+" %}
+                            selected
+                            {% endif %}
+                        >
+                            O+
+                        </option>
+
+
+                        <option
+                            value="O-"
+                            {% if represented_person.blood_group == "O-" %}
+                            selected
+                            {% endif %}
+                        >
+                            O-
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- Address -->
+
+            <label>
+                Address
+            </label>
+
+            <textarea
+                name="address"
+                required
+            >{{ represented_person.address }}</textarea>
+
+
+            <!-- Medical Conditions -->
+
+            <label>
+                Medical Conditions
+            </label>
+
+            <textarea
+                name="medical_conditions"
+                placeholder="Optional"
+            >{{ represented_person.medical_conditions }}</textarea>
+
+
+            <button type="submit">
+                💾 Save Changes
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.care-circle-container {
+    width: 100%;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    color: #1b6ca8;
+}
+
+.header p {
+    color: #777;
+    margin-top: 5px;
+}
+
+.success {
+    background: #d4edda;
+    color: #155724;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #c3e6cb;
+    font-weight: bold;
+}
+
+.care-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.person-header {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #eaf5fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+.person-header h2 {
+    color: #1b6ca8;
+    margin-bottom: 5px;
+}
+
+.person-header p {
+    color: #777;
+}
+
+.care-card .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.care-card label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+.care-card input,
+.care-card select,
+.care-card textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 15px;
+    outline: none;
+}
+
+.care-card input:focus,
+.care-card select:focus,
+.care-card textarea:focus {
+    border-color: #1b6ca8;
+    box-shadow: 0 0 0 2px rgba(27,108,168,0.1);
+}
+
+.care-card textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.care-card button {
+    margin-top: 25px;
+    padding: 13px 22px;
+    background: #1b6ca8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.care-card button:hover {
+    background: #155a8a;
+}
+
+@media (max-width: 700px) {
+
+    .care-card .grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+{% endblock %}

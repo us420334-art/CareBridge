@@ -51,6 +51,73 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+class RepresentedPerson(models.Model):
+
+    PERSON_TYPE_CHOICES = [
+        ('Elderly Person', 'Elderly Person'),
+        ('Person with Mobility Impairment', 'Person with Mobility Impairment'),
+        ('Person with Hearing Impairment', 'Person with Hearing Impairment'),
+    ]
+
+    RELATIONSHIP_CHOICES = [
+        ('Parent', 'Parent'),
+        ('Child', 'Child'),
+        ('Spouse', 'Spouse'),
+        ('Sibling', 'Sibling'),
+        ('Relative', 'Relative'),
+        ('Guardian', 'Guardian'),
+        ('Friend', 'Friend'),
+        ('Other', 'Other'),
+    ]
+
+    care_representative = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='represented_person'
+    )
+
+    full_name = models.CharField(
+        max_length=100
+    )
+
+    age = models.PositiveIntegerField()
+
+    person_type = models.CharField(
+        max_length=50,
+        choices=PERSON_TYPE_CHOICES
+    )
+
+    relationship = models.CharField(
+        max_length=30,
+        choices=RELATIONSHIP_CHOICES
+    )
+
+    phone = models.CharField(
+        max_length=15
+    )
+
+    address = models.TextField()
+
+    blood_group = models.CharField(
+        max_length=10,
+        blank=True
+    )
+
+    medical_conditions = models.TextField(
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return f"{self.full_name} - represented by {self.care_representative.username}"
+
 
 class DirectCaregiverBooking(models.Model):
 
@@ -392,13 +459,13 @@ class Feedback(models.Model):
 class Notification(models.Model):
 
     NOTIFICATION_TYPES = [
-        ('Booking', 'Booking'),
-        ('Service', 'Service'),
-        ('Medicine', 'Medicine'),
-        ('SOS', 'SOS'),
-        ('Feedback', 'Feedback'),
-    ]
-
+    ('Booking', 'Booking'),
+    ('Service', 'Service'),
+    ('Medicine', 'Medicine'),
+    ('SOS', 'SOS'),
+    ('Feedback', 'Feedback'),
+    ('System', 'System'),
+]
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

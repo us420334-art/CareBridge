@@ -1,4 +1,4 @@
-{% extends 'dashboard/base_dashboard.html' %}
+{% extends base_template %}
 
 {% block title %}
 Service Requests
@@ -8,253 +8,778 @@ Service Requests
 Service Requests
 {% endblock %}
 
+
+{% block extra_css %}
+
+<style>
+    /* =========================================
+   SERVICE REQUEST PAGE
+========================================= */
+
+    .service-request-container {
+        width: 100%;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+
+    /* =========================================
+   SUCCESS MESSAGE
+========================================= */
+
+    .service-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        border: 1px solid #c3e6cb;
+    }
+
+
+    /* =========================================
+   FORM CARD
+========================================= */
+
+    .form-card {
+        background: white;
+
+        padding: 30px;
+
+        border-radius: 16px;
+
+        box-shadow:
+            0 6px 20px rgba(0, 0, 0, 0.08);
+
+        margin-bottom: 35px;
+
+        border: 1px solid #e5edf2;
+    }
+
+
+    .form-card h2 {
+        color: #1b6ca8;
+
+        margin-bottom: 25px;
+
+        font-size: 24px;
+    }
+
+
+    .form-card h3 {
+        color: #374151;
+
+        margin-bottom: 15px;
+    }
+
+
+    /* =========================================
+   SERVICE GRID
+========================================= */
+
+    .service-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 15px;
+    }
+
+
+    .service-item {
+        background: #f8fbfd;
+
+        border: 1px solid #dceaf2;
+
+        border-radius: 10px;
+
+        padding: 15px;
+
+        transition: 0.2s ease;
+    }
+
+
+    .service-item:hover {
+        background: #eef8fd;
+
+        border-color: #1b6ca8;
+
+        transform: translateY(-2px);
+    }
+
+
+    .service-item label {
+        cursor: pointer;
+
+        font-weight: 600;
+
+        color: #374151;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+    }
+
+
+    .service-item input {
+        width: 17px;
+
+        height: 17px;
+
+        cursor: pointer;
+    }
+
+
+    /* =========================================
+   LABELS
+========================================= */
+
+    .form-card>label {
+        display: block;
+
+        margin-bottom: 8px;
+
+        color: #374151;
+    }
+
+
+    /* =========================================
+   INPUTS
+========================================= */
+
+    .form-card textarea,
+    .form-card select {
+
+        width: 100%;
+
+        padding: 12px;
+
+        border: 1px solid #d1d5db;
+
+        border-radius: 8px;
+
+        font-size: 15px;
+
+        box-sizing: border-box;
+
+        background: white;
+
+        color: #374151;
+
+        outline: none;
+    }
+
+
+    .form-card textarea {
+        resize: vertical;
+
+        min-height: 120px;
+    }
+
+
+    .form-card textarea:focus,
+    .form-card select:focus {
+
+        border-color: #1b6ca8;
+
+        box-shadow:
+            0 0 0 3px rgba(27, 108, 168, 0.10);
+    }
+
+
+    /* =========================================
+   SUBMIT BUTTON
+========================================= */
+
+    .submit-btn {
+
+        background: #1b6ca8;
+
+        color: white;
+
+        border: none;
+
+        padding: 13px 22px;
+
+        border-radius: 8px;
+
+        font-size: 15px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.2s ease;
+    }
+
+
+    .submit-btn:hover {
+
+        background: #155a8a;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =========================================
+   REQUEST SECTION TITLE
+========================================= */
+
+    .requests-title {
+
+        color: #1b6ca8;
+
+        margin-bottom: 20px;
+
+        font-size: 24px;
+    }
+
+
+    /* =========================================
+   REQUEST CARD
+========================================= */
+
+    .request-card {
+
+        background: white;
+
+        padding: 22px;
+
+        border-radius: 14px;
+
+        margin-bottom: 18px;
+
+        box-shadow:
+            0 4px 15px rgba(0, 0, 0, 0.07);
+
+        border-left: 5px solid #1b6ca8;
+
+        border-top: 1px solid #e8eef2;
+
+        border-right: 1px solid #e8eef2;
+
+        border-bottom: 1px solid #e8eef2;
+    }
+
+
+    .request-card h3 {
+
+        color: #1b6ca8;
+
+        margin-bottom: 8px;
+
+        font-size: 18px;
+    }
+
+
+    .request-description {
+
+        color: #555;
+
+        line-height: 1.6;
+
+        margin: 15px 0;
+    }
+
+
+    /* =========================================
+   BADGES
+========================================= */
+
+    .badge {
+
+        display: inline-block;
+
+        padding: 5px 11px;
+
+        border-radius: 15px;
+
+        font-size: 12px;
+
+        font-weight: bold;
+
+        margin-right: 7px;
+
+        margin-bottom: 5px;
+    }
+
+
+    /* Priority */
+
+    .badge.normal {
+
+        background: #e8f5e9;
+
+        color: #2e7d32;
+    }
+
+
+    .badge.high {
+
+        background: #fff3cd;
+
+        color: #856404;
+    }
+
+
+    .badge.emergency {
+
+        background: #f8d7da;
+
+        color: #721c24;
+    }
+
+
+    /* Status */
+
+    .badge.pending {
+
+        background: #fff3cd;
+
+        color: #856404;
+    }
+
+
+    .badge.assigned {
+
+        background: #dbeafe;
+
+        color: #1d4ed8;
+    }
+
+
+    .badge.completed {
+
+        background: #d4edda;
+
+        color: #155724;
+    }
+
+
+    /* =========================================
+   REQUEST DATE
+========================================= */
+
+    .request-date {
+
+        color: #666;
+
+        font-size: 13px;
+    }
+
+
+    /* =========================================
+   EMPTY STATE
+========================================= */
+
+    .empty-request-card {
+
+        background: white;
+
+        padding: 40px 25px;
+
+        border-radius: 14px;
+
+        text-align: center;
+
+        box-shadow:
+            0 4px 15px rgba(0, 0, 0, 0.07);
+
+        border: 1px solid #e5edf2;
+    }
+
+
+    .empty-request-icon {
+
+        font-size: 45px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .empty-request-card h3 {
+
+        color: #1b6ca8;
+
+        margin-bottom: 8px;
+    }
+
+
+    .empty-request-card p {
+
+        color: #777;
+    }
+
+
+    /* =========================================
+   MOBILE
+========================================= */
+
+    @media (max-width: 700px) {
+
+        .service-grid {
+
+            grid-template-columns: 1fr;
+
+        }
+
+        .form-card {
+
+            padding: 22px;
+
+        }
+
+        .request-card {
+
+            padding: 18px;
+
+        }
+
+    }
+</style>
+
+{% endblock %}
+
+
 {% block content %}
 
-{% if messages %}
-
-{% for message in messages %}
-
-<div style="
-            background:#d4edda;
-            color:#155724;
-            padding:15px;
-            border-radius:10px;
-            margin-bottom:20px;
-            font-weight:bold;
-        ">
-    ✔ {{ message }}
-</div>
-
-{% endfor %}
-
-{% endif %}
+<div class="service-request-container">
 
 
+    <!-- =====================================
+         MESSAGES
+    ====================================== -->
 
-<div class="form-card">
+    {% if messages %}
 
-    <h2>📝 Create Service Request</h2>
+    {% for message in messages %}
 
-    <form method="POST">
+    <div class="service-message">
 
-        {% csrf_token %}
+        ✔ {{ message }}
 
-        <h3 style="margin-bottom:15px;">
-            Select Services Required
+    </div>
+
+    {% endfor %}
+
+    {% endif %}
+
+
+    <!-- =====================================
+         CREATE SERVICE REQUEST
+    ====================================== -->
+
+    <div class="form-card">
+
+        <h2>
+            📝 Create Service Request
+        </h2>
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <h3>
+                Select Services Required
+            </h3>
+
+
+            <div class="service-grid">
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Personal Care">
+
+                        Personal Care
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Medication Assistance">
+
+                        Medication Assistance
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Hospital Visit">
+
+                        Hospital Visit
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Meal Preparation">
+
+                        Meal Preparation
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Household Help">
+
+                        Household Help
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Grocery Shopping">
+
+                        Grocery Shopping
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Companionship">
+
+                        Companionship
+
+                    </label>
+
+                </div>
+
+
+                <div class="service-item">
+
+                    <label>
+
+                        <input type="checkbox" name="services" value="Emergency Support">
+
+                        Emergency Support
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+
+            <br>
+
+
+            <label>
+
+                <strong>
+                    Description
+                </strong>
+
+            </label>
+
+
+            <textarea name="description" rows="5" placeholder="Describe the help you need..." required></textarea>
+
+
+            <br><br>
+
+
+            <label>
+
+                <strong>
+                    Priority
+                </strong>
+
+            </label>
+
+
+            <select name="priority">
+
+                <option value="Normal">
+                    Normal
+                </option>
+
+                <option value="High">
+                    High
+                </option>
+
+                <option value="Emergency">
+                    Emergency
+                </option>
+
+            </select>
+
+
+            <br><br>
+
+
+            <button type="submit" class="submit-btn">
+                Submit Request
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================
+         MY SERVICE REQUESTS
+    ====================================== -->
+
+    <h2 class="requests-title">
+        📋 My Service Requests
+    </h2>
+
+
+    {% if requests %}
+
+
+    {% for request in requests %}
+
+
+    <div class="request-card">
+
+
+        <h3>
+            {{ request.services }}
         </h3>
 
-        <div class="service-grid">
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Personal Care">
-                    Personal Care
-                </label>
-            </div>
+        <p class="request-description">
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Medication Assistance">
-                    Medication Assistance
-                </label>
-            </div>
+            {{ request.description }}
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Hospital Visit">
-                    Hospital Visit
-                </label>
-            </div>
+        </p>
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Meal Preparation">
-                    Meal Preparation
-                </label>
-            </div>
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Household Help">
-                    Household Help
-                </label>
-            </div>
+        <p>
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Grocery Shopping">
-                    Grocery Shopping
-                </label>
-            </div>
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Companionship">
-                    Companionship
-                </label>
-            </div>
+            <!-- PRIORITY -->
 
-            <div class="service-item">
-                <label>
-                    <input type="checkbox" name="services" value="Emergency Support">
-                    Emergency Support
-                </label>
-            </div>
+            {% if request.priority == "Normal" %}
 
-        </div>
+            <span class="badge normal">
+                {{ request.priority }}
+            </span>
+
+            {% elif request.priority == "High" %}
+
+            <span class="badge high">
+                {{ request.priority }}
+            </span>
+
+            {% else %}
+
+            <span class="badge emergency">
+                {{ request.priority }}
+            </span>
+
+            {% endif %}
+
+
+            <!-- STATUS -->
+
+            {% if request.status == "Pending" %}
+
+            <span class="badge pending">
+                {{ request.status }}
+            </span>
+
+            {% elif request.status == "Assigned" %}
+
+            <span class="badge assigned">
+                {{ request.status }}
+            </span>
+
+            {% else %}
+
+            <span class="badge completed">
+                {{ request.status }}
+            </span>
+
+            {% endif %}
+
+
+        </p>
+
 
         <br>
 
-        <label>
-            <strong>Description</strong>
-        </label>
 
-        <textarea name="description" rows="5" placeholder="Describe the help you need..." required></textarea>
+        <small class="request-date">
 
-        <br><br>
+            Requested on:
 
-        <label>
-            <strong>Priority</strong>
-        </label>
+            {{ request.requested_at|date:"d M Y, h:i A" }}
 
-        <select name="priority">
+        </small>
 
-            <option value="Normal">
-                Normal
-            </option>
 
-            <option value="High">
-                High
-            </option>
+    </div>
 
-            <option value="Emergency">
-                Emergency
-            </option>
 
-        </select>
+    {% endfor %}
 
-        <br><br>
 
-        <button class="submit-btn">
+    {% else %}
 
-            Submit Request
 
-        </button>
+    <div class="empty-request-card">
 
-    </form>
+        <div class="empty-request-icon">
+            📋
+        </div>
+
+        <h3>
+            No Requests Yet
+        </h3>
+
+        <p>
+            You haven't submitted any service requests.
+        </p>
+
+    </div>
+
+
+    {% endif %}
+
 
 </div>
-
-
-
-<h2 style="margin-bottom:20px;">
-    📋 My Service Requests
-</h2>
-
-
-{% if requests %}
-
-{% for request in requests %}
-
-<div class="request-card">
-
-    <h3>
-
-        {{ request.services }}
-
-    </h3>
-
-    <p style="margin:15px 0;">
-
-        {{ request.description }}
-
-    </p>
-
-    <p>
-
-        {% if request.priority == "Normal" %}
-
-        <span class="badge normal">
-
-            {{ request.priority }}
-
-        </span>
-
-        {% elif request.priority == "High" %}
-
-        <span class="badge high">
-
-            {{ request.priority }}
-
-        </span>
-
-        {% else %}
-
-        <span class="badge emergency">
-
-            {{ request.priority }}
-
-        </span>
-
-        {% endif %}
-
-
-        {% if request.status == "Pending" %}
-
-        <span class="badge pending">
-
-            {{ request.status }}
-
-        </span>
-
-        {% elif request.status == "Assigned" %}
-
-        <span class="badge assigned">
-
-            {{ request.status }}
-
-        </span>
-
-        {% else %}
-
-        <span class="badge completed">
-
-            {{ request.status }}
-
-        </span>
-
-        {% endif %}
-
-    </p>
-
-    <br>
-
-    <small style="color:#666;">
-
-        Requested on :
-
-        {{ request.requested_at }}
-
-    </small>
-
-</div>
-
-{% endfor %}
-
-{% else %}
-
-<div class="request-card">
-
-    <h3>No Requests Yet</h3>
-
-    <p>
-
-        You haven't submitted any service requests.
-
-    </p>
-
-</div>
-
-{% endif %}
 
 {% endblock %}

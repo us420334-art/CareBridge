@@ -7,6 +7,7 @@ from django.http import JsonResponse
 
 from .models import (
     UserProfile,
+    RepresentedPerson,
     DirectCaregiverBooking,
     DirectVolunteerBooking,
     ServiceRequest,
@@ -25,20 +26,37 @@ def register(request):
 
     if request.method == "POST":
 
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
 
-        phone = request.POST['phone']
-        address = request.POST['address']
-        role = request.POST['role']
+        phone = request.POST.get("phone")
+        address = request.POST.get("address")
+        role = request.POST.get("role")
 
-        emergency_contact_name = request.POST['emergency_contact_name']
-        emergency_contact_phone = request.POST['emergency_contact_phone']
+        emergency_contact_name = request.POST.get(
+            "emergency_contact_name",
+            ""
+        )
 
-        blood_group = request.POST['blood_group']
-        medical_conditions = request.POST['medical_conditions']
+        emergency_contact_phone = request.POST.get(
+            "emergency_contact_phone",
+            ""
+        )
 
+        blood_group = request.POST.get(
+            "blood_group",
+            ""
+        )
+
+        medical_conditions = request.POST.get(
+            "medical_conditions",
+            ""
+        )
+
+        # -------------------------------------------------
+        # Basic validation
+        # -------------------------------------------------
 
         if User.objects.filter(username=username).exists():
 
@@ -50,6 +68,145 @@ def register(request):
                 }
             )
 
+        # -------------------------------------------------
+        # Care Representative fields
+        # -------------------------------------------------
+
+        represented_name = ""
+        represented_age = None
+        represented_type = ""
+        represented_relationship = ""
+        represented_phone = ""
+        represented_address = ""
+        represented_blood_group = ""
+        represented_medical_conditions = ""
+
+        if role == "Care Representative":
+
+            represented_name = request.POST.get(
+                "represented_name",
+                ""
+            ).strip()
+
+            represented_age = request.POST.get(
+                "represented_age"
+            )
+
+            represented_type = request.POST.get(
+                "represented_type",
+                ""
+            )
+
+            represented_relationship = request.POST.get(
+                "represented_relationship",
+                ""
+            )
+
+            represented_phone = request.POST.get(
+                "represented_phone",
+                ""
+            ).strip()
+
+            represented_address = request.POST.get(
+                "represented_address",
+                ""
+            ).strip()
+
+            represented_blood_group = request.POST.get(
+                "represented_blood_group",
+                ""
+            )
+
+            represented_medical_conditions = request.POST.get(
+                "represented_medical_conditions",
+                ""
+            ).strip()
+
+            # Validate represented person details
+
+            if not represented_name:
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please enter the name of the person being represented.'
+                    }
+                )
+
+            if not represented_age:
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please enter the age of the person being represented.'
+                    }
+                )
+
+            try:
+                represented_age = int(represented_age)
+            except ValueError:
+
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please enter a valid age.'
+                    }
+                )
+
+            if represented_age <= 0 or represented_age > 120:
+
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please enter a valid age between 1 and 120.'
+                    }
+                )
+
+            if not represented_type:
+
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please select the type of person being represented.'
+                    }
+                )
+
+            if not represented_relationship:
+
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please select the relationship.'
+                    }
+                )
+
+            if not represented_phone:
+
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please enter the phone number of the person being represented.'
+                    }
+                )
+
+            if not represented_address:
+
+                return render(
+                    request,
+                    'register.html',
+                    {
+                        'error': 'Please enter the address of the person being represented.'
+                    }
+                )
+
+        # -------------------------------------------------
+        # Create CareBridge login user
+        # -------------------------------------------------
 
         user = User.objects.create_user(
             username=username,
@@ -57,6 +214,9 @@ def register(request):
             password=password
         )
 
+        # -------------------------------------------------
+        # Create user profile
+        # -------------------------------------------------
 
         UserProfile.objects.create(
             user=user,
@@ -69,11 +229,30 @@ def register(request):
             medical_conditions=medical_conditions
         )
 
+        # -------------------------------------------------
+        # If Care Representative, create represented person
+        # -------------------------------------------------
+
+        if role == "Care Representative":
+
+            RepresentedPerson.objects.create(
+                care_representative=user,
+                full_name=represented_name,
+                age=represented_age,
+                person_type=represented_type,
+                relationship=represented_relationship,
+                phone=represented_phone,
+                address=represented_address,
+                blood_group=represented_blood_group,
+                medical_conditions=represented_medical_conditions
+            )
 
         return redirect('/login/')
 
-
-    return render(request, 'register.html')
+    return render(
+        request,
+        'register.html'
+    )
 
 
 def user_login(request):
@@ -158,62 +337,137 @@ def profile(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    profile = UserProfile.objects.get(
+    profile = get_object_or_404(
+        UserProfile,
         user=request.user
     )
+
+    # ---------------------------------------------
+    # Select dashboard layout
+    # ---------------------------------------------
+
+    if profile.role == "Care Representative":
+
+        base_template = "dashboard/care_rep_base.html"
+
+    else:
+
+        base_template = "dashboard/base_dashboard.html"
 
     return render(
         request,
         'dashboard/profile.html',
         {
-            'profile': profile
+            'profile': profile,
+            'base_template': base_template,
         }
     )
 
 def edit_profile(request):
 
     if not request.user.is_authenticated:
-
         return redirect('/login/')
 
-
-    profile = UserProfile.objects.get(
+    # Get the logged-in user's profile
+    profile = get_object_or_404(
+        UserProfile,
         user=request.user
     )
 
+    # =================================================
+    # HANDLE FORM SUBMISSION
+    # =================================================
 
     if request.method == "POST":
 
-        request.user.email = request.POST['email']
+        # ---------------------------------------------
+        # Update Care Representative's OWN details
+        # ---------------------------------------------
+
+        request.user.email = request.POST.get(
+            "email",
+            ""
+        )
+
         request.user.save()
 
+        profile.phone = request.POST.get(
+            "phone",
+            ""
+        )
 
-        profile.phone = request.POST['phone']
-        profile.address = request.POST['address']
-        profile.role = request.POST['role']
+        profile.address = request.POST.get(
+            "address",
+            ""
+        )
 
+        # ---------------------------------------------
+        # Only care-recipient roles have their own
+        # emergency and medical information
+        # ---------------------------------------------
 
-        profile.emergency_contact_name = request.POST['emergency_contact_name']
-        profile.emergency_contact_phone = request.POST['emergency_contact_phone']
+        recipient_roles = [
+            "Elderly Person",
+            "Person with Mobility Impairment",
+            "Person with Hearing Impairment",
+        ]
 
+        if profile.role in recipient_roles:
 
-        profile.blood_group = request.POST['blood_group']
-        profile.medical_conditions = request.POST['medical_conditions']
+            profile.emergency_contact_name = request.POST.get(
+                "emergency_contact_name",
+                ""
+            )
 
+            profile.emergency_contact_phone = request.POST.get(
+                "emergency_contact_phone",
+                ""
+            )
+
+            profile.blood_group = request.POST.get(
+                "blood_group",
+                ""
+            )
+
+            profile.medical_conditions = request.POST.get(
+                "medical_conditions",
+                ""
+            )
 
         profile.save()
 
+        messages.success(
+            request,
+            "Your profile has been updated successfully."
+        )
 
-        return redirect('/profile/')
+        return redirect("edit_profile")
 
+    # =================================================
+    # SELECT THE CORRECT DASHBOARD LAYOUT
+    # =================================================
+
+    if profile.role == "Care Representative":
+
+        base_template = "dashboard/care_rep_base.html"
+
+    else:
+
+        base_template = "dashboard/base_dashboard.html"
+
+    # =================================================
+    # SHOW EDIT PROFILE PAGE
+    # =================================================
 
     return render(
         request,
-        'dashboard/edit_profile.html',
+        "dashboard/edit_profile.html",
         {
-            'profile': profile
+            "profile": profile,
+            "base_template": base_template,
         }
     )
+
 
 def user_logout(request):
 
@@ -227,12 +481,17 @@ def care_rep_dashboard(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    profile = UserProfile.objects.get(
+    profile = get_object_or_404(
+        UserProfile,
         user=request.user
     )
 
     if profile.role != "Care Representative":
         return redirect('/dashboard/')
+
+    represented_person = RepresentedPerson.objects.filter(
+        care_representative=request.user
+    ).first()
 
     caregivers = UserProfile.objects.filter(
         role="Caregiver"
@@ -242,16 +501,39 @@ def care_rep_dashboard(request):
         role="Volunteer"
     )
 
+    # Care statistics
+    service_requests_count = ServiceRequest.objects.filter(
+        user=request.user
+    ).count()
+
+    caregiver_bookings_count = DirectCaregiverBooking.objects.filter(
+        user=request.user
+    ).count()
+
+    volunteer_bookings_count = DirectVolunteerBooking.objects.filter(
+        user=request.user
+    ).count()
+
+    unread_notifications_count = Notification.objects.filter(
+        user=request.user,
+        is_read=False
+    ).count()
+
     return render(
         request,
         "dashboard/care_rep_dashboard.html",
         {
             "profile": profile,
+            "represented_person": represented_person,
             "caregivers": caregivers,
             "volunteers": volunteers,
+
+            "service_requests_count": service_requests_count,
+            "caregiver_bookings_count": caregiver_bookings_count,
+            "volunteer_bookings_count": volunteer_bookings_count,
+            "unread_notifications_count": unread_notifications_count,
         }
     )
-
 def caregiver_dashboard(request):
 
     if not request.user.is_authenticated:
@@ -299,12 +581,21 @@ def book_caregiver(request):
     if request.method == "POST":
 
         caregiver_id = request.POST.get("caregiver_id")
+
         service = request.POST.get("service")
+
         address = request.POST.get("address")
+
         booking_date = request.POST.get("booking_date")
+
         booking_time = request.POST.get("booking_time")
+
         priority = request.POST.get("priority")
-        description = request.POST.get("description", "")
+
+        description = request.POST.get(
+            "description",
+            ""
+        )
 
         if active_booking:
 
@@ -339,6 +630,18 @@ def book_caregiver(request):
 
         return redirect("book_caregiver")
 
+    # ---------------------------------------------
+    # Select dashboard layout
+    # ---------------------------------------------
+
+    if profile.role == "Care Representative":
+
+        base_template = "dashboard/care_rep_base.html"
+
+    else:
+
+        base_template = "dashboard/base_dashboard.html"
+
     return render(
         request,
         "dashboard/book_caregiver.html",
@@ -346,6 +649,7 @@ def book_caregiver(request):
             "caregivers": caregivers,
             "profile": profile,
             "active_booking": active_booking,
+            "base_template": base_template,
         }
     )
 
@@ -450,7 +754,25 @@ def my_bookings(request):
 
     # Latest booking status for sidebar
     latest_caregiver_booking = caregiver_bookings.first()
+
     latest_volunteer_booking = volunteer_bookings.first()
+
+    # ---------------------------------------------
+    # Select dashboard layout
+    # ---------------------------------------------
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role == "Care Representative":
+
+        base_template = "dashboard/care_rep_base.html"
+
+    else:
+
+        base_template = "dashboard/base_dashboard.html"
 
     return render(
         request,
@@ -460,8 +782,10 @@ def my_bookings(request):
             'volunteer_bookings': volunteer_bookings,
             'latest_caregiver_booking': latest_caregiver_booking,
             'latest_volunteer_booking': latest_volunteer_booking,
+            'base_template': base_template,
         }
     )
+
 
 def accept_caregiver_booking(request, booking_id):
 
@@ -534,15 +858,10 @@ def service_requests(request):
         priority = request.POST.get("priority")
 
         ServiceRequest.objects.create(
-
             user=request.user,
-
             services=", ".join(services),
-
             description=description,
-
             priority=priority
-
         )
 
         messages.success(
@@ -556,11 +875,34 @@ def service_requests(request):
         user=request.user
     ).order_by("-requested_at")
 
+    # ---------------------------------------------
+    # Select dashboard layout based on user role
+    # ---------------------------------------------
+
+    try:
+
+        profile = UserProfile.objects.get(
+            user=request.user
+        )
+
+        if profile.role == "Care Representative":
+
+            base_template = "dashboard/care_rep_base.html"
+
+        else:
+
+            base_template = "dashboard/base_dashboard.html"
+
+    except UserProfile.DoesNotExist:
+
+        base_template = "dashboard/base_dashboard.html"
+
     return render(
         request,
         "dashboard/service_requests.html",
         {
-            "requests": requests
+            "requests": requests,
+            "base_template": base_template,
         }
     )
 
@@ -725,12 +1067,21 @@ def book_volunteer(request):
     if request.method == "POST":
 
         volunteer_id = request.POST.get("volunteer_id")
+
         service = request.POST.get("service")
+
         address = request.POST.get("address")
+
         booking_date = request.POST.get("booking_date")
+
         booking_time = request.POST.get("booking_time")
+
         priority = request.POST.get("priority")
-        description = request.POST.get("description", "")
+
+        description = request.POST.get(
+            "description",
+            ""
+        )
 
         if active_booking:
 
@@ -765,6 +1116,18 @@ def book_volunteer(request):
 
         return redirect("book_volunteer")
 
+    # ---------------------------------------------
+    # Select dashboard layout
+    # ---------------------------------------------
+
+    if profile.role == "Care Representative":
+
+        base_template = "dashboard/care_rep_base.html"
+
+    else:
+
+        base_template = "dashboard/base_dashboard.html"
+
     return render(
         request,
         "dashboard/book_volunteer.html",
@@ -772,9 +1135,9 @@ def book_volunteer(request):
             "volunteers": volunteers,
             "profile": profile,
             "active_booking": active_booking,
+            "base_template": base_template,
         }
     )
-
 
 def confirm_volunteer_booking(request, volunteer_id):
 
@@ -1579,14 +1942,31 @@ def notifications(request):
         user=request.user
     ).order_by("-created_at")
 
+    # ---------------------------------------------
+    # Select dashboard layout
+    # ---------------------------------------------
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role == "Care Representative":
+
+        base_template = "dashboard/care_rep_base.html"
+
+    else:
+
+        base_template = "dashboard/base_dashboard.html"
+
     return render(
         request,
         "dashboard/notifications.html",
         {
             "notifications": notification_list,
+            "base_template": base_template,
         }
     )
-
 
 def mark_notification_read(request, notification_id):
 
@@ -2224,5 +2604,199 @@ def admin_notifications(request):
         'dashboard/admin_notifications.html',
         {
             'notifications': notifications,
+        }
+    )
+
+def care_circle(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role != "Care Representative":
+        return redirect('/dashboard/')
+
+    represented_person = get_object_or_404(
+        RepresentedPerson,
+        care_representative=request.user
+    )
+
+    if request.method == "POST":
+
+        represented_person.full_name = request.POST.get(
+            "full_name"
+        )
+
+        represented_person.age = request.POST.get(
+            "age"
+        )
+
+        represented_person.person_type = request.POST.get(
+            "person_type"
+        )
+
+        represented_person.relationship = request.POST.get(
+            "relationship"
+        )
+
+        represented_person.phone = request.POST.get(
+            "phone"
+        )
+
+        represented_person.address = request.POST.get(
+            "address"
+        )
+
+        represented_person.blood_group = request.POST.get(
+            "blood_group"
+        )
+
+        represented_person.medical_conditions = request.POST.get(
+            "medical_conditions"
+        )
+
+        represented_person.save()
+
+        messages.success(
+            request,
+            "Represented person's details updated successfully."
+        )
+
+        return redirect("care_circle")
+
+    return render(
+        request,
+        "dashboard/care_circle.html",
+        {
+            "profile": profile,
+            "represented_person": represented_person,
+        }
+    )
+
+def care_timeline(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role != "Care Representative":
+        return redirect('/dashboard/')
+
+    represented_person = RepresentedPerson.objects.filter(
+        care_representative=request.user
+    ).first()
+
+    timeline = []
+
+    # -------------------------------------------------
+    # Service Requests
+    # -------------------------------------------------
+
+    service_requests = ServiceRequest.objects.filter(
+        user=request.user
+    ).order_by('-requested_at')[:10]
+
+    for item in service_requests:
+
+        timeline.append({
+            "type": "Service Request",
+            "icon": "📋",
+            "title": "Service Request Submitted",
+            "description": item.services,
+            "status": item.status,
+            "date": item.requested_at,
+        })
+
+    # -------------------------------------------------
+    # Caregiver Bookings
+    # -------------------------------------------------
+
+    caregiver_bookings = DirectCaregiverBooking.objects.filter(
+        user=request.user
+    ).select_related(
+        "caregiver"
+    ).order_by('-booked_at')[:10]
+
+    for item in caregiver_bookings:
+
+        timeline.append({
+            "type": "Caregiver",
+            "icon": "👥",
+            "title": "Caregiver Booking",
+            "description": (
+                f"{item.service} with "
+                f"{item.caregiver.get_full_name() or item.caregiver.username}"
+            ),
+            "status": item.status,
+            "date": item.booked_at,
+        })
+
+    # -------------------------------------------------
+    # Volunteer Bookings
+    # -------------------------------------------------
+
+    volunteer_bookings = DirectVolunteerBooking.objects.filter(
+        user=request.user
+    ).select_related(
+        "volunteer"
+    ).order_by('-booked_at')[:10]
+
+    for item in volunteer_bookings:
+
+        timeline.append({
+            "type": "Volunteer",
+            "icon": "🤝",
+            "title": "Volunteer Booking",
+            "description": (
+                f"{item.service} with "
+                f"{item.volunteer.get_full_name() or item.volunteer.username}"
+            ),
+            "status": item.status,
+            "date": item.booked_at,
+        })
+
+    # -------------------------------------------------
+    # Notifications
+    # -------------------------------------------------
+
+    notifications_list = Notification.objects.filter(
+        user=request.user
+    ).order_by('-created_at')[:10]
+
+    for item in notifications_list:
+
+        timeline.append({
+            "type": "Notification",
+            "icon": "🔔",
+            "title": item.title,
+            "description": item.message,
+            "status": "Read" if item.is_read else "Unread",
+            "date": item.created_at,
+        })
+
+    # -------------------------------------------------
+    # Sort everything together
+    # -------------------------------------------------
+
+    timeline.sort(
+        key=lambda x: x["date"],
+        reverse=True
+    )
+
+    return render(
+        request,
+        "dashboard/care_timeline.html",
+        {
+            "profile": profile,
+            "represented_person": represented_person,
+            "timeline": timeline[:30],
         }
     )
