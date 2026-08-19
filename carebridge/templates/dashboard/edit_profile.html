@@ -54,6 +54,7 @@ Edit Profile
             0 4px 15px rgba(0, 0, 0, 0.06);
 
         display: block !important;
+
         float: none !important;
     }
 
@@ -102,6 +103,7 @@ Edit Profile
             0 4px 15px rgba(0, 0, 0, 0.07);
 
         display: block !important;
+
         float: none !important;
     }
 
@@ -239,7 +241,10 @@ Edit Profile
         border-color: #1b6ca8;
 
         box-shadow:
-            0 0 0 3px rgba(27, 108, 168, 0.10);
+            0 0 0 3px rgba(27,
+                108,
+                168,
+                0.10);
     }
 
 
@@ -344,35 +349,30 @@ Edit Profile
         .cb-edit-page {
 
             padding: 10px !important;
-
         }
 
 
         .cb-edit-card {
 
             padding: 22px;
-
         }
 
 
         .cb-edit-grid {
 
             grid-template-columns: 1fr;
-
         }
 
 
         .cb-edit-group.full {
 
             grid-column: auto;
-
         }
 
 
         .cb-edit-buttons {
 
             flex-direction: column;
-
         }
 
 
@@ -382,7 +382,6 @@ Edit Profile
             width: 100%;
 
             text-align: center;
-
         }
 
     }
@@ -435,8 +434,10 @@ Edit Profile
             </h3>
 
             <p class="cb-edit-description">
+
                 Update the information belonging to your
                 own CareBridge account.
+
             </p>
 
 
@@ -582,7 +583,7 @@ Edit Profile
                     </label>
 
                     <input type="text" name="emergency_contact_name" class="cb-edit-control"
-                        value="{{ profile.emergency_contact_name }}">
+                        value="{{ profile.emergency_contact_name }}" placeholder="Enter contact name">
 
                 </div>
 
@@ -668,7 +669,7 @@ Edit Profile
                     </label>
 
                     <input type="text" name="emergency_contact_name" class="cb-edit-control"
-                        value="{{ profile.emergency_contact_name }}">
+                        value="{{ profile.emergency_contact_name }}" placeholder="Enter contact name">
 
                 </div>
 
@@ -754,7 +755,7 @@ Edit Profile
                     </label>
 
                     <input type="text" name="emergency_contact_name" class="cb-edit-control"
-                        value="{{ profile.emergency_contact_name }}">
+                        value="{{ profile.emergency_contact_name }}" placeholder="Enter contact name">
 
                 </div>
 

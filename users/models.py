@@ -49,7 +49,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-
+    
 class RepresentedPerson(models.Model):
 
     PERSON_TYPE_CHOICES = [
@@ -385,6 +385,10 @@ class EmergencySOS(models.Model):
     )
 
     emergency_contact_email = models.EmailField(
+        blank=True
+    )
+
+    emergency_message = models.TextField(
         blank=True
     )
 

@@ -8,6 +8,7 @@ Emergency SOS
 Emergency SOS
 {% endblock %}
 
+
 {% block content %}
 
 <div style="
@@ -15,7 +16,10 @@ Emergency SOS
     margin:30px auto;
 ">
 
-    <!-- SOS MAIN CARD -->
+
+    <!-- =====================================================
+         SOS MAIN CARD
+    ====================================================== -->
 
     <div style="
         background:white;
@@ -25,6 +29,9 @@ Emergency SOS
         text-align:center;
     ">
 
+
+        <!-- SOS ICON -->
+
         <div style="
             font-size:60px;
             margin-bottom:10px;
@@ -32,12 +39,16 @@ Emergency SOS
             🚨
         </div>
 
+
+        <!-- TITLE -->
+
         <h1 style="
             color:#dc2626;
             margin-bottom:10px;
         ">
             Emergency SOS
         </h1>
+
 
         <p style="
             color:#666;
@@ -47,7 +58,9 @@ Emergency SOS
         </p>
 
 
-        <!-- MESSAGES -->
+        <!-- =================================================
+             MESSAGES
+        ================================================== -->
 
         {% if messages %}
 
@@ -85,7 +98,9 @@ Emergency SOS
         {% endif %}
 
 
-        <!-- EMERGENCY CONTACT -->
+        <!-- =================================================
+             EMERGENCY CONTACT
+        ================================================== -->
 
         <div style="
             background:#fef2f2;
@@ -96,6 +111,7 @@ Emergency SOS
             border:1px solid #fecaca;
         ">
 
+
             <h3 style="
                 text-align:center;
                 color:#991b1b;
@@ -104,45 +120,77 @@ Emergency SOS
                 Emergency Contact
             </h3>
 
+
+            <!-- CONTACT NAME -->
+
             <p>
+
                 <strong>Name:</strong>
 
                 {% if profile.emergency_contact_name %}
+
                 {{ profile.emergency_contact_name }}
+
                 {% else %}
+
                 <span style="color:#dc2626;">
                     Not Added
                 </span>
+
                 {% endif %}
 
             </p>
 
+
+            <!-- CONTACT EMAIL -->
 
             <p>
-                <strong>Phone:</strong>
 
-                {% if profile.emergency_contact_phone %}
-                {{ profile.emergency_contact_phone }}
+                <strong>Email:</strong>
+
+                {% if profile.emergency_contact_email %}
+
+                {{ profile.emergency_contact_email }}
+
                 {% else %}
+
                 <span style="color:#dc2626;">
                     Not Added
                 </span>
+
                 {% endif %}
 
             </p>
+
 
         </div>
 
 
-        <!-- SEND SOS BUTTON -->
+        <!-- =================================================
+             SEND SOS
+        ================================================== -->
 
-        {% if profile.emergency_contact_name and profile.emergency_contact_phone %}
+        {% if profile.emergency_contact_name and profile.emergency_contact_email %}
 
-        <form method="POST">
+
+        <form method="POST" id="sosForm">
 
             {% csrf_token %}
 
-            <button type="submit" onclick="return confirmSOS();" style="
+
+            <!--
+                    This hidden field will contain the optional
+                    message entered in the popup.
+                -->
+
+            <input type="hidden" name="emergency_message" id="emergencyMessageInput">
+
+
+            <!-- =================================================
+                     MAIN SOS BUTTON
+                ================================================== -->
+
+            <button type="button" onclick="startEmergencySOS()" style="
                         background:#dc2626;
                         color:white;
                         border:none;
@@ -155,9 +203,16 @@ Emergency SOS
                 🚨 SEND EMERGENCY SOS
             </button>
 
+
         </form>
 
+
         {% else %}
+
+
+        <!-- =================================================
+                 CONTACT NOT AVAILABLE
+            ================================================== -->
 
         <div style="
                 background:#fff7ed;
@@ -167,12 +222,19 @@ Emergency SOS
                 border-radius:10px;
                 font-weight:600;
             ">
-            ⚠️ Please add an emergency contact in your profile
-            before using Emergency SOS.
+
+            ⚠️ Please add an emergency contact name and email
+            in your profile before using Emergency SOS.
+
         </div>
+
 
         {% endif %}
 
+
+        <!-- =================================================
+             INFORMATION
+        ================================================== -->
 
         <p style="
             margin-top:20px;
@@ -183,10 +245,14 @@ Emergency SOS
             date and time.
         </p>
 
+
     </div>
 
 
-    <!-- SOS HISTORY -->
+
+    <!-- =====================================================
+         SOS HISTORY
+    ====================================================== -->
 
     <div style="
         background:white;
@@ -195,6 +261,7 @@ Emergency SOS
         box-shadow:0 8px 25px rgba(0,0,0,0.08);
         margin-top:25px;
     ">
+
 
         <h2 style="
             color:#1f2937;
@@ -207,7 +274,9 @@ Emergency SOS
 
         {% if sos_history %}
 
+
         {% for sos in sos_history %}
+
 
         <div style="
                     display:flex;
@@ -221,7 +290,11 @@ Emergency SOS
                     border-radius:12px;
                 ">
 
+
+            <!-- HISTORY INFORMATION -->
+
             <div>
+
 
                 <div style="
                             font-weight:700;
@@ -231,6 +304,7 @@ Emergency SOS
                     🚨 Emergency SOS
                 </div>
 
+
                 <div style="
                             color:#6b7280;
                             margin-top:5px;
@@ -238,6 +312,7 @@ Emergency SOS
                         ">
                     {{ sos.triggered_at|date:"d M Y, h:i A" }}
                 </div>
+
 
                 <div style="
                             color:#6b7280;
@@ -248,94 +323,474 @@ Emergency SOS
                     {{ sos.emergency_contact_name }}
                 </div>
 
+
             </div>
 
 
-            <div style="
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-shrink:0;
-">
 
-                <!-- SOS Status -->
+            <!-- STATUS + DELETE -->
+
+            <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                        flex-shrink:0;
+                    ">
+
+
+                <!-- STATUS -->
+
                 <div style="
-        background:#fee2e2;
-        color:#b91c1c;
-        padding:7px 12px;
-        border-radius:20px;
-        font-size:12px;
-        font-weight:700;
-        white-space:nowrap;
-    ">
+                            background:#fee2e2;
+                            color:#b91c1c;
+                            padding:7px 12px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:700;
+                            white-space:nowrap;
+                        ">
                     {{ sos.status }}
                 </div>
 
-                <!-- Delete Button -->
-                <form method="POST" action="{% url 'delete_emergency_sos' sos.id %}" style="margin:0;"
-                    onsubmit="return confirm('Are you sure you want to delete this SOS history record?');">
+
+                <!-- DELETE BUTTON -->
+
+                <form method="POST" action="{% url 'delete_emergency_sos' sos.id %}" style="margin:0;" onsubmit="
+                                return confirm(
+                                    'Are you sure you want to delete this SOS history record?'
+                                );
+                            ">
 
                     {% csrf_token %}
 
+
                     <button type="submit" style="
-            background:#fee2e2;
-            color:#b91c1c;
-            border:1px solid #fecaca;
-            padding:7px 12px;
-            border-radius:8px;
-            font-size:12px;
-            font-weight:700;
-            cursor:pointer;
-            white-space:nowrap;
-        ">
+                                    background:#fee2e2;
+                                    color:#b91c1c;
+                                    border:1px solid #fecaca;
+                                    padding:7px 12px;
+                                    border-radius:8px;
+                                    font-size:12px;
+                                    font-weight:700;
+                                    cursor:pointer;
+                                    white-space:nowrap;
+                                ">
                         🗑️ Delete
                     </button>
 
+
                 </form>
+
 
             </div>
 
+
         </div>
+
 
         {% endfor %}
 
+
         {% else %}
+
+
+        <!-- NO HISTORY -->
 
         <div style="
                 text-align:center;
                 padding:30px;
                 color:#6b7280;
             ">
+
+
             <div style="font-size:40px;">
                 📋
             </div>
+
 
             <h3>
                 No SOS alerts yet
             </h3>
 
+
             <p>
                 Your Emergency SOS history will appear here.
             </p>
+
+
         </div>
+
 
         {% endif %}
 
+
     </div>
+
 
 </div>
 
 
+
+<!-- =========================================================
+     EMERGENCY SOS JAVASCRIPT
+========================================================== -->
+
 <script>
 
-    function confirmSOS() {
 
-        return confirm(
-            "Are you sure you want to activate Emergency SOS?"
+    function startEmergencySOS() {
+
+
+        /*
+         * =====================================================
+         * STEP 1
+         * =====================================================
+         *
+         * Ask the user to type Y to continue.
+         *
+         * If the user presses Cancel,
+         * the SOS is cancelled.
+         *
+         */
+
+
+        const confirmation = prompt(
+
+            "🚨 Emergency SOS\n\n" +
+
+            "Type Y to continue sending the Emergency SOS.\n\n" +
+
+            "Click Cancel to cancel."
+
         );
+
+
+        /*
+         * User clicked Cancel
+         */
+
+        if (confirmation === null) {
+
+            return;
+
+        }
+
+
+        /*
+         * Only Y or y is accepted.
+         *
+         * Anything else cancels the SOS.
+         */
+
+        if (
+            confirmation.trim().toUpperCase() !== "Y"
+        ) {
+
+            alert(
+                "Emergency SOS cancelled."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * =====================================================
+         * STEP 2
+         * =====================================================
+         *
+         * User entered Y.
+         *
+         * Now show the optional message popup.
+         *
+         */
+
+
+        showEmergencyMessagePopup();
 
     }
 
+
+
+    function showEmergencyMessagePopup() {
+
+
+        /*
+         * =====================================================
+         * CREATE POPUP OVERLAY
+         * =====================================================
+         */
+
+        const overlay = document.createElement("div");
+
+
+        overlay.id =
+            "emergencyMessagePopup";
+
+
+        overlay.style.cssText = `
+
+        position:fixed;
+
+        top:0;
+        left:0;
+
+        width:100%;
+        height:100%;
+
+        background:rgba(0,0,0,0.55);
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        z-index:9999;
+
+        padding:20px;
+
+        box-sizing:border-box;
+
+    `;
+
+
+
+        /*
+         * =====================================================
+         * CREATE POPUP BOX
+         * =====================================================
+         */
+
+        const popup = document.createElement("div");
+
+
+        popup.style.cssText = `
+
+        background:white;
+
+        width:100%;
+
+        max-width:500px;
+
+        padding:30px;
+
+        border-radius:16px;
+
+        box-shadow:
+            0 10px 35px rgba(0,0,0,0.25);
+
+        text-align:left;
+
+        box-sizing:border-box;
+
+    `;
+
+
+
+        /*
+         * =====================================================
+         * POPUP CONTENT
+         * =====================================================
+         */
+
+        popup.innerHTML = `
+
+        <div style="
+            text-align:center;
+            font-size:45px;
+            margin-bottom:10px;
+        ">
+            🚨
+        </div>
+
+
+        <h2 style="
+            text-align:center;
+            color:#dc2626;
+            margin:0 0 10px 0;
+        ">
+            Emergency SOS
+        </h2>
+
+
+        <p style="
+            text-align:center;
+            color:#555;
+            font-size:14px;
+            line-height:1.5;
+            margin-bottom:20px;
+        ">
+            You may add a message for your emergency contact.
+            This is optional.
+        </p>
+
+
+        <label style="
+            display:block;
+            font-weight:700;
+            color:#374151;
+            margin-bottom:8px;
+        ">
+            Message
+        </label>
+
+
+        <textarea
+            id="popupEmergencyMessage"
+            rows="5"
+            placeholder="Optional: Tell your emergency contact what happened..."
+            style="
+                width:100%;
+                box-sizing:border-box;
+                padding:12px;
+                border:1px solid #d1d5db;
+                border-radius:8px;
+                resize:vertical;
+                font-size:14px;
+                outline:none;
+            "
+        ></textarea>
+
+
+        <div style="
+            display:flex;
+            gap:10px;
+            margin-top:20px;
+        ">
+
+
+            <!-- CANCEL -->
+
+            <button
+                type="button"
+                id="cancelEmergencyButton"
+                style="
+                    flex:1;
+                    padding:13px;
+                    border:none;
+                    border-radius:8px;
+                    background:#eef2f5;
+                    color:#555;
+                    font-size:14px;
+                    font-weight:bold;
+                    cursor:pointer;
+                "
+            >
+                Cancel
+            </button>
+
+
+
+            <!-- SEND -->
+
+            <button
+                type="button"
+                id="sendEmergencyButton"
+                style="
+                    flex:1;
+                    padding:13px;
+                    border:none;
+                    border-radius:8px;
+                    background:#dc2626;
+                    color:white;
+                    font-size:14px;
+                    font-weight:bold;
+                    cursor:pointer;
+                "
+            >
+                🚨 Send Emergency SOS
+            </button>
+
+
+        </div>
+
+    `;
+
+
+
+        /*
+         * =====================================================
+         * ADD POPUP TO PAGE
+         * =====================================================
+         */
+
+        overlay.appendChild(popup);
+
+        document.body.appendChild(overlay);
+
+
+
+        /*
+         * =====================================================
+         * CANCEL BUTTON
+         * =====================================================
+         *
+         * Nothing is submitted.
+         *
+         */
+
+        document.getElementById(
+            "cancelEmergencyButton"
+        ).onclick = function () {
+
+            overlay.remove();
+
+        };
+
+
+
+        /*
+         * =====================================================
+         * SEND BUTTON
+         * =====================================================
+         */
+
+        document.getElementById(
+            "sendEmergencyButton"
+        ).onclick = function () {
+
+
+            /*
+             * Get the optional message.
+             *
+             * It can be completely empty.
+             */
+
+            const message =
+                document.getElementById(
+                    "popupEmergencyMessage"
+                ).value;
+
+
+
+            /*
+             * Put the message into the hidden
+             * form field.
+             */
+
+            document.getElementById(
+                "emergencyMessageInput"
+            ).value = message;
+
+
+
+            /*
+             * Submit the SOS form.
+             */
+
+            document.getElementById(
+                "sosForm"
+            ).submit();
+
+        };
+
+
+    }
+
+
 </script>
+
 
 {% endblock %}

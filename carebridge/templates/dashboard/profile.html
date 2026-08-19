@@ -13,28 +13,31 @@ My Profile
 
 <style>
     /* =====================================================
-   PROFILE PAGE - ISOLATED STYLING
-===================================================== */
-
-    /* Force normal dashboard content to behave properly */
+       PROFILE PAGE
+    ===================================================== */
 
     .profile-page-wrapper {
+
         width: 100% !important;
         max-width: 1100px !important;
+
         margin: 0 auto !important;
         padding: 20px !important;
+
         display: block !important;
     }
 
 
     /* =====================================================
-   HEADER
-===================================================== */
+       HEADER
+    ===================================================== */
 
     .cb-profile-header {
+
         width: 100% !important;
 
-        background: linear-gradient(135deg,
+        background:
+            linear-gradient(135deg,
                 #eaf5fb,
                 #ffffff);
 
@@ -60,6 +63,7 @@ My Profile
 
 
     .cb-profile-avatar {
+
         width: 65px;
 
         height: 65px;
@@ -87,7 +91,6 @@ My Profile
         color: #1b6ca8;
 
         font-size: 24px;
-
     }
 
 
@@ -98,13 +101,12 @@ My Profile
         color: #777;
 
         font-size: 14px;
-
     }
 
 
     /* =====================================================
-   CARD
-===================================================== */
+       CARD
+    ===================================================== */
 
     .cb-profile-card {
 
@@ -135,7 +137,8 @@ My Profile
 
         padding-bottom: 12px;
 
-        border-bottom: 1px solid #e5e7eb;
+        border-bottom:
+            1px solid #e5e7eb;
 
         color: #1b6ca8;
 
@@ -144,22 +147,25 @@ My Profile
 
 
     /* =====================================================
-   INFORMATION ROW
-===================================================== */
+       INFORMATION ROW
+    ===================================================== */
 
     .cb-profile-row {
 
         display: flex !important;
 
-        justify-content: space-between !important;
+        justify-content:
+            space-between !important;
 
-        align-items: flex-start !important;
+        align-items:
+            flex-start !important;
 
         gap: 25px;
 
         padding: 14px 0;
 
-        border-bottom: 1px solid #f0f2f4;
+        border-bottom:
+            1px solid #f0f2f4;
 
         width: 100% !important;
 
@@ -170,7 +176,6 @@ My Profile
     .cb-profile-row:last-child {
 
         border-bottom: none;
-
     }
 
 
@@ -183,7 +188,6 @@ My Profile
         font-size: 14px;
 
         flex-shrink: 0;
-
     }
 
 
@@ -206,14 +210,29 @@ My Profile
 
 
     /* =====================================================
-   REPRESENTED PERSON NOTICE
-===================================================== */
+       EMPTY VALUE
+    ===================================================== */
+
+    .cb-profile-empty {
+
+        color: #999;
+
+        font-weight: normal;
+
+        font-style: italic;
+    }
+
+
+    /* =====================================================
+       CARE REPRESENTATIVE NOTICE
+    ===================================================== */
 
     .cb-profile-note {
 
         background: #eef8fd;
 
-        border-left: 4px solid #1b6ca8;
+        border-left:
+            4px solid #1b6ca8;
 
         border-radius: 7px;
 
@@ -230,8 +249,8 @@ My Profile
 
 
     /* =====================================================
-   BUTTON
-===================================================== */
+       BUTTON
+    ===================================================== */
 
     .cb-profile-button {
 
@@ -266,37 +285,36 @@ My Profile
 
 
     /* =====================================================
-   MOBILE
-===================================================== */
+       MOBILE
+    ===================================================== */
 
     @media (max-width: 700px) {
 
         .profile-page-wrapper {
 
             padding: 10px !important;
-
         }
+
 
         .cb-profile-header {
 
             padding: 20px;
-
         }
+
 
         .cb-profile-row {
 
             flex-direction: column !important;
 
             gap: 5px;
-
         }
+
 
         .cb-profile-value {
 
             max-width: 100%;
 
             text-align: left;
-
         }
 
     }
@@ -320,6 +338,7 @@ My Profile
             👤
         </div>
 
+
         <div class="cb-profile-header-text">
 
             <h2>
@@ -335,6 +354,7 @@ My Profile
     </div>
 
 
+
     <!-- =================================================
          PERSONAL INFORMATION
     ================================================== -->
@@ -345,6 +365,8 @@ My Profile
             📋 Personal Information
         </h3>
 
+
+        <!-- USERNAME -->
 
         <div class="cb-profile-row">
 
@@ -359,6 +381,8 @@ My Profile
         </div>
 
 
+        <!-- EMAIL -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -366,11 +390,25 @@ My Profile
             </span>
 
             <span class="cb-profile-value">
+
+                {% if request.user.email %}
+
                 {{ request.user.email }}
+
+                {% else %}
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
+                {% endif %}
+
             </span>
 
         </div>
 
+
+        <!-- PHONE -->
 
         <div class="cb-profile-row">
 
@@ -379,11 +417,25 @@ My Profile
             </span>
 
             <span class="cb-profile-value">
+
+                {% if profile.phone %}
+
                 {{ profile.phone }}
+
+                {% else %}
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
+                {% endif %}
+
             </span>
 
         </div>
 
+
+        <!-- ADDRESS -->
 
         <div class="cb-profile-row">
 
@@ -392,11 +444,25 @@ My Profile
             </span>
 
             <span class="cb-profile-value">
+
+                {% if profile.address %}
+
                 {{ profile.address }}
+
+                {% else %}
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
+                {% endif %}
+
             </span>
 
         </div>
 
+
+        <!-- ROLE -->
 
         <div class="cb-profile-row">
 
@@ -410,8 +476,8 @@ My Profile
 
         </div>
 
-
     </div>
+
 
 
     <!-- =================================================
@@ -439,6 +505,8 @@ My Profile
         </div>
 
 
+        <!-- NAME -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -451,6 +519,8 @@ My Profile
 
         </div>
 
+
+        <!-- AGE -->
 
         <div class="cb-profile-row">
 
@@ -465,6 +535,8 @@ My Profile
         </div>
 
 
+        <!-- PERSON TYPE -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -477,6 +549,8 @@ My Profile
 
         </div>
 
+
+        <!-- RELATIONSHIP -->
 
         <div class="cb-profile-row">
 
@@ -491,6 +565,8 @@ My Profile
         </div>
 
 
+        <!-- PHONE -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -503,6 +579,8 @@ My Profile
 
         </div>
 
+
+        <!-- ADDRESS -->
 
         <div class="cb-profile-row">
 
@@ -517,6 +595,8 @@ My Profile
         </div>
 
 
+        <!-- BLOOD GROUP -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -526,15 +606,23 @@ My Profile
             <span class="cb-profile-value">
 
                 {% if request.user.represented_person.blood_group %}
+
                 {{ request.user.represented_person.blood_group }}
+
                 {% else %}
-                Not Added
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
                 {% endif %}
 
             </span>
 
         </div>
 
+
+        <!-- MEDICAL CONDITIONS -->
 
         <div class="cb-profile-row">
 
@@ -545,9 +633,15 @@ My Profile
             <span class="cb-profile-value">
 
                 {% if request.user.represented_person.medical_conditions %}
+
                 {{ request.user.represented_person.medical_conditions }}
+
                 {% else %}
-                Not Added
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
                 {% endif %}
 
             </span>
@@ -562,7 +656,32 @@ My Profile
     </div>
 
 
+    {% else %}
+
+    <div class="cb-profile-card">
+
+        <h3>
+            💙 Person I Represent
+        </h3>
+
+        <div class="cb-profile-note">
+
+            No represented person has been added yet.
+
+            You can add or manage the person you
+            represent from <strong>My Care Circle</strong>.
+
+        </div>
+
+
+        <a href="{% url 'care_circle' %}" class="cb-profile-button">
+            💙 Manage Care Circle
+        </a>
+
+    </div>
+
     {% endif %}
+
 
 
     {% else %}
@@ -579,6 +698,8 @@ My Profile
         </h3>
 
 
+        <!-- CONTACT NAME -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -588,36 +709,50 @@ My Profile
             <span class="cb-profile-value">
 
                 {% if profile.emergency_contact_name %}
+
                 {{ profile.emergency_contact_name }}
+
                 {% else %}
-                Not Added
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
                 {% endif %}
 
             </span>
 
         </div>
 
+
+        <!-- CONTACT EMAIL -->
 
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
-                Contact Phone
+                Contact Email
             </span>
 
             <span class="cb-profile-value">
 
-                {% if profile.emergency_contact_phone %}
-                {{ profile.emergency_contact_phone }}
+                {% if profile.emergency_contact_email %}
+
+                {{ profile.emergency_contact_email }}
+
                 {% else %}
-                Not Added
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
                 {% endif %}
 
             </span>
 
         </div>
 
-
     </div>
+
 
 
     <!-- =================================================
@@ -631,6 +766,8 @@ My Profile
         </h3>
 
 
+        <!-- BLOOD GROUP -->
+
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
@@ -640,15 +777,23 @@ My Profile
             <span class="cb-profile-value">
 
                 {% if profile.blood_group %}
+
                 {{ profile.blood_group }}
+
                 {% else %}
-                Not Added
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
                 {% endif %}
 
             </span>
 
         </div>
 
+
+        <!-- MEDICAL CONDITIONS -->
 
         <div class="cb-profile-row">
 
@@ -659,24 +804,29 @@ My Profile
             <span class="cb-profile-value">
 
                 {% if profile.medical_conditions %}
+
                 {{ profile.medical_conditions }}
+
                 {% else %}
-                Not Added
+
+                <span class="cb-profile-empty">
+                    Not Added
+                </span>
+
                 {% endif %}
 
             </span>
 
         </div>
 
-
     </div>
-
 
     {% endif %}
 
 
+
     <!-- =================================================
-         EDIT PROFILE
+         EDIT PROFILE BUTTON
     ================================================== -->
 
     <a href="{% url 'edit_profile' %}" class="cb-profile-button">

@@ -6,6 +6,7 @@ from datetime import datetime
 from django.http import JsonResponse
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils import timezone
 
 from .models import (
     UserProfile,
@@ -467,7 +468,6 @@ def edit_profile(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    # Get the logged-in user's profile
     profile = get_object_or_404(
         UserProfile,
         user=request.user
@@ -480,7 +480,7 @@ def edit_profile(request):
     if request.method == "POST":
 
         # ---------------------------------------------
-        # Update Care Representative's OWN details
+        # ACCOUNT DETAILS
         # ---------------------------------------------
 
         request.user.email = request.POST.get(
@@ -501,8 +501,7 @@ def edit_profile(request):
         )
 
         # ---------------------------------------------
-        # Only care-recipient roles have their own
-        # emergency and medical information
+        # HEALTH & EMERGENCY INFORMATION
         # ---------------------------------------------
 
         recipient_roles = [
@@ -518,8 +517,8 @@ def edit_profile(request):
                 ""
             )
 
-            profile.emergency_contact_phone = request.POST.get(
-                "emergency_contact_phone",
+            profile.emergency_contact_email = request.POST.get(
+                "emergency_contact_email",
                 ""
             )
 
@@ -540,10 +539,12 @@ def edit_profile(request):
             "Your profile has been updated successfully."
         )
 
-        return redirect("edit_profile")
+        # IMPORTANT:
+        # Return to My Profile after saving
+        return redirect("profile")
 
     # =================================================
-    # SELECT THE CORRECT DASHBOARD LAYOUT
+    # SELECT DASHBOARD LAYOUT
     # =================================================
 
     if profile.role == "Care Representative":
@@ -1791,15 +1792,19 @@ def edit_medicine_reminder(request, reminder_id):
             'reminder': reminder
         }
     )
-
 def emergency_sos(request):
 
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    profile = UserProfile.objects.get(
+    profile = get_object_or_404(
+        UserProfile,
         user=request.user
     )
+
+    # =================================================
+    # HANDLE SOS SUBMISSION
+    # =================================================
 
     if request.method == "POST":
 
@@ -1807,7 +1812,16 @@ def emergency_sos(request):
         emergency_email = profile.emergency_contact_email.strip()
 
         # ------------------------------------------------
-        # Check whether emergency contact details exist
+        # Get OPTIONAL emergency message
+        # ------------------------------------------------
+
+        emergency_message = request.POST.get(
+            "emergency_message",
+            ""
+        ).strip()
+
+        # ------------------------------------------------
+        # Check emergency contact details
         # ------------------------------------------------
 
         if not emergency_name or not emergency_email:
@@ -1824,9 +1838,15 @@ def emergency_sos(request):
         # ------------------------------------------------
 
         EmergencySOS.objects.create(
+
             user=request.user,
+
             emergency_contact_name=emergency_name,
+
             emergency_contact_email=emergency_email,
+
+            emergency_message=emergency_message,
+
             status="Activated"
         )
 
@@ -1835,9 +1855,13 @@ def emergency_sos(request):
         # ------------------------------------------------
 
         create_notification(
+
             request.user,
+
             "Emergency SOS",
+
             "Emergency SOS Activated",
+
             "Your Emergency SOS alert has been activated successfully."
         )
 
@@ -1847,24 +1871,73 @@ def emergency_sos(request):
 
         try:
 
+            # ---------------------------------------------
+            # Emergency message section
+            # ---------------------------------------------
+
+            if emergency_message:
+
+                message_section = (
+                    "Emergency Information\n"
+                    "---------------------\n"
+                    "Message from user:\n"
+                    f"\"{emergency_message}\"\n\n"
+                )
+
+            else:
+
+                message_section = (
+                    "Emergency Information\n"
+                    "---------------------\n"
+                    "No additional message was provided by the user.\n\n"
+                )
+
+            # ---------------------------------------------
+            # Get current date and time
+            # ---------------------------------------------
+
+            current_time = timezone.localtime()
+
+            alert_date = current_time.strftime(
+                "%d %B %Y"
+            )
+
+            alert_time = current_time.strftime(
+                "%I:%M %p"
+            )
+
+            # ---------------------------------------------
+            # Email
+            # ---------------------------------------------
+
             send_mail(
+
                 subject="🚨 CareBridge Emergency SOS Alert",
 
                 message=(
+
                     f"Dear {emergency_name},\n\n"
 
-                    f"This is an emergency alert from CareBridge.\n\n"
+                    f"🚨 CAREBRIDGE EMERGENCY SOS ALERT\n\n"
 
-                    f"User: {request.user.username}\n\n"
+                    f"Person Requiring Assistance\n"
+                    f"---------------------------\n"
+                    f"Name: {request.user.username}\n"
+                    f"Role: {profile.role}\n\n"
 
-                    f"{request.user.username} has activated "
-                    f"the Emergency SOS feature.\n\n"
+                    f"{message_section}"
 
-                    f"Please contact them immediately and "
-                    f"provide assistance if required.\n\n"
+                    f"Alert Details\n"
+                    f"-------------\n"
+                    f"Alert Status: ACTIVATED\n"
+                    f"Date: {alert_date}\n"
+                    f"Time: {alert_time}\n\n"
+
+                    f"⚠️ Please contact the person immediately "
+                    f"and provide assistance if required.\n\n"
 
                     f"This is an automatically generated "
-                    f"alert from CareBridge."
+                    f"emergency alert from CareBridge."
                 ),
 
                 from_email=settings.DEFAULT_FROM_EMAIL,
@@ -1892,9 +1965,9 @@ def emergency_sos(request):
 
         return redirect("emergency_sos")
 
-    # ------------------------------------------------
-    # Previous SOS alerts
-    # ------------------------------------------------
+    # =================================================
+    # SOS HISTORY
+    # =================================================
 
     sos_history = EmergencySOS.objects.filter(
         user=request.user
