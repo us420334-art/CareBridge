@@ -1,11 +1,24 @@
 {% extends base_template %}
 
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+പ്രൊഫൈൽ തിരുത്തുക
+{% else %}
 Edit Profile
+{% endif %}
+
 {% endblock %}
 
+
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+പ്രൊഫൈൽ തിരുത്തുക
+{% else %}
 Edit Profile
+{% endif %}
+
 {% endblock %}
 
 
@@ -402,13 +415,33 @@ Edit Profile
     <div class="cb-edit-header">
 
         <h2>
+
+            {% if request.user.userprofile.language == "ml" %}
+            ✏️ എന്റെ പ്രൊഫൈൽ തിരുത്തുക
+            {% else %}
             ✏️ Edit My Profile
+            {% endif %}
+
         </h2>
 
+
         <p>
+
+            {% if request.user.userprofile.language == "ml" %}
+
+            നിങ്ങളുടെ CareBridge അക്കൗണ്ട് വിവരങ്ങൾ
+            പുതുക്കുക. നിങ്ങൾ പ്രതിനിധീകരിക്കുന്ന വ്യക്തിയുടെ
+            വിവരങ്ങൾ നിങ്ങളുടെ പ്രൊഫൈലിൽ നിന്ന് പ്രത്യേകം
+            സൂക്ഷിച്ചിരിക്കുന്നു.
+
+            {% else %}
+
             Update your own CareBridge account details.
             Your profile information is separate from
             any person you may represent.
+
+            {% endif %}
+
         </p>
 
     </div>
@@ -430,13 +463,29 @@ Edit Profile
         <div class="cb-edit-card">
 
             <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                👤 എന്റെ അക്കൗണ്ട് വിവരങ്ങൾ
+                {% else %}
                 👤 My Account Details
+                {% endif %}
+
             </h3>
+
 
             <p class="cb-edit-description">
 
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങളുടെ CareBridge അക്കൗണ്ടുമായി
+                ബന്ധപ്പെട്ട വിവരങ്ങൾ പുതുക്കുക.
+
+                {% else %}
+
                 Update the information belonging to your
                 own CareBridge account.
+
+                {% endif %}
 
             </p>
 
@@ -449,8 +498,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ഉപയോക്തൃനാമം
+                        {% else %}
                         Username
+                        {% endif %}
+
                     </label>
+
 
                     <input type="text" class="cb-edit-control" value="{{ request.user.username }}" readonly>
 
@@ -462,8 +518,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ഇമെയിൽ
+                        {% else %}
                         Email
+                        {% endif %}
+
                     </label>
+
 
                     <input type="email" name="email" class="cb-edit-control" value="{{ request.user.email }}" required>
 
@@ -475,8 +538,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ഫോൺ നമ്പർ
+                        {% else %}
                         Phone Number
+                        {% endif %}
+
                     </label>
+
 
                     <input type="text" name="phone" class="cb-edit-control" value="{{ profile.phone }}" required>
 
@@ -488,8 +558,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        പങ്ക്
+                        {% else %}
                         Role
+                        {% endif %}
+
                     </label>
+
 
                     <input type="text" class="cb-edit-control" value="{{ profile.role }}" readonly>
 
@@ -501,8 +578,15 @@ Edit Profile
                 <div class="cb-edit-group full">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        വിലാസം
+                        {% else %}
                         Address
+                        {% endif %}
+
                     </label>
+
 
                     <textarea name="address" class="cb-edit-control cb-edit-textarea"
                         required>{{ profile.address }}</textarea>
@@ -524,18 +608,47 @@ Edit Profile
         <div class="cb-edit-card">
 
             <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                💙 കെയർ റെപ്രസെന്റേറ്റീവ് അക്കൗണ്ട്
+                {% else %}
                 💙 Care Representative Account
+                {% endif %}
+
             </h3>
 
+
             <p class="cb-edit-description">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                മറ്റൊരു വ്യക്തിക്കായി CareBridge സേവനങ്ങൾ
+                നിയന്ത്രിക്കാൻ നിങ്ങളുടെ കെയർ റെപ്രസെന്റേറ്റീവ്
+                അക്കൗണ്ട് ഉപയോഗിക്കുന്നു.
+
+                {% else %}
 
                 Your Care Representative account is used
                 to manage CareBridge services for another
                 person.
 
+                {% endif %}
+
             </p>
 
+
             <div class="cb-edit-note">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങൾ പ്രതിനിധീകരിക്കുന്ന വ്യക്തിയുടെ വിവരങ്ങൾ
+                പ്രത്യേകം സൂക്ഷിച്ചിരിക്കുന്നു.
+
+                ആ വിവരങ്ങൾ തിരുത്താൻ സൈഡ്‌ബാറിലെ
+                <strong>💙 My Care Circle</strong>
+                ഉപയോഗിക്കുക.
+
+                {% else %}
 
                 The information of the person you represent
                 is maintained separately.
@@ -543,6 +656,8 @@ Edit Profile
                 To edit that information, use
                 <strong>💙 My Care Circle</strong>
                 from your sidebar.
+
+                {% endif %}
 
             </div>
 
@@ -560,13 +675,30 @@ Edit Profile
         <div class="cb-edit-card">
 
             <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                🩺 ആരോഗ്യവും അടിയന്തര വിവരങ്ങളും
+                {% else %}
                 🩺 Health & Emergency Information
+                {% endif %}
+
             </h3>
+
 
             <p class="cb-edit-description">
 
+                {% if request.user.userprofile.language == "ml" %}
+
+                മികച്ച CareBridge പിന്തുണ ലഭിക്കുന്നതിനായി
+                നിങ്ങളുടെ ആരോഗ്യവും അടിയന്തര വിവരങ്ങളും
+                പുതുക്കി സൂക്ഷിക്കുക.
+
+                {% else %}
+
                 Keep your health and emergency details
                 updated for better CareBridge support.
+
+                {% endif %}
 
             </p>
 
@@ -579,11 +711,19 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര്
+                        {% else %}
                         Emergency Contact Name
+                        {% endif %}
+
                     </label>
 
+
                     <input type="text" name="emergency_contact_name" class="cb-edit-control"
-                        value="{{ profile.emergency_contact_name }}" placeholder="Enter contact name">
+                        value="{{ profile.emergency_contact_name }}"
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര് നൽകുക{% else %}Enter contact name{% endif %}">
 
                 </div>
 
@@ -593,8 +733,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ ഇമെയിൽ
+                        {% else %}
                         Emergency Contact Email
+                        {% endif %}
+
                     </label>
+
 
                     <input type="email" name="emergency_contact_email" class="cb-edit-control"
                         value="{{ profile.emergency_contact_email }}" placeholder="example@gmail.com">
@@ -607,11 +754,18 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        രക്തഗ്രൂപ്പ്
+                        {% else %}
                         Blood Group
+                        {% endif %}
+
                     </label>
 
+
                     <input type="text" name="blood_group" class="cb-edit-control" value="{{ profile.blood_group }}"
-                        placeholder="Example: B+">
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ഉദാഹരണം: B+{% else %}Example: B+{% endif %}">
 
                 </div>
 
@@ -621,11 +775,18 @@ Edit Profile
                 <div class="cb-edit-group full">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ആരോഗ്യസ്ഥിതികൾ
+                        {% else %}
                         Medical Conditions
+                        {% endif %}
+
                     </label>
 
+
                     <textarea name="medical_conditions" class="cb-edit-control cb-edit-textarea"
-                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ഓപ്ഷണൽ{% else %}Optional{% endif %}">{{ profile.medical_conditions }}</textarea>
 
                 </div>
 
@@ -646,13 +807,30 @@ Edit Profile
         <div class="cb-edit-card">
 
             <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                🩺 ആരോഗ്യവും അടിയന്തര വിവരങ്ങളും
+                {% else %}
                 🩺 Health & Emergency Information
+                {% endif %}
+
             </h3>
+
 
             <p class="cb-edit-description">
 
+                {% if request.user.userprofile.language == "ml" %}
+
+                മികച്ച CareBridge പിന്തുണ ലഭിക്കുന്നതിനായി
+                നിങ്ങളുടെ ആരോഗ്യവും അടിയന്തര വിവരങ്ങളും
+                പുതുക്കി സൂക്ഷിക്കുക.
+
+                {% else %}
+
                 Keep your health and emergency details
                 updated for better CareBridge support.
+
+                {% endif %}
 
             </p>
 
@@ -665,11 +843,19 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര്
+                        {% else %}
                         Emergency Contact Name
+                        {% endif %}
+
                     </label>
 
+
                     <input type="text" name="emergency_contact_name" class="cb-edit-control"
-                        value="{{ profile.emergency_contact_name }}" placeholder="Enter contact name">
+                        value="{{ profile.emergency_contact_name }}"
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര് നൽകുക{% else %}Enter contact name{% endif %}">
 
                 </div>
 
@@ -679,8 +865,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ ഇമെയിൽ
+                        {% else %}
                         Emergency Contact Email
+                        {% endif %}
+
                     </label>
+
 
                     <input type="email" name="emergency_contact_email" class="cb-edit-control"
                         value="{{ profile.emergency_contact_email }}" placeholder="example@gmail.com">
@@ -693,11 +886,18 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        രക്തഗ്രൂപ്പ്
+                        {% else %}
                         Blood Group
+                        {% endif %}
+
                     </label>
 
+
                     <input type="text" name="blood_group" class="cb-edit-control" value="{{ profile.blood_group }}"
-                        placeholder="Example: B+">
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ഉദാഹരണം: B+{% else %}Example: B+{% endif %}">
 
                 </div>
 
@@ -707,11 +907,18 @@ Edit Profile
                 <div class="cb-edit-group full">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ആരോഗ്യസ്ഥിതികൾ
+                        {% else %}
                         Medical Conditions
+                        {% endif %}
+
                     </label>
 
+
                     <textarea name="medical_conditions" class="cb-edit-control cb-edit-textarea"
-                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ഓപ്ഷണൽ{% else %}Optional{% endif %}">{{ profile.medical_conditions }}</textarea>
 
                 </div>
 
@@ -732,13 +939,30 @@ Edit Profile
         <div class="cb-edit-card">
 
             <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                🩺 ആരോഗ്യവും അടിയന്തര വിവരങ്ങളും
+                {% else %}
                 🩺 Health & Emergency Information
+                {% endif %}
+
             </h3>
+
 
             <p class="cb-edit-description">
 
+                {% if request.user.userprofile.language == "ml" %}
+
+                മികച്ച CareBridge പിന്തുണ ലഭിക്കുന്നതിനായി
+                നിങ്ങളുടെ ആരോഗ്യവും അടിയന്തര വിവരങ്ങളും
+                പുതുക്കി സൂക്ഷിക്കുക.
+
+                {% else %}
+
                 Keep your health and emergency details
                 updated for better CareBridge support.
+
+                {% endif %}
 
             </p>
 
@@ -751,11 +975,19 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര്
+                        {% else %}
                         Emergency Contact Name
+                        {% endif %}
+
                     </label>
 
+
                     <input type="text" name="emergency_contact_name" class="cb-edit-control"
-                        value="{{ profile.emergency_contact_name }}" placeholder="Enter contact name">
+                        value="{{ profile.emergency_contact_name }}"
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര് നൽകുക{% else %}Enter contact name{% endif %}">
 
                 </div>
 
@@ -765,8 +997,15 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ ഇമെയിൽ
+                        {% else %}
                         Emergency Contact Email
+                        {% endif %}
+
                     </label>
+
 
                     <input type="email" name="emergency_contact_email" class="cb-edit-control"
                         value="{{ profile.emergency_contact_email }}" placeholder="example@gmail.com">
@@ -779,11 +1018,18 @@ Edit Profile
                 <div class="cb-edit-group">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        രക്തഗ്രൂപ്പ്
+                        {% else %}
                         Blood Group
+                        {% endif %}
+
                     </label>
 
+
                     <input type="text" name="blood_group" class="cb-edit-control" value="{{ profile.blood_group }}"
-                        placeholder="Example: B+">
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ഉദാഹരണം: B+{% else %}Example: B+{% endif %}">
 
                 </div>
 
@@ -793,11 +1039,18 @@ Edit Profile
                 <div class="cb-edit-group full">
 
                     <label>
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ആരോഗ്യസ്ഥിതികൾ
+                        {% else %}
                         Medical Conditions
+                        {% endif %}
+
                     </label>
 
+
                     <textarea name="medical_conditions" class="cb-edit-control cb-edit-textarea"
-                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
+                        placeholder="{% if request.user.userprofile.language == 'ml' %}ഓപ്ഷണൽ{% else %}Optional{% endif %}">{{ profile.medical_conditions }}</textarea>
 
                 </div>
 
@@ -815,14 +1068,28 @@ Edit Profile
 
         <div class="cb-edit-buttons">
 
+
             <button type="submit" class="cb-save-button">
+
+                {% if request.user.userprofile.language == "ml" %}
+                💾 മാറ്റങ്ങൾ സംരക്ഷിക്കുക
+                {% else %}
                 💾 Save Changes
+                {% endif %}
+
             </button>
 
 
             <a href="{% url 'profile' %}" class="cb-cancel-button">
+
+                {% if request.user.userprofile.language == "ml" %}
+                റദ്ദാക്കുക
+                {% else %}
                 Cancel
+                {% endif %}
+
             </a>
+
 
         </div>
 

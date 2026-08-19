@@ -1,42 +1,403 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+സേവന അഭ്യർത്ഥനകൾ
+{% else %}
 Service Requests
+{% endif %}
+
 {% endblock %}
 
+
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+സേവന അഭ്യർത്ഥനകൾ
+{% else %}
 Service Requests
+{% endif %}
+
 {% endblock %}
+
 
 {% block content %}
 
+<style>
+    /* =====================================================
+       SERVICE REQUEST PAGE
+    ===================================================== */
+
+    .service-page {
+        padding: 10px;
+    }
+
+
+    /* =====================================================
+       HERO
+    ===================================================== */
+
+    .service-hero {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        background: linear-gradient(135deg,
+                #eaf6ff,
+                #f7fbff);
+
+        padding: 28px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    }
+
+
+    .service-hero-icon {
+        width: 65px;
+        height: 65px;
+
+        border-radius: 18px;
+
+        background: #1b6ca8;
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 30px;
+        flex-shrink: 0;
+    }
+
+
+    .service-hero h1 {
+        margin: 0 0 8px 0;
+
+        color: #1b4965;
+        font-size: 28px;
+    }
+
+
+    .service-hero p {
+        margin: 0;
+
+        color: #666;
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       SERVICE OPTIONS
+    ===================================================== */
+
+    .service-options {
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 25px;
+    }
+
+
+    /* =====================================================
+       SERVICE CARD
+    ===================================================== */
+
+    .service-card {
+        background: white;
+
+        border-radius: 18px;
+
+        padding: 25px;
+
+        box-shadow:
+            0 6px 20px rgba(0, 0, 0, 0.10);
+
+        border: 1px solid #e6eef3;
+
+        transition: 0.25s ease;
+    }
+
+
+    .service-card:hover {
+        transform: translateY(-5px);
+
+        box-shadow:
+            0 10px 28px rgba(0, 0, 0, 0.14);
+    }
+
+
+    /* =====================================================
+       CARD TOP
+    ===================================================== */
+
+    .service-card-top {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: 18px;
+    }
+
+
+    .service-card-icon {
+        width: 55px;
+        height: 55px;
+
+        border-radius: 15px;
+
+        background: #eef7fc;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 27px;
+    }
+
+
+    .service-label {
+        background: #eaf5fb;
+
+        color: #1b6ca8;
+
+        padding: 7px 12px;
+
+        border-radius: 20px;
+
+        font-size: 11px;
+
+        font-weight: bold;
+    }
+
+
+    /* =====================================================
+       CARD TEXT
+    ===================================================== */
+
+    .service-card h2 {
+        color: #1f2937;
+
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+
+    .service-description {
+        color: #666;
+
+        line-height: 1.6;
+
+        min-height: 70px;
+    }
+
+
+    /* =====================================================
+       FEATURES
+    ===================================================== */
+
+    .service-features {
+        margin-top: 18px;
+    }
+
+
+    .service-features div {
+        margin: 10px 0;
+
+        color: #4b5563;
+    }
+
+
+    .service-features span {
+        color: #28a745;
+
+        font-weight: bold;
+
+        margin-right: 8px;
+    }
+
+
+    /* =====================================================
+       BUTTON
+    ===================================================== */
+
+    .service-card-footer {
+        margin-top: 25px;
+    }
+
+
+    .service-button {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        text-decoration: none;
+
+        background: #1b6ca8;
+
+        color: white;
+
+        padding: 13px 18px;
+
+        border-radius: 10px;
+
+        font-weight: bold;
+
+        transition: 0.2s ease;
+    }
+
+
+    .service-button:hover {
+        background: #155582;
+    }
+
+
+    /* =====================================================
+       VOLUNTEER CARD
+    ===================================================== */
+
+    .volunteer-card .service-button {
+        background: #198754;
+    }
+
+
+    .volunteer-card .service-button:hover {
+        background: #146c43;
+    }
+
+
+    /* =====================================================
+       INFORMATION BOX
+    ===================================================== */
+
+    .service-info {
+        display: flex;
+
+        gap: 18px;
+
+        align-items: flex-start;
+
+        margin-top: 25px;
+
+        background: #f0f8ff;
+
+        padding: 22px;
+
+        border-radius: 15px;
+
+        border-left: 5px solid #1b6ca8;
+    }
+
+
+    .service-info-icon {
+        font-size: 28px;
+    }
+
+
+    .service-info h3 {
+        margin: 0 0 7px 0;
+
+        color: #1b4965;
+    }
+
+
+    .service-info p {
+        margin: 0;
+
+        color: #666;
+
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 800px) {
+
+        .service-options {
+            grid-template-columns: 1fr;
+        }
+
+        .service-hero {
+            padding: 20px;
+        }
+
+        .service-hero h1 {
+            font-size: 23px;
+        }
+
+    }
+</style>
+
+
 <div class="service-page">
 
-    <!-- Page Header -->
+
+    <!-- =================================================
+         HERO
+    ================================================= -->
+
     <div class="service-hero">
 
         <div class="service-hero-icon">
             🤝
         </div>
 
+
         <div>
-            <h1>How can we help you?</h1>
+
+            <h1>
+
+                {% if request.user.userprofile.language == "ml" %}
+                നിങ്ങളെ എങ്ങനെ സഹായിക്കാം?
+                {% else %}
+                How can we help you?
+                {% endif %}
+
+            </h1>
+
 
             <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങൾക്ക് ആവശ്യമായ സഹായത്തിന്റെ തരം തിരഞ്ഞെടുക്കുക.
+                CareBridge നിങ്ങളെ വിശ്വസനീയമായ കെയർഗിവർമാരുമായും
+                വോളന്റിയർമാരുമായും ബന്ധിപ്പിക്കുന്നു.
+
+                {% else %}
+
                 Choose the type of assistance you need.
                 CareBridge connects you with trusted caregivers
                 and volunteers.
+
+                {% endif %}
+
             </p>
+
         </div>
 
     </div>
 
 
-    <!-- Service Cards -->
+    <!-- =================================================
+         SERVICE OPTIONS
+    ================================================= -->
+
     <div class="service-options">
 
 
-        <!-- CAREGIVER -->
+        <!-- =================================================
+             CAREGIVER
+        ================================================= -->
+
         <div class="service-card">
 
             <div class="service-card-top">
@@ -45,42 +406,103 @@ Service Requests
                     👨‍⚕️
                 </div>
 
+
                 <span class="service-label">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    പ്രൊഫഷണൽ പരിചരണം
+                    {% else %}
                     PROFESSIONAL CARE
+                    {% endif %}
+
                 </span>
 
             </div>
 
 
-            <h2>Book a Caregiver</h2>
+            <h2>
+
+                {% if request.user.userprofile.language == "ml" %}
+                കെയർഗിവറെ ബുക്ക് ചെയ്യുക
+                {% else %}
+                Book a Caregiver
+                {% endif %}
+
+            </h2>
+
 
             <p class="service-description">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങളുടെ ആവശ്യങ്ങൾക്കനുസരിച്ച് വിശ്വസനീയമായ
+                വ്യക്തിഗത പരിചരണവും ദൈനംദിന സഹായവും
+                ഒരു കെയർഗിവറിൽ നിന്ന് നേടുക.
+
+                {% else %}
+
                 Get reliable personal care and daily assistance
                 from a caregiver based on your specific needs.
+
+                {% endif %}
+
             </p>
 
 
             <div class="service-features">
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    വ്യക്തിഗത പരിചരണ സഹായം
+                    {% else %}
                     Personal care assistance
+                    {% endif %}
+
                 </div>
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ദൈനംദിന പ്രവർത്തന സഹായം
+                    {% else %}
                     Daily activity support
+                    {% endif %}
+
                 </div>
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചലന സഹായം
+                    {% else %}
                     Mobility assistance
+                    {% endif %}
+
                 </div>
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ഇഷ്ടപ്പെട്ട കെയർഗിവറെ തിരഞ്ഞെടുക്കുക
+                    {% else %}
                     Choose your preferred caregiver
+                    {% endif %}
+
                 </div>
+
 
             </div>
 
@@ -89,9 +511,19 @@ Service Requests
 
                 <a href="{% url 'book_caregiver' %}" class="service-button">
 
-                    <span>Book Caregiver</span>
+                    <span>
 
-                    <span>→</span>
+                        {% if request.user.userprofile.language == "ml" %}
+                        കെയർഗിവറെ ബുക്ക് ചെയ്യുക
+                        {% else %}
+                        Book Caregiver
+                        {% endif %}
+
+                    </span>
+
+                    <span>
+                        →
+                    </span>
 
                 </a>
 
@@ -100,7 +532,10 @@ Service Requests
         </div>
 
 
-        <!-- VOLUNTEER -->
+        <!-- =================================================
+             VOLUNTEER
+        ================================================= -->
+
         <div class="service-card volunteer-card">
 
             <div class="service-card-top">
@@ -109,42 +544,103 @@ Service Requests
                     🤝
                 </div>
 
+
                 <span class="service-label">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    കമ്മ്യൂണിറ്റി പിന്തുണ
+                    {% else %}
                     COMMUNITY SUPPORT
+                    {% endif %}
+
                 </span>
 
             </div>
 
 
-            <h2>Book a Volunteer</h2>
+            <h2>
+
+                {% if request.user.userprofile.language == "ml" %}
+                വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+                {% else %}
+                Book a Volunteer
+                {% endif %}
+
+            </h2>
+
 
             <p class="service-description">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                കൂട്ടായ്മ, ചെറിയ ജോലികൾ, ഗതാഗതം,
+                ദൈനംദിന പ്രവർത്തനങ്ങൾ എന്നിവയ്ക്കായി
+                സൗഹൃദപരമായ കമ്മ്യൂണിറ്റി പിന്തുണ നേടുക.
+
+                {% else %}
+
                 Get friendly community support for companionship,
                 errands, transportation, and everyday activities.
+
+                {% endif %}
+
             </p>
 
 
             <div class="service-features">
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    കൂട്ടായ്മ
+                    {% else %}
                     Companionship
+                    {% endif %}
+
                 </div>
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചെറിയ ജോലികൾക്ക് സഹായം
+                    {% else %}
                     Help with errands
+                    {% endif %}
+
                 </div>
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ഗതാഗത സഹായം
+                    {% else %}
                     Transportation assistance
+                    {% endif %}
+
                 </div>
 
+
                 <div>
+
                     <span>✓</span>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    കമ്മ്യൂണിറ്റി പിന്തുണ
+                    {% else %}
                     Community support
+                    {% endif %}
+
                 </div>
+
 
             </div>
 
@@ -153,9 +649,19 @@ Service Requests
 
                 <a href="{% url 'book_volunteer' %}" class="service-button">
 
-                    <span>Book Volunteer</span>
+                    <span>
 
-                    <span>→</span>
+                        {% if request.user.userprofile.language == "ml" %}
+                        വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+                        {% else %}
+                        Book Volunteer
+                        {% endif %}
+
+                    </span>
+
+                    <span>
+                        →
+                    </span>
 
                 </a>
 
@@ -163,30 +669,59 @@ Service Requests
 
         </div>
 
+
     </div>
 
 
-    <!-- Information Box -->
+    <!-- =================================================
+         INFORMATION BOX
+    ================================================= -->
+
     <div class="service-info">
 
         <div class="service-info-icon">
             💙
         </div>
 
+
         <div>
 
-            <h3>CareBridge is here to support you</h3>
+            <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                നിങ്ങളെ പിന്തുണയ്ക്കാൻ CareBridge ഇവിടെ ഉണ്ട്
+                {% else %}
+                CareBridge is here to support you
+                {% endif %}
+
+            </h3>
+
 
             <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങളുടെ ആവശ്യങ്ങൾക്ക് ഏറ്റവും അനുയോജ്യമായ സേവനം
+                തിരഞ്ഞെടുക്കുക. My Bookings വിഭാഗത്തിൽ നിന്ന്
+                നിങ്ങളുടെ എല്ലാ ബുക്കിംഗുകളും കാണാനും ട്രാക്ക്
+                ചെയ്യാനും നിയന്ത്രിക്കാനും കഴിയും.
+
+                {% else %}
+
                 Select the service that best matches your needs.
                 You can view, track and manage all your bookings
                 from the My Bookings section.
+
+                {% endif %}
+
             </p>
 
         </div>
 
     </div>
 
+
 </div>
+
 
 {% endblock %}

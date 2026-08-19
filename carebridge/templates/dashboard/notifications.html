@@ -1,12 +1,24 @@
 {% extends base_template %}
 
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+അറിയിപ്പുകൾ
+{% else %}
 Notifications
+{% endif %}
+
 {% endblock %}
 
 
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+അറിയിപ്പുകൾ
+{% else %}
 Notifications
+{% endif %}
+
 {% endblock %}
 
 
@@ -19,7 +31,9 @@ Notifications
 ">
 
 
-    <!-- NOTIFICATIONS CARD -->
+    <!-- =====================================================
+         NOTIFICATIONS CARD
+    ====================================================== -->
 
     <div style="
         background:white;
@@ -28,6 +42,10 @@ Notifications
         box-shadow:0 8px 25px rgba(0,0,0,0.08);
     ">
 
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
 
         <div style="
             display:flex;
@@ -42,14 +60,34 @@ Notifications
                     color:#4f46e5;
                     margin:0;
                 ">
-                    🔔 Notifications
+
+                    🔔
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    അറിയിപ്പുകൾ
+                    {% else %}
+                    Notifications
+                    {% endif %}
+
                 </h1>
+
 
                 <p style="
                     color:#666;
                     margin-top:8px;
                 ">
+
+                    {% if request.user.userprofile.language == "ml" %}
+
+                    നിങ്ങളുടെ CareBridge പ്രവർത്തനങ്ങളെക്കുറിച്ച്
+                    ഏറ്റവും പുതിയ വിവരങ്ങൾ അറിയുക.
+
+                    {% else %}
+
                     Stay updated about your CareBridge activities.
+
+                    {% endif %}
+
                 </p>
 
             </div>
@@ -57,7 +95,9 @@ Notifications
         </div>
 
 
-        <!-- NOTIFICATION LIST -->
+        <!-- =================================================
+             NOTIFICATION LIST
+        ================================================== -->
 
         {% if notifications %}
 
@@ -77,7 +117,9 @@ Notifications
         ">
 
 
-            <!-- ICON -->
+            <!-- =================================================
+                 ICON
+            ================================================== -->
 
             <div style="
                 width:45px;
@@ -120,12 +162,14 @@ Notifications
             </div>
 
 
-
-            <!-- CONTENT -->
+            <!-- =================================================
+                 CONTENT
+            ================================================== -->
 
             <div style="
                 flex:1;
             ">
+
 
                 <div style="
                     display:flex;
@@ -134,14 +178,25 @@ Notifications
                     gap:10px;
                 ">
 
+
+                    <!-- =================================================
+                         NOTIFICATION TITLE
+                    ================================================== -->
+
                     <h3 style="
                         margin:0;
                         color:#1f2937;
                         font-size:16px;
                     ">
+
                         {{ notification.title }}
+
                     </h3>
 
+
+                    <!-- =================================================
+                         NEW BADGE
+                    ================================================== -->
 
                     {% if not notification.is_read %}
 
@@ -153,30 +208,48 @@ Notifications
                         font-size:11px;
                         font-weight:700;
                     ">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        പുതിയത്
+                        {% else %}
                         NEW
+                        {% endif %}
+
                     </span>
 
                     {% endif %}
 
+
                 </div>
 
 
+                <!-- =================================================
+                     MESSAGE
+                ================================================== -->
 
                 <p style="
                     color:#4b5563;
                     margin:8px 0;
                     line-height:1.5;
                 ">
+
                     {{ notification.message }}
+
                 </p>
 
 
+                <!-- =================================================
+                     DATE
+                ================================================== -->
 
                 <small style="
                     color:#6b7280;
                 ">
+
                     {{ notification.created_at|date:"d M Y, h:i A" }}
+
                 </small>
+
 
             </div>
 
@@ -190,8 +263,9 @@ Notifications
         {% else %}
 
 
-        <!-- EMPTY STATE -->
-
+        <!-- =====================================================
+             EMPTY STATE
+        ====================================================== -->
 
         <div style="
             text-align:center;
@@ -199,24 +273,49 @@ Notifications
             color:#6b7280;
         ">
 
+
             <div style="
                 font-size:55px;
                 margin-bottom:15px;
             ">
+
                 🔔
+
             </div>
 
 
             <h2 style="
                 color:#374151;
             ">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                അറിയിപ്പുകളൊന്നുമില്ല
+
+                {% else %}
+
                 No notifications yet
+
+                {% endif %}
+
             </h2>
 
 
             <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങളുടെ CareBridge അപ്‌ഡേറ്റുകളും
+                അലേർട്ടുകളും ഇവിടെ കാണിക്കും.
+
+                {% else %}
+
                 Your CareBridge updates and alerts will appear here.
+
+                {% endif %}
+
             </p>
+
 
         </div>
 

@@ -2,12 +2,24 @@
 
 
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+അഭിപ്രായം
+{% else %}
 Feedback
+{% endif %}
+
 {% endblock %}
 
 
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+അഭിപ്രായം
+{% else %}
 Feedback
+{% endif %}
+
 {% endblock %}
 
 
@@ -36,16 +48,37 @@ Feedback
             color:#4f46e5;
             margin-top:0;
         ">
-            ⭐ Share Your Feedback
+
+            ⭐
+
+            {% if request.user.userprofile.language == "ml" %}
+            നിങ്ങളുടെ അഭിപ്രായം പങ്കിടുക
+            {% else %}
+            Share Your Feedback
+            {% endif %}
+
         </h1>
 
 
         <p style="color:#666;">
+
+            {% if request.user.userprofile.language == "ml" %}
+
+            നിങ്ങളുടെ അഭിപ്രായം CareBridge സേവനങ്ങൾ
+            മെച്ചപ്പെടുത്താൻ ഞങ്ങളെ സഹായിക്കുന്നു.
+
+            {% else %}
+
             Your feedback helps us improve CareBridge services.
+
+            {% endif %}
+
         </p>
 
 
-        <!-- MESSAGES -->
+        <!-- =====================================================
+             MESSAGES
+        ====================================================== -->
 
         {% if messages %}
 
@@ -60,7 +93,9 @@ Feedback
             border:1px solid #a7f3d0;
             font-weight:600;
         ">
+
             {{ message }}
+
         </div>
 
         {% endfor %}
@@ -77,102 +112,182 @@ Feedback
             {% csrf_token %}
 
 
-            <!-- SERVICE TYPE -->
+            <!-- =================================================
+                 SERVICE TYPE
+            ================================================== -->
 
             <div style="margin-bottom:20px;">
 
                 <label style="
-        display:block;
-        font-weight:700;
-        margin-bottom:8px;
-    ">
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:8px;
+                ">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    സേവനം
+                    {% else %}
                     Service
+                    {% endif %}
+
                 </label>
 
+
                 <select name="service_type" id="service_type" required onchange="updateProviders()" style="
-            width:100%;
-            padding:12px;
-            border:1px solid #d1d5db;
-            border-radius:9px;
-            box-sizing:border-box;
-        ">
+                            width:100%;
+                            padding:12px;
+                            border:1px solid #d1d5db;
+                            border-radius:9px;
+                            box-sizing:border-box;
+                        ">
+
 
                     <option value="">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        സേവനം തിരഞ്ഞെടുക്കുക
+                        {% else %}
                         Select Service
+                        {% endif %}
+
                     </option>
+
 
                     <option value="Caregiver">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        കെയർഗിവർ
+                        {% else %}
                         Caregiver
+                        {% endif %}
+
                     </option>
+
 
                     <option value="Volunteer">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        വോളന്റിയർ
+                        {% else %}
                         Volunteer
+                        {% endif %}
+
                     </option>
+
 
                     <option value="Service Request">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        സേവന അഭ്യർത്ഥന
+                        {% else %}
                         Service Request
+                        {% endif %}
+
                     </option>
 
+
                     <option value="Other">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        മറ്റുള്ളവ
+                        {% else %}
                         Other
+                        {% endif %}
+
                     </option>
+
 
                 </select>
 
             </div>
 
 
-            <!-- PERSON -->
+            <!-- =================================================
+                 PERSON
+            ================================================== -->
 
             <div style="margin-bottom:20px;">
 
                 <label style="
-        display:block;
-        font-weight:700;
-        margin-bottom:8px;
-    ">
+                    display:block;
+                    font-weight:700;
+                    margin-bottom:8px;
+                ">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    കെയർഗിവർ / വോളന്റിയർ തിരഞ്ഞെടുക്കുക
+                    {% else %}
                     Select Caregiver / Volunteer
+                    {% endif %}
+
                 </label>
 
+
                 <select name="service_provider" id="service_provider" style="
-            width:100%;
-            padding:12px;
-            border:1px solid #d1d5db;
-            border-radius:9px;
-            box-sizing:border-box;
-        ">
+                            width:100%;
+                            padding:12px;
+                            border:1px solid #d1d5db;
+                            border-radius:9px;
+                            box-sizing:border-box;
+                        ">
+
 
                     <option value="">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        വ്യക്തിയെ തിരഞ്ഞെടുക്കുക
+                        {% else %}
                         Select a person
+                        {% endif %}
+
                     </option>
 
+
                     {% for caregiver in caregivers %}
+
                     <option value="{{ caregiver.id }}" data-type="Caregiver">
+
                         {{ caregiver.get_full_name|default:caregiver.username }}
+
                     </option>
+
                     {% endfor %}
 
 
                     {% for volunteer in volunteers %}
+
                     <option value="{{ volunteer.id }}" data-type="Volunteer">
+
                         {{ volunteer.get_full_name|default:volunteer.username }}
+
                     </option>
+
                     {% endfor %}
+
 
                 </select>
 
+
                 <small style="
-        display:block;
-        margin-top:7px;
-        color:#6b7280;
-    ">
+                    display:block;
+                    margin-top:7px;
+                    color:#6b7280;
+                ">
+
+                    {% if request.user.userprofile.language == "ml" %}
+
+                    സേവനം നൽകിയ വ്യക്തിയെ തിരഞ്ഞെടുക്കുക.
+
+                    {% else %}
+
                     Select the person who provided the service.
+
+                    {% endif %}
+
                 </small>
 
+
             </div>
-
-
-            
 
 
             <!-- =================================================
@@ -186,41 +301,95 @@ Feedback
                     font-weight:700;
                     margin-bottom:8px;
                 ">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    റേറ്റിംഗ്
+                    {% else %}
                     Rating
+                    {% endif %}
+
                 </label>
 
 
                 <select name="rating" required style="
-                        width:100%;
-                        padding:12px;
-                        border:1px solid #d1d5db;
-                        border-radius:9px;
-                        box-sizing:border-box;
-                    ">
+                            width:100%;
+                            padding:12px;
+                            border:1px solid #d1d5db;
+                            border-radius:9px;
+                            box-sizing:border-box;
+                        ">
+
 
                     <option value="">
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        റേറ്റിംഗ് തിരഞ്ഞെടുക്കുക
+                        {% else %}
                         Select Rating
+                        {% endif %}
+
                     </option>
+
 
                     <option value="5">
-                        ⭐⭐⭐⭐⭐ Excellent
+                        ⭐⭐⭐⭐⭐
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        മികച്ചത്
+                        {% else %}
+                        Excellent
+                        {% endif %}
+
                     </option>
+
 
                     <option value="4">
-                        ⭐⭐⭐⭐ Very Good
+                        ⭐⭐⭐⭐
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        വളരെ നല്ലത്
+                        {% else %}
+                        Very Good
+                        {% endif %}
+
                     </option>
+
 
                     <option value="3">
-                        ⭐⭐⭐ Good
+                        ⭐⭐⭐
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        നല്ലത്
+                        {% else %}
+                        Good
+                        {% endif %}
+
                     </option>
+
 
                     <option value="2">
-                        ⭐⭐ Fair
+                        ⭐⭐
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        ശരാശരി
+                        {% else %}
+                        Fair
+                        {% endif %}
+
                     </option>
 
+
                     <option value="1">
-                        ⭐ Poor
+                        ⭐
+
+                        {% if request.user.userprofile.language == "ml" %}
+                        മോശം
+                        {% else %}
+                        Poor
+                        {% endif %}
+
                     </option>
+
 
                 </select>
 
@@ -238,11 +407,19 @@ Feedback
                     font-weight:700;
                     margin-bottom:8px;
                 ">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    നിങ്ങളുടെ അഭിപ്രായം
+                    {% else %}
                     Your Feedback
+                    {% endif %}
+
                 </label>
 
 
-                <textarea name="comment" rows="5" required placeholder="Tell us about your experience..." style="
+                <textarea name="comment" rows="5" required
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}നിങ്ങളുടെ അനുഭവത്തെക്കുറിച്ച് ഞങ്ങളോട് പറയുക...{% else %}Tell us about your experience...{% endif %}"
+                    style="
                         width:100%;
                         padding:12px;
                         border:1px solid #d1d5db;
@@ -254,19 +431,29 @@ Feedback
             </div>
 
 
-            <!-- SUBMIT -->
+            <!-- =================================================
+                 SUBMIT
+            ================================================== -->
 
             <button type="submit" style="
-                    background:#4f46e5;
-                    color:white;
-                    border:none;
-                    padding:13px 30px;
-                    border-radius:9px;
-                    font-size:15px;
-                    font-weight:700;
-                    cursor:pointer;
-                ">
-                ⭐ Submit Feedback
+                background:#4f46e5;
+                color:white;
+                border:none;
+                padding:13px 30px;
+                border-radius:9px;
+                font-size:15px;
+                font-weight:700;
+                cursor:pointer;
+            ">
+
+                ⭐
+
+                {% if request.user.userprofile.language == "ml" %}
+                അഭിപ്രായം സമർപ്പിക്കുക
+                {% else %}
+                Submit Feedback
+                {% endif %}
+
             </button>
 
 
@@ -293,7 +480,15 @@ Feedback
             color:#1f2937;
             margin-top:0;
         ">
-            📋 My Previous Feedback
+
+            📋
+
+            {% if request.user.userprofile.language == "ml" %}
+            എന്റെ മുൻ അഭിപ്രായങ്ങൾ
+            {% else %}
+            My Previous Feedback
+            {% endif %}
+
         </h2>
 
 
@@ -312,7 +507,9 @@ Feedback
         ">
 
 
-            <!-- TOP ROW -->
+            <!-- =================================================
+                 TOP ROW
+            ================================================== -->
 
             <div style="
                 display:flex;
@@ -328,7 +525,9 @@ Feedback
                         color:#4f46e5;
                         font-size:16px;
                     ">
+
                         {{ item.service_type }}
+
                     </strong>
 
 
@@ -339,7 +538,11 @@ Feedback
                         color:#374151;
                         font-weight:600;
                     ">
-                        👤 {{ item.service_provider.get_full_name|default:item.service_provider.username }}
+
+                        👤
+
+                        {{ item.service_provider.get_full_name|default:item.service_provider.username }}
+
                     </div>
 
                     {% endif %}
@@ -374,17 +577,23 @@ Feedback
             </div>
 
 
-            <!-- COMMENT -->
+            <!-- =================================================
+                 COMMENT
+            ================================================== -->
 
             <p style="
                 color:#4b5563;
                 margin:12px 0;
             ">
+
                 {{ item.comment }}
+
             </p>
 
 
-            <!-- DATE + DELETE -->
+            <!-- =================================================
+                 DATE + DELETE
+            ================================================== -->
 
             <div style="
                 display:flex;
@@ -395,26 +604,38 @@ Feedback
 
 
                 <small style="color:#6b7280;">
+
                     {{ item.created_at|date:"d M Y, h:i A" }}
+
                 </small>
 
 
-                <form method="POST" action="{% url 'delete_feedback' item.id %}" style="margin:0;"
-                    onsubmit="return confirm('Are you sure you want to delete this feedback?');">
+                <form method="POST" action="{% url 'delete_feedback' item.id %}" style="margin:0;" onsubmit="
+                        return confirm(
+                            '{% if request.user.userprofile.language == " ml" %}ഈ അഭിപ്രായം ഇല്ലാതാക്കണമെന്ന്
+                    ഉറപ്പാണോ?{% else %}Are you sure you want to delete this feedback?{% endif %}' ); ">
 
                     {% csrf_token %}
 
 
-                    <button type="submit" style="
-                            background:#fee2e2;
-                            color:#b91c1c;
-                            border:1px solid #fecaca;
-                            padding:7px 12px;
-                            border-radius:8px;
-                            font-weight:700;
-                            cursor:pointer;
-                        ">
-                        🗑️ Delete
+                    <button type=" submit" style="
+                        background:#fee2e2;
+                        color:#b91c1c;
+                        border:1px solid #fecaca;
+                        padding:7px 12px;
+                        border-radius:8px;
+                        font-weight:700;
+                        cursor:pointer;
+                    ">
+
+                    🗑️
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ഇല്ലാതാക്കുക
+                    {% else %}
+                    Delete
+                    {% endif %}
+
                     </button>
 
                 </form>
@@ -432,7 +653,9 @@ Feedback
         {% else %}
 
 
-        <!-- EMPTY STATE -->
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
 
         <div style="
             text-align:center;
@@ -440,19 +663,37 @@ Feedback
             color:#6b7280;
         ">
 
+
             <div style="font-size:40px;">
                 ⭐
             </div>
 
 
             <h3>
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഇതുവരെ അഭിപ്രായങ്ങളൊന്നുമില്ല
+                {% else %}
                 No feedback yet
+                {% endif %}
+
             </h3>
 
 
             <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                നിങ്ങൾ സമർപ്പിച്ച അഭിപ്രായങ്ങൾ ഇവിടെ കാണിക്കും.
+
+                {% else %}
+
                 Your submitted feedback will appear here.
+
+                {% endif %}
+
             </p>
+
 
         </div>
 
@@ -489,14 +730,21 @@ Feedback
         options.forEach(function (option) {
 
             if (option.value === "") {
+
                 option.style.display = "block";
+
                 return;
+
             }
 
             if (option.dataset.type === serviceType) {
+
                 option.style.display = "block";
+
             } else {
+
                 option.style.display = "none";
+
             }
 
         });
@@ -504,5 +752,6 @@ Feedback
     }
 
 </script>
+
 
 {% endblock %}

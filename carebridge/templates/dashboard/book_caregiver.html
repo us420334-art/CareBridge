@@ -3,12 +3,22 @@
 {% load static %}
 
 {% block title %}
+{% if request.user.userprofile.language == 'ml' %}
+പരിചരണക്കാരനെ ബുക്ക് ചെയ്യുക
+{% else %}
 Book a Caregiver
+{% endif %}
 {% endblock %}
 
+
 {% block page_title %}
+{% if request.user.userprofile.language == 'ml' %}
+പരിചരണക്കാരനെ ബുക്ക് ചെയ്യുക
+{% else %}
 Book a Caregiver
+{% endif %}
 {% endblock %}
+
 
 {% block extra_css %}
 
@@ -65,25 +75,6 @@ Book a Caregiver
 
 
     /* =========================
-       MESSAGE
-    ========================= */
-
-    .booking-message {
-        padding: 14px 18px;
-        margin-bottom: 20px;
-
-        border-radius: 10px;
-
-        background: #e8f3ff;
-        color: #1559a6;
-
-        border-left: 5px solid #1769d1;
-
-        font-weight: 600;
-    }
-
-
-    /* =========================
        ACTIVE BOOKING
     ========================= */
 
@@ -105,17 +96,13 @@ Book a Caregiver
     .active-booking-title {
         font-size: 20px;
         font-weight: 700;
-
         color: #1f2937;
-
         margin-bottom: 8px;
     }
 
     .active-booking-text {
         color: #4b5563;
-
         margin: 5px 0;
-
         line-height: 1.5;
     }
 
@@ -207,7 +194,6 @@ Book a Caregiver
 
     textarea.form-control {
         min-height: 120px;
-
         resize: vertical;
     }
 
@@ -496,19 +482,24 @@ Book a Caregiver
         <div>
 
             <h1>
+                {% if request.user.userprofile.language == 'ml' %}
+                പരിചരണക്കാരനെ ബുക്ക് ചെയ്യുക
+                {% else %}
                 Book a Caregiver
+                {% endif %}
             </h1>
 
             <p>
+                {% if request.user.userprofile.language == 'ml' %}
+                നിങ്ങൾക്ക് ആവശ്യമായ സഹായം വിശദീകരിച്ച് ഒരു പരിചരണക്കാരനെ തിരഞ്ഞെടുക്കുക.
+                {% else %}
                 Choose a caregiver and tell us exactly what support you need.
+                {% endif %}
             </p>
 
         </div>
 
     </div>
-
-
-    
 
 
     <!-- =========================
@@ -520,22 +511,40 @@ Book a Caregiver
     <div class="active-booking-box">
 
         <div class="active-booking-title">
+
+            {% if request.user.userprofile.language == 'ml' %}
+            🔒 സജീവ പരിചരണ ബുക്കിംഗ്
+            {% else %}
             🔒 Active Caregiver Booking
+            {% endif %}
+
         </div>
 
         <p class="active-booking-text">
 
+            {% if request.user.userprofile.language == 'ml' %}
+            നിങ്ങൾക്ക് നിലവിൽ
+            {% else %}
             You currently have an active booking with
+            {% endif %}
 
             <span class="active-caregiver-name">
                 {{ active_booking.caregiver.get_full_name|default:active_booking.caregiver.username }}
-            </span>.
+            </span>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            എന്ന പരിചരണക്കാരനുമായി ഒരു സജീവ ബുക്കിംഗ് ഉണ്ട്.
+            {% endif %}
 
         </p>
 
         <p class="active-booking-text">
 
+            {% if request.user.userprofile.language == 'ml' %}
+            നില:
+            {% else %}
             Status:
+            {% endif %}
 
             <strong>
                 {{ active_booking.status }}
@@ -545,8 +554,12 @@ Book a Caregiver
 
         <p class="active-booking-text">
 
-            You can make another caregiver booking after the
-            current booking is completed, rejected, or cancelled.
+            {% if request.user.userprofile.language == 'ml' %}
+            നിലവിലെ ബുക്കിംഗ് പൂർത്തിയാകുകയോ നിരസിക്കപ്പെടുകയോ റദ്ദാക്കപ്പെടുകയോ ചെയ്തതിന് ശേഷം മറ്റൊരു പരിചരണക്കാരനെ
+            ബുക്ക് ചെയ്യാം.
+            {% else %}
+            You can make another caregiver booking after the current booking is completed, rejected, or cancelled.
+            {% endif %}
 
         </p>
 
@@ -564,11 +577,23 @@ Book a Caregiver
     <div class="booking-form-card">
 
         <h2 class="form-title">
+
+            {% if request.user.userprofile.language == 'ml' %}
+            📋 പരിചരണ സേവന അഭ്യർത്ഥന
+            {% else %}
             📋 Caregiver Service Request
+            {% endif %}
+
         </h2>
 
         <p class="form-subtitle">
+
+            {% if request.user.userprofile.language == 'ml' %}
+            പരിചരണക്കാരന് നിങ്ങളെ എങ്ങനെ സഹായിക്കണമെന്ന് മനസ്സിലാക്കാൻ താഴെയുള്ള വിവരങ്ങൾ നൽകുക.
+            {% else %}
             Provide the details below so the caregiver knows how to assist you.
+            {% endif %}
+
         </p>
 
 
@@ -577,22 +602,35 @@ Book a Caregiver
             {% csrf_token %}
 
 
-            <!-- =========================
-                     CAREGIVER
-                ========================= -->
+            <!-- CAREGIVER -->
 
             <div class="form-group">
 
                 <label class="form-label" for="caregiver">
-                    👨‍⚕️ Select Caregiver
+
+                    👨‍⚕️
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    പരിചരണക്കാരനെ തിരഞ്ഞെടുക്കുക
+                    {% else %}
+                    Select Caregiver
+                    {% endif %}
+
                     <span class="required">*</span>
+
                 </label>
 
 
                 <select name="caregiver_id" id="caregiver" class="form-control caregiver-select" required>
 
                     <option value="">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+                        ഒരു പരിചരണക്കാരനെ തിരഞ്ഞെടുക്കുക
+                        {% else %}
                         Select a caregiver
+                        {% endif %}
+
                     </option>
 
 
@@ -614,21 +652,34 @@ Book a Caregiver
 
 
                 <small class="form-help">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    നിങ്ങൾ ബുക്ക് ചെയ്യാൻ ആഗ്രഹിക്കുന്ന പരിചരണക്കാരനെ തിരഞ്ഞെടുക്കുക.
+                    {% else %}
                     Select the caregiver you would like to book.
+                    {% endif %}
+
                 </small>
 
             </div>
 
 
-            <!-- =========================
-                     ADDRESS
-                ========================= -->
+            <!-- ADDRESS -->
 
             <div class="form-group">
 
                 <label class="form-label" for="address">
-                    📍 Your Service Address
+
+                    📍
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    സേവന വിലാസം
+                    {% else %}
+                    Your Service Address
+                    {% endif %}
+
                     <span class="required">*</span>
+
                 </label>
 
 
@@ -637,23 +688,32 @@ Book a Caregiver
 
                 <small class="form-help">
 
-                    This is the address saved in your CareBridge profile.
-                    You can edit it if the service is needed at another location.
+                    {% if request.user.userprofile.language == 'ml' %}
+                    നിങ്ങളുടെ CareBridge പ്രൊഫൈലിൽ സേവ് ചെയ്ത വിലാസമാണിത്. സേവനം മറ്റൊരു സ്ഥലത്താണെങ്കിൽ ഇത് മാറ്റാം.
+                    {% else %}
+                    This is the address saved in your CareBridge profile. You can edit it if the service is needed at
+                    another location.
+                    {% endif %}
 
                 </small>
 
             </div>
 
 
-            <!-- =========================
-                     SERVICES
-                ========================= -->
+            <!-- SERVICES -->
 
             <div class="form-group">
 
                 <label class="form-label">
 
-                    🛠️ What support do you need?
+                    🛠️
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    നിങ്ങൾക്ക് എന്ത് സഹായമാണ് ആവശ്യം?
+                    {% else %}
+                    What support do you need?
+                    {% endif %}
+
                     <span class="required">*</span>
 
                 </label>
@@ -670,16 +730,26 @@ Book a Caregiver
 
                         <label for="home_support">
 
-                            <span class="service-icon">
-                                🏠
-                            </span>
+                            <span class="service-icon">🏠</span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                വീട്ടിലെ സഹായം
+                                {% else %}
                                 Home Support
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                വീട്ടിലെ ദൈനംദിന പ്രവർത്തനങ്ങൾക്കും വ്യക്തിഗത പരിചരണത്തിനും സഹായം.
+                                {% else %}
                                 Help with daily activities and personal support at home.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -687,7 +757,7 @@ Book a Caregiver
                     </div>
 
 
-                    <!-- HOSPITAL ASSISTANCE -->
+                    <!-- HOSPITAL -->
 
                     <div class="service-option">
 
@@ -695,16 +765,26 @@ Book a Caregiver
 
                         <label for="hospital_assistance">
 
-                            <span class="service-icon">
-                                🏥
-                            </span>
+                            <span class="service-icon">🏥</span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ആശുപത്രി സഹായം
+                                {% else %}
                                 Hospital Assistance
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ആശുപത്രി സന്ദർശനങ്ങൾക്കും ആരോഗ്യ സംബന്ധമായ ആവശ്യങ്ങൾക്കും സഹായം.
+                                {% else %}
                                 Support with hospital visits and health-related needs.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -712,7 +792,7 @@ Book a Caregiver
                     </div>
 
 
-                    <!-- MEDICAL SUPPORT -->
+                    <!-- MEDICAL -->
 
                     <div class="service-option">
 
@@ -720,16 +800,26 @@ Book a Caregiver
 
                         <label for="medical_support">
 
-                            <span class="service-icon">
-                                💊
-                            </span>
+                            <span class="service-icon">💊</span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                മെഡിക്കൽ സഹായം
+                                {% else %}
                                 Medical Support
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                മരുന്നുകൾ, അപ്പോയിന്റ്മെന്റുകൾ, അടിസ്ഥാന ആരോഗ്യ പ്രവർത്തനങ്ങൾ എന്നിവയിൽ സഹായം.
+                                {% else %}
                                 Assistance with medicines, appointments, and basic health-related activities.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -745,16 +835,26 @@ Book a Caregiver
 
                         <label for="personal_care">
 
-                            <span class="service-icon">
-                                🧑‍🦽
-                            </span>
+                            <span class="service-icon">🧑‍🦽</span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                വ്യക്തിഗത പരിചരണ സഹായം
+                                {% else %}
                                 Personal Care Assistance
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ചലനം, വസ്ത്രധാരണം, ഭക്ഷണം എന്നിവയിലും മറ്റ് ദൈനംദിന ആവശ്യങ്ങളിലും സഹായം.
+                                {% else %}
                                 Help with mobility, dressing, eating, and other personal daily needs.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -762,7 +862,7 @@ Book a Caregiver
                     </div>
 
 
-                    <!-- HEALTH AND WELLNESS -->
+                    <!-- HEALTH -->
 
                     <div class="service-option">
 
@@ -770,16 +870,26 @@ Book a Caregiver
 
                         <label for="health_wellness">
 
-                            <span class="service-icon">
-                                🩺
-                            </span>
+                            <span class="service-icon">🩺</span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ആരോഗ്യവും ക്ഷേമവും
+                                {% else %}
                                 Health & Wellness Support
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                പതിവ് ആരോഗ്യ, ക്ഷേമ, സുഖപ്രാപ്തി പ്രവർത്തനങ്ങളിൽ സഹായം.
+                                {% else %}
                                 Support with routine health, wellness, and recovery activities.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -792,59 +902,68 @@ Book a Caregiver
             </div>
 
 
-            <!-- =========================
-                     DATE + TIME
-                ========================= -->
+            <!-- DATE + TIME -->
 
             <div class="form-row">
-
-
-                <!-- DATE -->
 
                 <div class="form-group">
 
                     <label class="form-label" for="booking_date">
 
-                        📅 Date
+                        📅
+
+                        {% if request.user.userprofile.language == 'ml' %}
+                        തീയതി
+                        {% else %}
+                        Date
+                        {% endif %}
+
                         <span class="required">*</span>
 
                     </label>
-
 
                     <input type="date" name="booking_date" id="booking_date" class="form-control" required>
 
                 </div>
 
 
-                <!-- TIME -->
-
                 <div class="form-group">
 
                     <label class="form-label" for="booking_time">
 
-                        🕐 Time
+                        🕐
+
+                        {% if request.user.userprofile.language == 'ml' %}
+                        സമയം
+                        {% else %}
+                        Time
+                        {% endif %}
+
                         <span class="required">*</span>
 
                     </label>
-
 
                     <input type="time" name="booking_time" id="booking_time" class="form-control" required>
 
                 </div>
 
-
             </div>
 
 
-            <!-- =========================
-                     PRIORITY
-                ========================= -->
+            <!-- PRIORITY -->
 
             <div class="form-group">
 
                 <label class="form-label">
 
-                    ⚠️ Priority
+                    ⚠️
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    മുൻഗണന
+                    {% else %}
+                    Priority
+                    {% endif %}
+
                     <span class="required">*</span>
 
                 </label>
@@ -852,91 +971,115 @@ Book a Caregiver
 
                 <div class="priority-options">
 
-
                     <label>
-
                         <input type="radio" name="priority" value="Low">
 
                         <span class="priority-box">
-                            🟢 Low
-                        </span>
 
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🟢 കുറഞ്ഞത്
+                            {% else %}
+                            🟢 Low
+                            {% endif %}
+
+                        </span>
                     </label>
 
 
                     <label>
-
                         <input type="radio" name="priority" value="Medium" checked>
 
                         <span class="priority-box">
-                            🟡 Medium
-                        </span>
 
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🟡 ഇടത്തരം
+                            {% else %}
+                            🟡 Medium
+                            {% endif %}
+
+                        </span>
                     </label>
 
 
                     <label>
-
                         <input type="radio" name="priority" value="High">
 
                         <span class="priority-box">
-                            🟠 High
-                        </span>
 
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🟠 ഉയർന്നത്
+                            {% else %}
+                            🟠 High
+                            {% endif %}
+
+                        </span>
                     </label>
 
 
                     <label>
-
                         <input type="radio" name="priority" value="Emergency">
 
                         <span class="priority-box">
+
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🔴 അടിയന്തരാവസ്ഥ
+                            {% else %}
                             🔴 Emergency
+                            {% endif %}
+
                         </span>
-
                     </label>
-
 
                 </div>
 
             </div>
 
 
-            <!-- =========================
-                     DESCRIPTION
-                ========================= -->
+            <!-- DESCRIPTION -->
 
             <div class="form-group">
 
                 <label class="form-label" for="description">
 
-                    📝 Additional Requirements
+                    📝
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    അധിക ആവശ്യങ്ങൾ
+                    {% else %}
+                    Additional Requirements
+                    {% endif %}
 
                 </label>
 
 
                 <textarea name="description" id="description" class="form-control"
-                    placeholder="Tell the caregiver anything important they should know about the service..."></textarea>
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}സേവനത്തെക്കുറിച്ച് പരിചരണക്കാരൻ അറിയേണ്ട പ്രധാന കാര്യങ്ങൾ ഇവിടെ എഴുതുക...{% else %}Tell the caregiver anything important they should know about the service...{% endif %}"></textarea>
 
 
                 <small class="form-help">
 
-                    Mention specific assistance, mobility needs,
-                    hospital details, preferred support, or anything
-                    else important.
+                    {% if request.user.userprofile.language == 'ml' %}
+                    ആവശ്യമായ സഹായം, ചലന ബുദ്ധിമുട്ടുകൾ, ആശുപത്രി വിവരങ്ങൾ, ഇഷ്ടപ്പെട്ട സഹായം തുടങ്ങിയ പ്രധാന വിവരങ്ങൾ
+                    നൽകുക.
+                    {% else %}
+                    Mention specific assistance, mobility needs, hospital details, preferred support, or anything else
+                    important.
+                    {% endif %}
 
                 </small>
 
             </div>
 
 
-            <!-- =========================
-                     SUBMIT
-                ========================= -->
+            <!-- SUBMIT -->
 
             <button type="submit" class="submit-button">
 
+                {% if request.user.userprofile.language == 'ml' %}
+                📅 പരിചരണക്കാരനെ ബുക്ക് ചെയ്യുക
+                {% else %}
                 📅 Book Caregiver
+                {% endif %}
 
             </button>
 
@@ -944,22 +1087,38 @@ Book a Caregiver
         </form>
 
 
-        <!-- =========================
-                 NOTE
-            ========================= -->
+        <!-- NOTE -->
 
         <div class="booking-note">
 
             💙 <strong>CareBridge Tip:</strong>
 
-            Please provide accurate information so your caregiver
-            can understand your requirements and prepare accordingly.
+            {% if request.user.userprofile.language == 'ml' %}
+            കൃത്യമായ വിവരങ്ങൾ നൽകുക, അതുവഴി പരിചരണക്കാരന് നിങ്ങളുടെ ആവശ്യങ്ങൾ മനസ്സിലാക്കി തയ്യാറാകാൻ കഴിയും.
+            {% else %}
+            Please provide accurate information so your caregiver can understand your requirements and prepare
+            accordingly.
+            {% endif %}
 
+            {% if request.user.userprofile.language == 'ml' %}
+            നിങ്ങളുടെ ബുക്കിംഗ് നില
+            {% else %}
             You can track your booking status from
+            {% endif %}
 
             <a href="{% url 'my_bookings' %}" class="my-bookings-link">
+
+                {% if request.user.userprofile.language == 'ml' %}
+                എന്റെ ബുക്കിംഗുകൾ
+                {% else %}
                 My Bookings
-            </a>.
+                {% endif %}
+
+            </a>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            വിഭാഗത്തിൽ പരിശോധിക്കാം.
+            {% endif %}
 
         </div>
 

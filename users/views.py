@@ -432,6 +432,57 @@ def dashboard(request):
         }
     )
 
+def switch_language(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    # ---------------------------------------------
+    # Only the 3 main users can change language
+    # ---------------------------------------------
+
+    allowed_roles = [
+        "Elderly Person",
+        "Person with Mobility Impairment",
+        "Person with Hearing Impairment",
+    ]
+
+    if profile.role not in allowed_roles:
+        return redirect("dashboard")
+
+    # ---------------------------------------------
+    # Get selected language
+    # ---------------------------------------------
+
+    language = request.POST.get("language")
+
+    if language not in ["en", "ml"]:
+        return redirect("dashboard")
+
+    # ---------------------------------------------
+    # Save language preference
+    # ---------------------------------------------
+
+    profile.language = language
+    profile.save(update_fields=["language"])
+
+    # ---------------------------------------------
+    # Return to previous page
+    # ---------------------------------------------
+
+    return redirect(
+        request.META.get(
+            "HTTP_REFERER",
+            "/dashboard/"
+        )
+    )
+
+
 def profile(request):
 
     if not request.user.is_authenticated:

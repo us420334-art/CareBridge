@@ -1,268 +1,588 @@
 {% extends base_template %}
 
+
 {% block title %}
+
+{% if request.user.userprofile.language == 'ml' %}
+വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+{% else %}
 Book a Volunteer
+{% endif %}
+
 {% endblock %}
+
 
 {% block page_title %}
+
+{% if request.user.userprofile.language == 'ml' %}
+വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+{% else %}
 Book a Volunteer
+{% endif %}
+
 {% endblock %}
 
+
 {% block extra_css %}
+
 <style>
     .volunteer-page {
         padding: 30px 35px 50px;
         max-width: 1100px;
-        margin: auto
+        margin: auto;
     }
 
     .header {
         display: flex;
         align-items: center;
         gap: 18px;
-        margin-bottom: 25px
+        margin-bottom: 25px;
     }
 
     .header-icon {
         width: 65px;
         height: 65px;
         border-radius: 18px;
+
         background: linear-gradient(135deg, #00897b, #26a69a);
+
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 32px
+
+        font-size: 32px;
     }
 
     .header h1 {
         margin: 0;
-        color: #1f2937
+        color: #1f2937;
     }
 
     .header p {
         margin: 6px 0 0;
-        color: #6b7280
+        color: #6b7280;
     }
 
-    .message {
-        padding: 14px 18px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        background: #e8f7f5;
-        color: #00695c;
-        border-left: 5px solid #00897b
-    }
+
+    /* =========================
+       ACTIVE BOOKING
+    ========================= */
 
     .active-box {
         background: #eefaf8;
+
         border-left: 5px solid #00897b;
+
         border-radius: 14px;
+
         padding: 20px;
-        margin-bottom: 28px
+
+        margin-bottom: 28px;
     }
+
+    .active-box h3 {
+        color: #1f2937;
+    }
+
+
+    /* =========================
+       FORM CARD
+    ========================= */
 
     .form-card {
         background: #fff;
+
         border-radius: 18px;
+
         padding: 32px;
+
         border: 1px solid #e2e8f0;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, .07)
+
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .07);
     }
 
     .form-group {
-        margin-bottom: 22px
+        margin-bottom: 22px;
     }
 
     label {
         display: block;
+
         margin-bottom: 8px;
+
         font-weight: 700;
-        color: #374151
+
+        color: #374151;
     }
 
     .control {
         width: 100%;
+
         padding: 13px;
+
         border: 1px solid #d1d5db;
+
         border-radius: 10px;
-        box-sizing: border-box
+
+        box-sizing: border-box;
+
+        font-size: 15px;
     }
+
+    .control:focus {
+        outline: none;
+
+        border-color: #00897b;
+
+        box-shadow:
+            0 0 0 3px rgba(0, 137, 123, .10);
+    }
+
+    textarea.control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+
+    /* =========================
+       ROW
+    ========================= */
 
     .row {
         display: grid;
+
         grid-template-columns: 1fr 1fr;
-        gap: 20px
+
+        gap: 20px;
     }
 
+
     /* =========================
-   SERVICE OPTIONS
-========================= */
+       SERVICE OPTIONS
+    ========================= */
 
-.service-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
+    .service-options {
+        display: grid;
 
-.service-option {
-    position: relative;
-}
+        grid-template-columns: 1fr 1fr;
 
-.service-option input {
-    position: absolute;
-    opacity: 0;
-}
+        gap: 15px;
+    }
 
-.service-option label {
-    display: block;
-    padding: 18px;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: #ffffff;
-    min-height: 120px;
-    box-sizing: border-box;
-}
+    .service-option {
+        position: relative;
+    }
 
-.service-option label:hover {
-    border-color: #80cbc4;
-    background: #f5fffd;
-}
+    .service-option input {
+        position: absolute;
 
-.service-option input:checked + label {
-    border-color: #00897b;
-    background: #eefaf8;
-    box-shadow: 0 4px 12px rgba(0, 137, 123, 0.12);
-}
+        opacity: 0;
+    }
 
-.service-icon {
-    font-size: 26px;
-    display: block;
-    margin-bottom: 8px;
-}
+    .service-option label {
+        display: block;
 
-.service-name {
-    font-weight: 700;
-    color: #1f2937;
-    display: block;
-}
+        padding: 18px;
 
-.service-description {
-    display: block;
-    margin-top: 5px;
-    color: #6b7280;
-    font-size: 13px;
-    line-height: 1.4;
-}
+        border: 2px solid #e5e7eb;
+
+        border-radius: 12px;
+
+        cursor: pointer;
+
+        transition: all 0.2s ease;
+
+        background: #ffffff;
+
+        min-height: 120px;
+
+        box-sizing: border-box;
+    }
+
+    .service-option label:hover {
+        border-color: #80cbc4;
+
+        background: #f5fffd;
+    }
+
+    .service-option input:checked+label {
+        border-color: #00897b;
+
+        background: #eefaf8;
+
+        box-shadow:
+            0 4px 12px rgba(0, 137, 123, 0.12);
+    }
+
+    .service-icon {
+        font-size: 26px;
+
+        display: block;
+
+        margin-bottom: 8px;
+    }
+
+    .service-name {
+        font-weight: 700;
+
+        color: #1f2937;
+
+        display: block;
+    }
+
+    .service-description {
+        display: block;
+
+        margin-top: 5px;
+
+        color: #6b7280;
+
+        font-size: 13px;
+
+        line-height: 1.4;
+    }
+
+
+    /* =========================
+       PRIORITY
+    ========================= */
+
     .priority {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 10px;
     }
 
     .priority input {
-        display: none
+        display: none;
     }
 
     .priority span {
         display: block;
+
         text-align: center;
+
         padding: 12px;
+
         border: 2px solid #e5e7eb;
-        border-radius: 10px
+
+        border-radius: 10px;
+
+        cursor: pointer;
     }
 
     .priority input:checked+span {
         border-color: #00897b;
-        background: #eefaf8
+
+        background: #eefaf8;
+
+        color: #00897b;
     }
+
+
+    /* =========================
+       SUBMIT
+    ========================= */
 
     .submit {
         width: 100%;
+
         padding: 15px;
+
         border: 0;
+
         border-radius: 11px;
-        background: linear-gradient(135deg, #00897b, #26a69a);
+
+        background:
+            linear-gradient(135deg, #00897b, #26a69a);
+
         color: #fff;
+
         font-size: 16px;
-        font-weight: 700
+
+        font-weight: 700;
+
+        cursor: pointer;
     }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
 
     @media(max-width:700px) {
 
-        .row,
-        .services {
-            grid-template-columns: 1fr
+        .row {
+            grid-template-columns: 1fr;
+        }
+
+        .service-options {
+            grid-template-columns: 1fr;
         }
 
         .priority {
-            grid-template-columns: 1fr 1fr
+            grid-template-columns: 1fr 1fr;
         }
+
+        .volunteer-page {
+            padding: 20px 15px 40px;
+        }
+
+        .form-card {
+            padding: 22px;
+        }
+
     }
 </style>
+
 {% endblock %}
 
+
 {% block content %}
+
 <div class="volunteer-page">
 
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
     <div class="header">
-        <div class="header-icon">🤝</div>
-        <div>
-            <h1>Book a Volunteer</h1>
-            <p>Choose a volunteer and describe the support you need.</p>
+
+        <div class="header-icon">
+            🤝
         </div>
+
+        <div>
+
+            <h1>
+
+                {% if request.user.userprofile.language == 'ml' %}
+                വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+                {% else %}
+                Book a Volunteer
+                {% endif %}
+
+            </h1>
+
+            <p>
+
+                {% if request.user.userprofile.language == 'ml' %}
+                ഒരു വോളന്റിയറെ തിരഞ്ഞെടുക്കുകയും നിങ്ങൾക്ക് ആവശ്യമായ സഹായം വിശദീകരിക്കുകയും ചെയ്യുക.
+                {% else %}
+                Choose a volunteer and describe the support you need.
+                {% endif %}
+
+            </p>
+
+        </div>
+
     </div>
 
-   
+
+    <!-- =========================
+         ACTIVE BOOKING
+    ========================= -->
 
     {% if active_booking %}
+
     <div class="active-box">
-        <h3>🔒 Active Volunteer Booking</h3>
-        <p>You currently have an active booking with <strong>{{ active_booking.volunteer.username }}</strong>.</p>
-        <p>Status: <strong>{{ active_booking.status }}</strong></p>
-        <p>You can make another booking after this request is completed, rejected, or cancelled.</p>
+
+        <h3>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            🔒 സജീവ വോളന്റിയർ ബുക്കിംഗ്
+            {% else %}
+            🔒 Active Volunteer Booking
+            {% endif %}
+
+        </h3>
+
+
+        <p>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            നിങ്ങൾക്ക് നിലവിൽ
+            {% else %}
+            You currently have an active booking with
+            {% endif %}
+
+            <strong>
+                {{ active_booking.volunteer.username }}
+            </strong>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            എന്ന വോളന്റിയറുമായി ഒരു സജീവ ബുക്കിംഗ് ഉണ്ട്.
+            {% endif %}
+
+        </p>
+
+
+        <p>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            നില:
+            {% else %}
+            Status:
+            {% endif %}
+
+            <strong>
+                {{ active_booking.status }}
+            </strong>
+
+        </p>
+
+
+        <p>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            ഈ അഭ്യർത്ഥന പൂർത്തിയാകുകയോ നിരസിക്കപ്പെടുകയോ റദ്ദാക്കപ്പെടുകയോ ചെയ്തതിന് ശേഷം മറ്റൊരു ബുക്കിംഗ് നടത്താം.
+            {% else %}
+            You can make another booking after this request is completed, rejected, or cancelled.
+            {% endif %}
+
+        </p>
+
     </div>
+
     {% endif %}
 
+
+    <!-- =========================
+         FORM
+    ========================= -->
+
     {% if not active_booking %}
+
     <div class="form-card">
 
-        <h2>📋 Volunteer Service Request</h2>
-        <p>Provide the details below so the volunteer knows how to assist you.</p>
+
+        <h2>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            📋 വോളന്റിയർ സേവന അഭ്യർത്ഥന
+            {% else %}
+            📋 Volunteer Service Request
+            {% endif %}
+
+        </h2>
+
+
+        <p>
+
+            {% if request.user.userprofile.language == 'ml' %}
+            വോളന്റിയർക്ക് നിങ്ങളെ എങ്ങനെ സഹായിക്കണമെന്ന് മനസ്സിലാക്കാൻ താഴെയുള്ള വിവരങ്ങൾ നൽകുക.
+            {% else %}
+            Provide the details below so the volunteer knows how to assist you.
+            {% endif %}
+
+        </p>
+
 
         <form method="POST">
+
             {% csrf_token %}
 
+
+            <!-- VOLUNTEER -->
+
             <div class="form-group">
-                <label>Select Volunteer *</label>
+
+                <label>
+
+                    🤝
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    വോളന്റിയറെ തിരഞ്ഞെടുക്കുക
+                    {% else %}
+                    Select Volunteer
+                    {% endif %}
+
+                    *
+
+                </label>
+
+
                 <select name="volunteer_id" class="control" required>
-                    <option value="">Select a volunteer</option>
-                    {% for volunteer in volunteers %}
-                    <option value="{{ volunteer.user.id }}">
-                        {{ volunteer.user.get_full_name|default:volunteer.user.username }}
-                        {% if volunteer.phone %} — {{ volunteer.phone }}{% endif %}
+
+                    <option value="">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+                        ഒരു വോളന്റിയറെ തിരഞ്ഞെടുക്കുക
+                        {% else %}
+                        Select a volunteer
+                        {% endif %}
+
                     </option>
+
+
+                    {% for volunteer in volunteers %}
+
+                    <option value="{{ volunteer.user.id }}">
+
+                        {{ volunteer.user.get_full_name|default:volunteer.user.username }}
+
+                        {% if volunteer.phone %}
+                        — {{ volunteer.phone }}
+                        {% endif %}
+
+                    </option>
+
                     {% endfor %}
+
                 </select>
+
             </div>
+
+
+            <!-- ADDRESS -->
 
             <div class="form-group">
-                <label>Your Service Address *</label>
+
+                <label>
+
+                    📍
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    സേവന വിലാസം
+                    {% else %}
+                    Your Service Address
+                    {% endif %}
+
+                    *
+
+                </label>
+
+
                 <textarea name="address" class="control" required>{{ profile.address }}</textarea>
+
             </div>
 
-            <!-- =========================
-     SERVICE OPTIONS
-========================= -->
+
+            <!-- SERVICE OPTIONS -->
 
             <div class="form-group">
 
                 <label class="form-label">
-                    🤝 What support do you need? <span class="required">*</span>
+
+                    🤝
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    നിങ്ങൾക്ക് എന്ത് സഹായമാണ് ആവശ്യം?
+                    {% else %}
+                    What support do you need?
+                    {% endif %}
+
+                    <span class="required">*</span>
+
                 </label>
 
+
                 <div class="service-options">
+
 
                     <!-- SHOPPING -->
 
@@ -278,12 +598,23 @@ Book a Volunteer
                             </span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ഷോപ്പിംഗ് സഹായം
+                                {% else %}
                                 Shopping Assistance
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
-                                Help with grocery shopping, collecting essential items,
-                                and other shopping needs.
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                പലചരക്ക് സാധനങ്ങൾ, ആവശ്യമായ വസ്തുക്കൾ എന്നിവ വാങ്ങുന്നതിനുള്ള സഹായം.
+                                {% else %}
+                                Help with grocery shopping, collecting essential items, and other shopping needs.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -304,12 +635,23 @@ Book a Volunteer
                             </span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ബാങ്ക് സഹായം
+                                {% else %}
                                 Bank Assistance
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
-                                Support for visiting banks, completing simple banking
-                                tasks, or standing in queues.
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ബാങ്ക് സന്ദർശനം, ലളിതമായ ബാങ്കിംഗ് ജോലികൾ, ക്യൂവിൽ നിൽക്കൽ എന്നിവയ്ക്കുള്ള സഹായം.
+                                {% else %}
+                                Support for visiting banks, completing simple banking tasks, or standing in queues.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -330,12 +672,23 @@ Book a Volunteer
                             </span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ഗതാഗത സഹായം
+                                {% else %}
                                 Transport Assistance
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
-                                Help arranging or accompanying you during local travel
-                                and transportation.
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                പ്രാദേശിക യാത്രയ്ക്കും ഗതാഗതത്തിനും ക്രമീകരണം നടത്താനും കൂടെ പോകാനും സഹായം.
+                                {% else %}
+                                Help arranging or accompanying you during local travel and transportation.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -356,12 +709,23 @@ Book a Volunteer
                             </span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ആശുപത്രി അനുഗമനം
+                                {% else %}
                                 Hospital Accompaniment
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
-                                Accompany you to hospital visits, appointments,
-                                and provide support during the visit.
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ആശുപത്രി സന്ദർശനങ്ങൾക്കും അപ്പോയിന്റ്മെന്റുകൾക്കും പിന്തുണ.
+                                {% else %}
+                                Accompany you to hospital visits, appointments, and provide support during the visit.
+                                {% endif %}
+
                             </span>
 
                         </label>
@@ -382,57 +746,221 @@ Book a Volunteer
                             </span>
 
                             <span class="service-name">
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                പൊതുവായ സഹായം
+                                {% else %}
                                 General Support
+                                {% endif %}
+
                             </span>
 
                             <span class="service-description">
-                                Friendly assistance with everyday non-medical tasks
-                                and community support.
+
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ദൈനംദിന മെഡിക്കൽ അല്ലാത്ത ജോലികൾക്കും സാമൂഹിക പിന്തുണയ്ക്കുമുള്ള സൗഹൃദ സഹായം.
+                                {% else %}
+                                Friendly assistance with everyday non-medical tasks and community support.
+                                {% endif %}
+
                             </span>
 
                         </label>
 
                     </div>
 
+
+                </div>
+
+            </div>
+
+
+            <!-- DATE + TIME -->
+
+            <div class="row">
+
+                <div class="form-group">
+
+                    <label>
+
+                        📅
+
+                        {% if request.user.userprofile.language == 'ml' %}
+                        തീയതി
+                        {% else %}
+                        Date
+                        {% endif %}
+
+                        *
+
+                    </label>
+
+                    <input type="date" name="booking_date" class="control" required>
+
                 </div>
 
 
+                <div class="form-group">
+
+                    <label>
+
+                        🕐
+
+                        {% if request.user.userprofile.language == 'ml' %}
+                        സമയം
+                        {% else %}
+                        Time
+                        {% endif %}
+
+                        *
+
+                    </label>
+
+                    <input type="time" name="booking_time" class="control" required>
+
+                </div>
 
             </div>
+
+
+            <!-- PRIORITY -->
+
+            <div class="form-group">
+
+                <label>
+
+                    ⚠️
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    മുൻഗണന
+                    {% else %}
+                    Priority
+                    {% endif %}
+
+                    *
+
+                </label>
+
+
+                <div class="priority">
+
+
+                    <label>
+
+                        <input type="radio" name="priority" value="Low">
+
+                        <span>
+
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🟢 കുറഞ്ഞത്
+                            {% else %}
+                            🟢 Low
+                            {% endif %}
+
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input type="radio" name="priority" value="Medium" checked>
+
+                        <span>
+
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🟡 ഇടത്തരം
+                            {% else %}
+                            🟡 Medium
+                            {% endif %}
+
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input type="radio" name="priority" value="High">
+
+                        <span>
+
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🟠 ഉയർന്നത്
+                            {% else %}
+                            🟠 High
+                            {% endif %}
+
+                        </span>
+
+                    </label>
+
+
+                    <label>
+
+                        <input type="radio" name="priority" value="Emergency">
+
+                        <span>
+
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🔴 അടിയന്തരാവസ്ഥ
+                            {% else %}
+                            🔴 Emergency
+                            {% endif %}
+
+                        </span>
+
+                    </label>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label>
+
+                    📝
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                    അധിക ആവശ്യങ്ങൾ
+                    {% else %}
+                    Additional Requirements
+                    {% endif %}
+
+                </label>
+
+
+                <textarea name="description" class="control"
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}വോളന്റിയർ അറിയേണ്ട പ്രധാന കാര്യങ്ങൾ ഇവിടെ എഴുതുക...{% else %}Tell the volunteer anything important they should know...{% endif %}"></textarea>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button type="submit" class="submit">
+
+                {% if request.user.userprofile.language == 'ml' %}
+                📅 വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+                {% else %}
+                📅 Book Volunteer
+                {% endif %}
+
+            </button>
+
+
+        </form>
+
     </div>
 
-    <div class="row">
-        <div class="form-group">
-            <label>Date *</label>
-            <input type="date" name="booking_date" class="control" required>
-        </div>
+    {% endif %}
 
-        <div class="form-group">
-            <label>Time *</label>
-            <input type="time" name="booking_time" class="control" required>
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label>Priority *</label>
-        <div class="priority">
-            <label><input type="radio" name="priority" value="Low"><span>🟢 Low</span></label>
-            <label><input type="radio" name="priority" value="Medium" checked><span>🟡 Medium</span></label>
-            <label><input type="radio" name="priority" value="High"><span>🟠 High</span></label>
-            <label><input type="radio" name="priority" value="Emergency"><span>🔴 Emergency</span></label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>Additional Requirements</label>
-        <textarea name="description" class="control"
-            placeholder="Tell the volunteer anything important they should know..."></textarea>
-    </div>
-
-    <button type="submit" class="submit">📅 Book Volunteer</button>
-
-    </form>
 </div>
-{% endif %}
-</div>
+
 {% endblock %}

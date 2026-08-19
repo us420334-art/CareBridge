@@ -1,34 +1,45 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+മരുന്ന് ഓർമ്മപ്പെടുത്തൽ തിരുത്തുക
+{% else %}
 Edit Medicine Reminder
+{% endif %}
+
 {% endblock %}
 
+
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+മരുന്ന് ഓർമ്മപ്പെടുത്തൽ തിരുത്തുക
+{% else %}
 Edit Medicine Reminder
+{% endif %}
+
 {% endblock %}
+
 
 {% block extra_css %}
 
 <style>
     /* =========================================================
-   PAGE
-========================================================= */
+       PAGE
+    ========================================================= */
 
     .edit-medicine-page {
         max-width: 850px;
-
         margin: 0 auto;
-
         padding: 35px;
-
         box-sizing: border-box;
     }
 
 
     /* =========================================================
-   CARD
-========================================================= */
+       CARD
+    ========================================================= */
 
     .edit-medicine-card {
         background: white;
@@ -47,8 +58,8 @@ Edit Medicine Reminder
 
 
     /* =========================================================
-   HEADER
-========================================================= */
+       HEADER
+    ========================================================= */
 
     .edit-medicine-header {
         display: flex;
@@ -63,6 +74,7 @@ Edit Medicine Reminder
 
         border-bottom: 1px solid #eeeeee;
     }
+
 
     .edit-medicine-icon {
         width: 55px;
@@ -84,6 +96,7 @@ Edit Medicine Reminder
         flex-shrink: 0;
     }
 
+
     .edit-medicine-header h1 {
         margin: 0;
 
@@ -91,6 +104,7 @@ Edit Medicine Reminder
 
         font-size: 27px;
     }
+
 
     .edit-medicine-header p {
         margin: 5px 0 0;
@@ -102,8 +116,8 @@ Edit Medicine Reminder
 
 
     /* =========================================================
-   FORM
-========================================================= */
+       FORM
+    ========================================================= */
 
     .edit-medicine-form {
         display: grid;
@@ -116,8 +130,8 @@ Edit Medicine Reminder
 
 
     /* =========================================================
-   FORM GROUP
-========================================================= */
+       FORM GROUP
+    ========================================================= */
 
     .edit-form-group {
         display: flex;
@@ -127,9 +141,11 @@ Edit Medicine Reminder
         gap: 8px;
     }
 
+
     .edit-form-group.full-width {
         grid-column: 1 / -1;
     }
+
 
     .edit-form-group label {
         color: #374151;
@@ -138,6 +154,7 @@ Edit Medicine Reminder
 
         font-weight: 700;
     }
+
 
     .edit-form-group input,
     .edit-form-group textarea {
@@ -160,6 +177,7 @@ Edit Medicine Reminder
         outline: none;
     }
 
+
     .edit-form-group input:focus,
     .edit-form-group textarea:focus {
         border-color: #6366f1;
@@ -167,6 +185,7 @@ Edit Medicine Reminder
         box-shadow:
             0 0 0 3px rgba(99, 102, 241, 0.12);
     }
+
 
     .edit-form-group textarea {
         min-height: 110px;
@@ -176,9 +195,8 @@ Edit Medicine Reminder
 
 
     /* =========================================================
-   ACTION AREA
-   SAVE + CANCEL ALWAYS TOGETHER
-========================================================= */
+       ACTION AREA
+    ========================================================= */
 
     .edit-form-actions {
         grid-column: 1 / -1;
@@ -202,8 +220,8 @@ Edit Medicine Reminder
 
 
     /* =========================================================
-   SAVE BUTTON
-========================================================= */
+       SAVE BUTTON
+    ========================================================= */
 
     .save-medicine-button {
         height: 46px;
@@ -229,14 +247,15 @@ Edit Medicine Reminder
         box-sizing: border-box;
     }
 
+
     .save-medicine-button:hover {
         background: #4338ca;
     }
 
 
     /* =========================================================
-   CANCEL BUTTON
-========================================================= */
+       CANCEL BUTTON
+    ========================================================= */
 
     .cancel-medicine-button {
         display: inline-flex;
@@ -266,14 +285,15 @@ Edit Medicine Reminder
         box-sizing: border-box;
     }
 
+
     .cancel-medicine-button:hover {
         background: #e5e7eb;
     }
 
 
     /* =========================================================
-   BACK LINK
-========================================================= */
+       BACK LINK
+    ========================================================= */
 
     .back-to-medicines {
         display: inline-flex;
@@ -293,14 +313,15 @@ Edit Medicine Reminder
         font-weight: 700;
     }
 
+
     .back-to-medicines:hover {
         text-decoration: underline;
     }
 
 
     /* =========================================================
-   MOBILE
-========================================================= */
+       MOBILE
+    ========================================================= */
 
     @media (max-width: 700px) {
 
@@ -308,17 +329,21 @@ Edit Medicine Reminder
             padding: 20px 15px 40px;
         }
 
+
         .edit-medicine-card {
             padding: 24px 20px;
         }
+
 
         .edit-medicine-form {
             grid-template-columns: 1fr;
         }
 
+
         .edit-form-group.full-width {
             grid-column: auto;
         }
+
 
         .edit-form-actions {
             grid-column: auto;
@@ -352,14 +377,33 @@ Edit Medicine Reminder
                 💊
             </div>
 
+
             <div>
 
                 <h1>
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    മരുന്ന് ഓർമ്മപ്പെടുത്തൽ തിരുത്തുക
+                    {% else %}
                     Edit Medicine Reminder
+                    {% endif %}
+
                 </h1>
 
+
                 <p>
+
+                    {% if request.user.userprofile.language == "ml" %}
+
+                    നിങ്ങളുടെ മരുന്നിന്റെ വിവരങ്ങളും
+                    ഓർമ്മപ്പെടുത്തൽ സമയവും പുതുക്കുക.
+
+                    {% else %}
+
                     Update your medicine details and reminder time.
+
+                    {% endif %}
+
                 </p>
 
             </div>
@@ -381,11 +425,19 @@ Edit Medicine Reminder
             <div class="edit-form-group">
 
                 <label for="medicine_name">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    മരുന്നിന്റെ പേര്
+                    {% else %}
                     Medicine Name
+                    {% endif %}
+
                 </label>
 
+
                 <input type="text" id="medicine_name" name="medicine_name" value="{{ reminder.medicine_name }}"
-                    placeholder="Example: Paracetamol" required>
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}ഉദാഹരണം: പാരസെറ്റമോൾ{% else %}Example: Paracetamol{% endif %}"
+                    required>
 
             </div>
 
@@ -395,10 +447,18 @@ Edit Medicine Reminder
             <div class="edit-form-group">
 
                 <label for="dosage">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ഡോസ്
+                    {% else %}
                     Dosage
+                    {% endif %}
+
                 </label>
 
-                <input type="text" id="dosage" name="dosage" value="{{ reminder.dosage }}" placeholder="Example: 500 mg"
+
+                <input type="text" id="dosage" name="dosage" value="{{ reminder.dosage }}"
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}ഉദാഹരണം: 500 mg{% else %}Example: 500 mg{% endif %}"
                     required>
 
             </div>
@@ -409,8 +469,15 @@ Edit Medicine Reminder
             <div class="edit-form-group">
 
                 <label for="reminder_time">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ഓർമ്മപ്പെടുത്തൽ സമയം
+                    {% else %}
                     Reminder Time
+                    {% endif %}
+
                 </label>
+
 
                 <input type="time" id="reminder_time" name="reminder_time"
                     value="{{ reminder.reminder_time|time:'H:i' }}" required>
@@ -423,8 +490,15 @@ Edit Medicine Reminder
             <div class="edit-form-group">
 
                 <label for="start_date">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ആരംഭ തീയതി
+                    {% else %}
                     Start Date
+                    {% endif %}
+
                 </label>
+
 
                 <input type="date" id="start_date" name="start_date" value="{{ reminder.start_date|date:'Y-m-d' }}"
                     required>
@@ -437,11 +511,18 @@ Edit Medicine Reminder
             <div class="edit-form-group full-width">
 
                 <label for="instructions">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    നിർദ്ദേശങ്ങൾ
+                    {% else %}
                     Instructions
+                    {% endif %}
+
                 </label>
 
+
                 <textarea id="instructions" name="instructions"
-                    placeholder="Example: Take after breakfast">{{ reminder.instructions }}</textarea>
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}ഉദാഹരണം: പ്രഭാതഭക്ഷണത്തിന് ശേഷം കഴിക്കുക{% else %}Example: Take after breakfast{% endif %}">{{ reminder.instructions }}</textarea>
 
             </div>
 
@@ -452,18 +533,28 @@ Edit Medicine Reminder
 
             <div class="edit-form-actions">
 
+
                 <button type="submit" class="save-medicine-button">
 
+                    {% if request.user.userprofile.language == "ml" %}
+                    💾 മാറ്റങ്ങൾ സംരക്ഷിക്കുക
+                    {% else %}
                     💾 Save Changes
+                    {% endif %}
 
                 </button>
 
 
                 <a href="{% url 'medicine_alerts' %}" class="cancel-medicine-button">
 
+                    {% if request.user.userprofile.language == "ml" %}
+                    ✖ റദ്ദാക്കുക
+                    {% else %}
                     ✖ Cancel
+                    {% endif %}
 
                 </a>
+
 
             </div>
 
@@ -474,7 +565,11 @@ Edit Medicine Reminder
 
         <a href="{% url 'medicine_alerts' %}" class="back-to-medicines">
 
+            {% if request.user.userprofile.language == "ml" %}
+            ← മരുന്ന് ഓർമ്മപ്പെടുത്തലുകളിലേക്ക് മടങ്ങുക
+            {% else %}
             ← Back to Medicine Alerts
+            {% endif %}
 
         </a>
 

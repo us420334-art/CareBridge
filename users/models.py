@@ -23,6 +23,15 @@ class UserProfile(models.Model):
         choices=ROLE_CHOICES
     )
 
+    language = models.CharField(
+        max_length=2,
+        choices=[
+            ('en', 'English'),
+            ('ml', 'Malayalam'),
+        ],
+        default='en'
+    )
+
     phone = models.CharField(
         max_length=15
     )
@@ -49,6 +58,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
     
 class RepresentedPerson(models.Model):
 

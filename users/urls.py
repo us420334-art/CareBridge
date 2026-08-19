@@ -12,6 +12,12 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
 
     path(
+    'switch-language/',
+    views.switch_language,
+    name='switch_language'
+),
+
+    path(
     'admin-dashboard/',
     views.admin_dashboard,
     name='admin_dashboard'

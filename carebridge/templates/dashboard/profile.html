@@ -1,11 +1,24 @@
 {% extends base_template %}
 
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+എന്റെ പ്രൊഫൈൽ
+{% else %}
 My Profile
+{% endif %}
+
 {% endblock %}
 
+
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+എന്റെ പ്രൊഫൈൽ
+{% else %}
 My Profile
+{% endif %}
+
 {% endblock %}
 
 
@@ -346,7 +359,37 @@ My Profile
             </h2>
 
             <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                {% if profile.role == "Elderly Person" %}
+                വയോജന വ്യക്തി
+
+                {% elif profile.role == "Person with Mobility Impairment" %}
+                ചലന വൈകല്യമുള്ള വ്യക്തി
+
+                {% elif profile.role == "Person with Hearing Impairment" %}
+                ശ്രവണ വൈകല്യമുള്ള വ്യക്തി
+
+                {% elif profile.role == "Care Representative" %}
+                കെയർ പ്രതിനിധി
+
+                {% elif profile.role == "Caregiver" %}
+                കെയർഗിവർ
+
+                {% elif profile.role == "Volunteer" %}
+                വോളന്റിയർ
+
+                {% else %}
                 {{ profile.role }}
+                {% endif %}
+
+                {% else %}
+
+                {{ profile.role }}
+
+                {% endif %}
+
             </p>
 
         </div>
@@ -362,7 +405,13 @@ My Profile
     <div class="cb-profile-card">
 
         <h3>
+
+            {% if request.user.userprofile.language == "ml" %}
+            📋 വ്യക്തിഗത വിവരങ്ങൾ
+            {% else %}
             📋 Personal Information
+            {% endif %}
+
         </h3>
 
 
@@ -371,7 +420,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഉപയോക്തൃനാമം
+                {% else %}
                 Username
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -386,7 +441,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഇമെയിൽ
+                {% else %}
                 Email
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -398,7 +459,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -413,7 +480,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഫോൺ
+                {% else %}
                 Phone
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -425,7 +498,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -440,7 +519,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                വിലാസം
+                {% else %}
                 Address
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -452,7 +537,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -467,11 +558,47 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                പങ്ക്
+                {% else %}
                 Role
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                {% if profile.role == "Elderly Person" %}
+                വയോജന വ്യക്തി
+
+                {% elif profile.role == "Person with Mobility Impairment" %}
+                ചലന വൈകല്യമുള്ള വ്യക്തി
+
+                {% elif profile.role == "Person with Hearing Impairment" %}
+                ശ്രവണ വൈകല്യമുള്ള വ്യക്തി
+
+                {% elif profile.role == "Care Representative" %}
+                കെയർ പ്രതിനിധി
+
+                {% elif profile.role == "Caregiver" %}
+                കെയർഗിവർ
+
+                {% elif profile.role == "Volunteer" %}
+                വോളന്റിയർ
+
+                {% else %}
                 {{ profile.role }}
+                {% endif %}
+
+                {% else %}
+
+                {{ profile.role }}
+
+                {% endif %}
+
             </span>
 
         </div>
@@ -492,15 +619,31 @@ My Profile
     <div class="cb-profile-card">
 
         <h3>
+
+            {% if request.user.userprofile.language == "ml" %}
+            💙 ഞാൻ പ്രതിനിധീകരിക്കുന്ന വ്യക്തി
+            {% else %}
             💙 Person I Represent
+            {% endif %}
+
         </h3>
 
 
         <div class="cb-profile-note">
 
+            {% if request.user.userprofile.language == "ml" %}
+
+            ഈ വ്യക്തിയുടെ പേരിൽ നിങ്ങൾ CareBridge സേവനങ്ങൾ
+            നിയന്ത്രിക്കുന്നു. അവരുടെ വിവരങ്ങൾ നിങ്ങളുടെ
+            പ്രൊഫൈലിൽ നിന്ന് പ്രത്യേകം സൂക്ഷിച്ചിരിക്കുന്നു.
+
+            {% else %}
+
             You manage CareBridge services on behalf
             of this person. Their information is kept
             separately from your own profile.
+
+            {% endif %}
 
         </div>
 
@@ -510,7 +653,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                പേര്
+                {% else %}
                 Name
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -525,7 +674,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                പ്രായം
+                {% else %}
                 Age
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -540,11 +695,38 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                വ്യക്തിയുടെ തരം
+                {% else %}
                 Person Type
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
+
+                {% if request.user.userprofile.language == "ml" %}
+
+                {% if request.user.represented_person.person_type == "Elderly Person" %}
+                വയോജന വ്യക്തി
+
+                {% elif request.user.represented_person.person_type == "Person with Mobility Impairment" %}
+                ചലന വൈകല്യമുള്ള വ്യക്തി
+
+                {% elif request.user.represented_person.person_type == "Person with Hearing Impairment" %}
+                ശ്രവണ വൈകല്യമുള്ള വ്യക്തി
+
+                {% else %}
                 {{ request.user.represented_person.person_type }}
+                {% endif %}
+
+                {% else %}
+
+                {{ request.user.represented_person.person_type }}
+
+                {% endif %}
+
             </span>
 
         </div>
@@ -555,7 +737,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ബന്ധം
+                {% else %}
                 Relationship
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -570,7 +758,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഫോൺ
+                {% else %}
                 Phone
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -585,7 +779,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                വിലാസം
+                {% else %}
                 Address
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -600,7 +800,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                രക്തഗ്രൂപ്പ്
+                {% else %}
                 Blood Group
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -612,7 +818,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -627,7 +839,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ആരോഗ്യ വിവരങ്ങൾ
+                {% else %}
                 Medical Conditions
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -639,7 +857,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -650,7 +874,13 @@ My Profile
 
 
         <a href="{% url 'care_circle' %}" class="cb-profile-button">
+
+            {% if request.user.userprofile.language == "ml" %}
+            💙 കെയർ സർക്കിൾ നിയന്ത്രിക്കുക
+            {% else %}
             💙 Manage Care Circle
+            {% endif %}
+
         </a>
 
     </div>
@@ -661,21 +891,45 @@ My Profile
     <div class="cb-profile-card">
 
         <h3>
+
+            {% if request.user.userprofile.language == "ml" %}
+            💙 ഞാൻ പ്രതിനിധീകരിക്കുന്ന വ്യക്തി
+            {% else %}
             💙 Person I Represent
+            {% endif %}
+
         </h3>
 
         <div class="cb-profile-note">
+
+            {% if request.user.userprofile.language == "ml" %}
+
+            ഇതുവരെ പ്രതിനിധീകരിക്കുന്ന വ്യക്തിയെ ചേർത്തിട്ടില്ല.
+
+            നിങ്ങൾക്ക് <strong>എന്റെ കെയർ സർക്കിൾ</strong>
+            എന്നതിൽ നിന്ന് നിങ്ങൾ പ്രതിനിധീകരിക്കുന്ന വ്യക്തിയെ
+            ചേർക്കാനോ നിയന്ത്രിക്കാനോ കഴിയും.
+
+            {% else %}
 
             No represented person has been added yet.
 
             You can add or manage the person you
             represent from <strong>My Care Circle</strong>.
 
+            {% endif %}
+
         </div>
 
 
         <a href="{% url 'care_circle' %}" class="cb-profile-button">
+
+            {% if request.user.userprofile.language == "ml" %}
+            💙 കെയർ സർക്കിൾ നിയന്ത്രിക്കുക
+            {% else %}
             💙 Manage Care Circle
+            {% endif %}
+
         </a>
 
     </div>
@@ -688,13 +942,19 @@ My Profile
 
 
     <!-- =================================================
-             EMERGENCY INFORMATION
-        ================================================== -->
+         EMERGENCY INFORMATION
+    ================================================== -->
 
     <div class="cb-profile-card">
 
         <h3>
+
+            {% if request.user.userprofile.language == "ml" %}
+            🚨 അടിയന്തര വിവരങ്ങൾ
+            {% else %}
             🚨 Emergency Information
+            {% endif %}
+
         </h3>
 
 
@@ -703,7 +963,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ പേര്
+                {% else %}
                 Contact Name
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -715,7 +981,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -730,7 +1002,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ബന്ധപ്പെടേണ്ട വ്യക്തിയുടെ ഇമെയിൽ
+                {% else %}
                 Contact Email
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -742,7 +1020,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -756,13 +1040,19 @@ My Profile
 
 
     <!-- =================================================
-             MEDICAL INFORMATION
-        ================================================== -->
+         MEDICAL INFORMATION
+    ================================================== -->
 
     <div class="cb-profile-card">
 
         <h3>
+
+            {% if request.user.userprofile.language == "ml" %}
+            🏥 ആരോഗ്യ വിവരങ്ങൾ
+            {% else %}
             🏥 Medical Information
+            {% endif %}
+
         </h3>
 
 
@@ -771,7 +1061,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                രക്തഗ്രൂപ്പ്
+                {% else %}
                 Blood Group
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -783,7 +1079,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -798,7 +1100,13 @@ My Profile
         <div class="cb-profile-row">
 
             <span class="cb-profile-label">
+
+                {% if request.user.userprofile.language == "ml" %}
+                ആരോഗ്യ വിവരങ്ങൾ
+                {% else %}
                 Medical Conditions
+                {% endif %}
+
             </span>
 
             <span class="cb-profile-value">
@@ -810,7 +1118,13 @@ My Profile
                 {% else %}
 
                 <span class="cb-profile-empty">
+
+                    {% if request.user.userprofile.language == "ml" %}
+                    ചേർത്തിട്ടില്ല
+                    {% else %}
                     Not Added
+                    {% endif %}
+
                 </span>
 
                 {% endif %}
@@ -830,7 +1144,13 @@ My Profile
     ================================================== -->
 
     <a href="{% url 'edit_profile' %}" class="cb-profile-button">
+
+        {% if request.user.userprofile.language == "ml" %}
+        ✏️ പ്രൊഫൈൽ തിരുത്തുക
+        {% else %}
         ✏️ Edit Profile
+        {% endif %}
+
     </a>
 
 

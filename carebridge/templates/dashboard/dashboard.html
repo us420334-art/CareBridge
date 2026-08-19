@@ -1,93 +1,524 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
+
 {% block title %}
+
+{% if request.user.userprofile.language == "ml" %}
+ഡാഷ്ബോർഡ്
+{% else %}
 Dashboard
+{% endif %}
+
 {% endblock %}
 
+
+
 {% block page_title %}
+
+{% if request.user.userprofile.language == "ml" %}
+ഡാഷ്ബോർഡ്
+{% else %}
 Dashboard
+{% endif %}
+
 {% endblock %}
+
+
 
 {% block content %}
 
+
 <div class="cards">
 
+
+    <!-- =====================================================
+         PROFILE
+    ====================================================== -->
+
     <a href="{% url 'profile' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>👤 My Profile</h3>
-            <p>View and update your personal information.</p>
+
+            <h3>
+                👤
+
+                {% if request.user.userprofile.language == "ml" %}
+                എന്റെ പ്രൊഫൈൽ
+                {% else %}
+                My Profile
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                നിങ്ങളുടെ വ്യക്തിഗത വിവരങ്ങൾ കാണുകയും
+                അപ്ഡേറ്റ് ചെയ്യുകയും ചെയ്യുക.
+                {% else %}
+                View and update your personal information.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         SERVICE REQUESTS
+    ====================================================== -->
 
     <a href="{% url 'service_choice' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>📋 Service Requests</h3>
-            <p>Book a caregiver or volunteer.</p>
+
+            <h3>
+                📋
+
+                {% if request.user.userprofile.language == "ml" %}
+                സേവന അഭ്യർത്ഥനകൾ
+                {% else %}
+                Service Requests
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഒരു കെയർഗിവറെയോ വോളന്റിയറെയോ ബുക്ക് ചെയ്യുക.
+                {% else %}
+                Book a caregiver or volunteer.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         NOTIFICATIONS
+    ====================================================== -->
 
     <a href="{% url 'notifications' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>🔔 Notifications</h3>
-            <p>Check your latest updates and reminders.</p>
+
+            <h3>
+                🔔
+
+                {% if request.user.userprofile.language == "ml" %}
+                അറിയിപ്പുകൾ
+                {% else %}
+                Notifications
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                നിങ്ങളുടെ ഏറ്റവും പുതിയ അപ്ഡേറ്റുകളും
+                ഓർമ്മപ്പെടുത്തലുകളും പരിശോധിക്കുക.
+                {% else %}
+                Check your latest updates and reminders.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         EMERGENCY SOS
+    ====================================================== -->
 
     <a href="{% url 'emergency_sos' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>🚨 Emergency SOS</h3>
-            <p>Send emergency alerts instantly.</p>
+
+            <h3>
+                🚨
+
+                {% if request.user.userprofile.language == "ml" %}
+                അടിയന്തര SOS
+                {% else %}
+                Emergency SOS
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                അടിയന്തര അറിയിപ്പുകൾ ഉടൻ അയയ്ക്കുക.
+                {% else %}
+                Send emergency alerts instantly.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         BOOK CAREGIVER
+    ====================================================== -->
 
     <a href="{% url 'book_caregiver' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>👨‍⚕️ Book Caregiver</h3>
-            <p>Book a caregiver directly.</p>
+
+            <h3>
+                👨‍⚕️
+
+                {% if request.user.userprofile.language == "ml" %}
+                കെയർഗിവറെ ബുക്ക് ചെയ്യുക
+                {% else %}
+                Book Caregiver
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഒരു കെയർഗിവറെ നേരിട്ട് ബുക്ക് ചെയ്യുക.
+                {% else %}
+                Book a caregiver directly.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         BOOK VOLUNTEER
+    ====================================================== -->
 
     <a href="{% url 'book_volunteer' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>🤝 Book Volunteer</h3>
-            <p>Book a volunteer directly.</p>
+
+            <h3>
+                🤝
+
+                {% if request.user.userprofile.language == "ml" %}
+                വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+                {% else %}
+                Book Volunteer
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                ഒരു വോളന്റിയറെ നേരിട്ട് ബുക്ക് ചെയ്യുക.
+                {% else %}
+                Book a volunteer directly.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         MY BOOKINGS
+    ====================================================== -->
 
     <a href="{% url 'my_bookings' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>📑 My Bookings</h3>
-            <p>View your booking requests.</p>
+
+            <h3>
+                📑
+
+                {% if request.user.userprofile.language == "ml" %}
+                എന്റെ ബുക്കിംഗുകൾ
+                {% else %}
+                My Bookings
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                നിങ്ങളുടെ ബുക്കിംഗ് അഭ്യർത്ഥനകൾ കാണുക.
+                {% else %}
+                View your booking requests.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
+
+
+    <!-- =====================================================
+         CAREGIVER DASHBOARD
+         Only Caregiver
+    ====================================================== -->
 
     {% if profile.role == "Caregiver" %}
+
     <a href="{% url 'caregiver_dashboard' %}" style="text-decoration:none;color:inherit;">
+
         <div class="card">
-            <h3>👨‍⚕️ Caregiver Dashboard</h3>
-            <p>View and manage your assigned bookings.</p>
+
+            <h3>
+                👨‍⚕️
+
+                {% if request.user.userprofile.language == "ml" %}
+                കെയർഗിവർ ഡാഷ്ബോർഡ്
+                {% else %}
+                Caregiver Dashboard
+                {% endif %}
+
+            </h3>
+
+            <p>
+
+                {% if request.user.userprofile.language == "ml" %}
+                നിങ്ങൾക്ക് നൽകിയിട്ടുള്ള ബുക്കിംഗുകൾ
+                കാണുകയും നിയന്ത്രിക്കുകയും ചെയ്യുക.
+                {% else %}
+                View and manage your assigned bookings.
+                {% endif %}
+
+            </p>
+
         </div>
+
     </a>
+
     {% endif %}
 
+
 </div>
+
+
+
+<!-- =====================================================
+     PROFILE SUMMARY
+====================================================== -->
 
 <div class="profile">
 
-    <h2>Profile Summary</h2>
 
-    <p><strong>Email:</strong> {{ request.user.email }}</p>
-    <p><strong>Phone:</strong> {{ profile.phone }}</p>
-    <p><strong>Address:</strong> {{ profile.address }}</p>
-    <p><strong>Emergency Contact:</strong> {{ profile.emergency_contact_name }}</p>
-    <p><strong>Emergency Phone:</strong> {{ profile.emergency_contact_phone }}</p>
-    <p><strong>Blood Group:</strong> {{ profile.blood_group }}</p>
-    <p><strong>Medical Conditions:</strong> {{ profile.medical_conditions }}</p>
+    <h2>
+
+        {% if request.user.userprofile.language == "ml" %}
+        പ്രൊഫൈൽ സംഗ്രഹം
+        {% else %}
+        Profile Summary
+        {% endif %}
+
+    </h2>
+
+
+
+    <!-- EMAIL -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            ഇമെയിൽ:
+            {% else %}
+            Email:
+            {% endif %}
+
+        </strong>
+
+        {{ request.user.email }}
+
+    </p>
+
+
+
+    <!-- PHONE -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            ഫോൺ:
+            {% else %}
+            Phone:
+            {% endif %}
+
+        </strong>
+
+        {{ profile.phone }}
+
+    </p>
+
+
+
+    <!-- ADDRESS -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            വിലാസം:
+            {% else %}
+            Address:
+            {% endif %}
+
+        </strong>
+
+        {{ profile.address }}
+
+    </p>
+
+
+
+    <!-- EMERGENCY CONTACT -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            അടിയന്തര ബന്ധപ്പെടേണ്ട വ്യക്തി:
+            {% else %}
+            Emergency Contact:
+            {% endif %}
+
+        </strong>
+
+        {{ profile.emergency_contact_name }}
+
+    </p>
+
+
+
+    <!-- EMERGENCY EMAIL -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            അടിയന്തര ഇമെയിൽ:
+            {% else %}
+            Emergency Email:
+            {% endif %}
+
+        </strong>
+
+        {{ profile.emergency_contact_email }}
+
+    </p>
+
+
+
+    <!-- BLOOD GROUP -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            രക്തഗ്രൂപ്പ്:
+            {% else %}
+            Blood Group:
+            {% endif %}
+
+        </strong>
+
+        {{ profile.blood_group }}
+
+    </p>
+
+
+
+    <!-- MEDICAL CONDITIONS -->
+
+    <p>
+
+        <strong>
+
+            {% if request.user.userprofile.language == "ml" %}
+            ആരോഗ്യ പ്രശ്നങ്ങൾ:
+            {% else %}
+            Medical Conditions:
+            {% endif %}
+
+        </strong>
+
+        {{ profile.medical_conditions }}
+
+    </p>
+
+
+
+    <!-- ROLE -->
 
     <span class="badge">
+
+        {% if request.user.userprofile.language == "ml" %}
+
+        {% if profile.role == "Elderly Person" %}
+        മുതിർന്ന വ്യക്തി
+
+        {% elif profile.role == "Person with Mobility Impairment" %}
+        ചലന വൈകല്യമുള്ള വ്യക്തി
+
+        {% elif profile.role == "Person with Hearing Impairment" %}
+        കേൾവി വൈകല്യമുള്ള വ്യക്തി
+
+        {% elif profile.role == "Caregiver" %}
+        കെയർഗിവർ
+
+        {% elif profile.role == "Volunteer" %}
+        വോളന്റിയർ
+
+        {% elif profile.role == "Care Representative" %}
+        കെയർ പ്രതിനിധി
+
+        {% else %}
         {{ profile.role }}
+        {% endif %}
+
+        {% else %}
+
+        {{ profile.role }}
+
+        {% endif %}
+
     </span>
 
+
 </div>
+
 
 {% endblock %}

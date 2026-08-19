@@ -1,12 +1,30 @@
 {% extends base_template %}
 
+{% load static %}
+
+
 {% block title %}
+
+{% if request.user.userprofile.language == 'ml' %}
+എന്റെ ബുക്കിംഗുകൾ
+{% else %}
 My Bookings
+{% endif %}
+
 {% endblock %}
 
+
+
 {% block page_title %}
+
+{% if request.user.userprofile.language == 'ml' %}
+എന്റെ ബുക്കിംഗുകൾ
+{% else %}
 My Bookings
+{% endif %}
+
 {% endblock %}
+
 
 
 {% block extra_css %}
@@ -17,10 +35,15 @@ My Bookings
     ============================== */
 
     .bookings-page {
+
         padding: 30px 35px 50px;
+
         max-width: 1200px;
+
         margin: auto;
+
     }
+
 
 
     /* ==============================
@@ -28,20 +51,33 @@ My Bookings
     ============================== */
 
     .page-intro {
+
         margin-bottom: 30px;
+
     }
+
 
     .page-intro h1 {
+
         margin: 0 0 8px;
+
         color: #1f2937;
+
         font-size: 30px;
+
     }
 
+
     .page-intro p {
+
         margin: 0;
+
         color: #6b7280;
+
         font-size: 15px;
+
     }
+
 
 
     /* ==============================
@@ -49,21 +85,35 @@ My Bookings
     ============================== */
 
     .booking-section {
+
         margin-bottom: 45px;
+
     }
+
 
     .section-title {
+
         display: flex;
+
         align-items: center;
+
         gap: 10px;
+
         margin-bottom: 18px;
+
     }
 
+
     .section-title h2 {
+
         margin: 0;
+
         color: #1f2937;
+
         font-size: 23px;
+
     }
+
 
 
     /* ==============================
@@ -71,9 +121,13 @@ My Bookings
     ============================== */
 
     .booking-card {
+
         background: #ffffff;
+
         border-radius: 18px;
+
         padding: 25px;
+
         margin-bottom: 20px;
 
         border: 1px solid #e2e8f0;
@@ -82,12 +136,17 @@ My Bookings
             0 7px 22px rgba(0, 0, 0, 0.07);
 
         transition: 0.2s ease;
+
     }
 
+
     .booking-card:hover {
+
         box-shadow:
             0 10px 28px rgba(0, 0, 0, 0.10);
+
     }
+
 
 
     /* ==============================
@@ -95,25 +154,39 @@ My Bookings
     ============================== */
 
     .booking-header {
+
         display: flex;
+
         justify-content: space-between;
+
         align-items: flex-start;
+
         gap: 20px;
 
         padding-bottom: 18px;
+
         margin-bottom: 20px;
 
         border-bottom: 1px solid #e5e7eb;
+
     }
+
 
     .provider-info {
+
         display: flex;
+
         align-items: center;
+
         gap: 15px;
+
     }
 
+
     .provider-icon {
+
         width: 55px;
+
         height: 55px;
 
         border-radius: 14px;
@@ -121,28 +194,42 @@ My Bookings
         background: #eef6ff;
 
         display: flex;
+
         align-items: center;
+
         justify-content: center;
 
         font-size: 28px;
+
     }
+
 
     .volunteer-icon {
+
         background: #e6f7f5;
+
     }
 
+
     .provider-info h3 {
+
         margin: 0 0 5px;
 
         color: #1f2937;
 
         font-size: 20px;
+
     }
 
+
     .provider-role {
+
         color: #6b7280;
+
         font-size: 13px;
+
     }
+
 
 
     /* ==============================
@@ -150,40 +237,64 @@ My Bookings
     ============================== */
 
     .status {
+
         padding: 8px 14px;
 
         border-radius: 20px;
 
         font-size: 13px;
+
         font-weight: 700;
 
         white-space: nowrap;
+
     }
+
 
     .status-pending {
+
         background: #fff7ed;
+
         color: #ea580c;
+
     }
+
 
     .status-accepted {
+
         background: #ecfdf5;
+
         color: #15803d;
+
     }
+
 
     .status-completed {
+
         background: #eff6ff;
+
         color: #2563eb;
+
     }
+
 
     .status-rejected {
+
         background: #fef2f2;
+
         color: #dc2626;
+
     }
 
+
     .status-cancelled {
+
         background: #f3f4f6;
+
         color: #6b7280;
+
     }
+
 
 
     /* ==============================
@@ -191,6 +302,7 @@ My Bookings
     ============================== */
 
     .booking-details {
+
         display: grid;
 
         grid-template-columns: repeat(2, 1fr);
@@ -198,9 +310,12 @@ My Bookings
         gap: 16px;
 
         margin-bottom: 20px;
+
     }
 
+
     .detail-box {
+
         background: #f8fafc;
 
         border: 1px solid #e5e7eb;
@@ -208,9 +323,12 @@ My Bookings
         border-radius: 12px;
 
         padding: 14px 16px;
+
     }
 
+
     .detail-label {
+
         display: block;
 
         font-size: 12px;
@@ -222,9 +340,12 @@ My Bookings
         font-weight: 600;
 
         text-transform: uppercase;
+
     }
 
+
     .detail-value {
+
         color: #1f2937;
 
         font-size: 15px;
@@ -232,7 +353,9 @@ My Bookings
         font-weight: 600;
 
         word-break: break-word;
+
     }
+
 
 
     /* ==============================
@@ -240,6 +363,7 @@ My Bookings
     ============================== */
 
     .description-box {
+
         background: #f8fafc;
 
         border-left: 4px solid #1769d1;
@@ -249,23 +373,31 @@ My Bookings
         padding: 15px 17px;
 
         margin-top: 5px;
+
     }
 
+
     .description-box strong {
+
         display: block;
 
         color: #374151;
 
         margin-bottom: 6px;
+
     }
 
+
     .description-box p {
+
         margin: 0;
 
         color: #6b7280;
 
         line-height: 1.6;
+
     }
+
 
 
     /* ==============================
@@ -273,12 +405,15 @@ My Bookings
     ============================== */
 
     .booked-on {
+
         margin-top: 18px;
 
         color: #9ca3af;
 
         font-size: 13px;
+
     }
+
 
 
     /* ==============================
@@ -286,13 +421,20 @@ My Bookings
     ============================== */
 
     .priority-high {
+
         color: #ea580c;
+
     }
 
+
     .priority-emergency {
+
         color: #dc2626;
+
         font-weight: 800;
+
     }
+
 
 
     /* ==============================
@@ -300,6 +442,7 @@ My Bookings
     ============================== */
 
     .empty-bookings {
+
         background: #ffffff;
 
         border: 1px solid #e5e7eb;
@@ -311,22 +454,34 @@ My Bookings
         text-align: center;
 
         color: #6b7280;
+
     }
+
 
     .empty-icon {
+
         font-size: 45px;
+
         margin-bottom: 10px;
+
     }
 
+
     .empty-bookings h3 {
+
         margin: 5px 0 8px;
 
         color: #1f2937;
+
     }
 
+
     .empty-bookings p {
+
         margin: 0;
+
     }
+
 
 
     /* ==============================
@@ -336,16 +491,25 @@ My Bookings
     @media (max-width: 700px) {
 
         .bookings-page {
+
             padding: 20px 15px 40px;
+
         }
+
 
         .booking-header {
+
             flex-direction: column;
+
             align-items: flex-start;
+
         }
 
+
         .booking-details {
+
             grid-template-columns: 1fr;
+
         }
 
     }
@@ -354,9 +518,11 @@ My Bookings
 {% endblock %}
 
 
+
 {% block content %}
 
 <div class="bookings-page">
+
 
 
     <!-- =========================================
@@ -366,12 +532,35 @@ My Bookings
     <div class="page-intro">
 
         <h1>
-            📋 My Bookings
+
+            📋
+
+            {% if request.user.userprofile.language == 'ml' %}
+
+            എന്റെ ബുക്കിംഗുകൾ
+
+            {% else %}
+
+            My Bookings
+
+            {% endif %}
+
         </h1>
 
+
         <p>
+
+            {% if request.user.userprofile.language == 'ml' %}
+
+            നിങ്ങളുടെ കെയർഗിവർ, വോളണ്ടിയർ ബുക്കിംഗുകളും സേവന വിശദാംശങ്ങളും നിലവിലെ സ്ഥിരീകരണ നിലയും കാണുക.
+
+            {% else %}
+
             View your caregiver and volunteer bookings,
             service details, and current confirmation status.
+
+            {% endif %}
+
         </p>
 
     </div>
@@ -387,21 +576,37 @@ My Bookings
         <div class="section-title">
 
             <span style="font-size:28px;">
+
                 👨‍⚕️
+
             </span>
 
+
             <h2>
+
+                {% if request.user.userprofile.language == 'ml' %}
+
+                എന്റെ കെയർഗിവർ ബുക്കിംഗുകൾ
+
+                {% else %}
+
                 My Caregiver Bookings
+
+                {% endif %}
+
             </h2>
 
         </div>
 
 
+
         {% if caregiver_bookings %}
+
 
         {% for booking in caregiver_bookings %}
 
         <div class="booking-card">
+
 
             <!-- HEADER -->
 
@@ -410,17 +615,33 @@ My Bookings
                 <div class="provider-info">
 
                     <div class="provider-icon">
+
                         👨‍⚕️
+
                     </div>
+
 
                     <div>
 
                         <h3>
+
                             {{ booking.caregiver.get_full_name|default:booking.caregiver.username }}
+
                         </h3>
 
+
                         <span class="provider-role">
+
+                            {% if request.user.userprofile.language == 'ml' %}
+
+                            പ്രൊഫഷണൽ കെയർഗിവർ
+
+                            {% else %}
+
                             Professional Caregiver
+
+                            {% endif %}
+
                         </span>
 
                     </div>
@@ -428,42 +649,100 @@ My Bookings
                 </div>
 
 
-                <!-- CURRENT STATUS -->
+
+                <!-- STATUS -->
 
                 {% if booking.status == "Pending" %}
 
                 <span class="status status-pending">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    ⏳ കാത്തിരിക്കുന്നു
+
+                    {% else %}
+
                     ⏳ Pending
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Accepted" %}
 
                 <span class="status status-accepted">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    ✅ അംഗീകരിച്ചു
+
+                    {% else %}
+
                     ✅ Accepted
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Completed" %}
 
                 <span class="status status-completed">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    🎉 പൂർത്തിയായി
+
+                    {% else %}
+
                     🎉 Completed
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Rejected" %}
 
                 <span class="status status-rejected">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    ❌ നിരസിച്ചു
+
+                    {% else %}
+
                     ❌ Rejected
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Cancelled" %}
 
                 <span class="status status-cancelled">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    🚫 റദ്ദാക്കി
+
+                    {% else %}
+
                     🚫 Cancelled
+
+                    {% endif %}
+
                 </span>
+
 
                 {% else %}
 
                 <span class="status">
+
                     {{ booking.status }}
+
                 </span>
 
                 {% endif %}
@@ -482,14 +761,28 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🛠️ സേവനം
+
+                        {% else %}
+
                         🛠️ Service
+
+                        {% endif %}
+
                     </span>
 
+
                     <span class="detail-value">
+
                         {{ booking.service|default:"Not specified" }}
+
                     </span>
 
                 </div>
+
 
 
                 <!-- ADDRESS -->
@@ -497,14 +790,28 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        📍 സേവന വിലാസം
+
+                        {% else %}
+
                         📍 Service Address
+
+                        {% endif %}
+
                     </span>
 
+
                     <span class="detail-value">
+
                         {{ booking.address|default:"Not specified" }}
+
                     </span>
 
                 </div>
+
 
 
                 <!-- DATE -->
@@ -512,8 +819,19 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        📅 സേവന തീയതി
+
+                        {% else %}
+
                         📅 Service Date
+
+                        {% endif %}
+
                     </span>
+
 
                     <span class="detail-value">
 
@@ -523,7 +841,15 @@ My Bookings
 
                         {% else %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        വ്യക്തമാക്കിയിട്ടില്ല
+
+                        {% else %}
+
                         Not specified
+
+                        {% endif %}
 
                         {% endif %}
 
@@ -532,13 +858,25 @@ My Bookings
                 </div>
 
 
+
                 <!-- TIME -->
 
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🕐 സേവന സമയം
+
+                        {% else %}
+
                         🕐 Service Time
+
+                        {% endif %}
+
                     </span>
+
 
                     <span class="detail-value">
 
@@ -548,7 +886,15 @@ My Bookings
 
                         {% else %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        വ്യക്തമാക്കിയിട്ടില്ല
+
+                        {% else %}
+
                         Not specified
+
+                        {% endif %}
 
                         {% endif %}
 
@@ -557,29 +903,82 @@ My Bookings
                 </div>
 
 
+
                 <!-- PRIORITY -->
 
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ⚠️ മുൻഗണന
+
+                        {% else %}
+
                         ⚠️ Priority
+
+                        {% endif %}
+
                     </span>
 
+
                     <span class="detail-value
+                        {% if booking.priority == 'Emergency' %}
+                        priority-emergency
+                        {% elif booking.priority == 'High' %}
+                        priority-high
+                        {% endif %}">
 
-                            {% if booking.priority == 'Emergency' %}
-                                priority-emergency
+                        {% if booking.priority == "Emergency" %}
 
-                            {% elif booking.priority == 'High' %}
-                                priority-high
+                        {% if request.user.userprofile.language == 'ml' %}
 
-                            {% endif %}">
+                        അടിയന്തരാവസ്ഥ
 
-                        {{ booking.priority|default:"Not specified" }}
+                        {% else %}
+
+                        Emergency
+
+                        {% endif %}
+
+
+                        {% elif booking.priority == "High" %}
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ഉയർന്നത്
+
+                        {% else %}
+
+                        High
+
+                        {% endif %}
+
+
+                        {% elif booking.priority %}
+
+                        {{ booking.priority }}
+
+
+                        {% else %}
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        വ്യക്തമാക്കിയിട്ടില്ല
+
+                        {% else %}
+
+                        Not specified
+
+                        {% endif %}
+
+                        {% endif %}
 
                     </span>
 
                 </div>
+
 
 
                 <!-- CURRENT STATUS -->
@@ -587,30 +986,86 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        📌 നിലവിലെ നില
+
+                        {% else %}
+
                         📌 Current Status
+
+                        {% endif %}
+
                     </span>
+
 
                     <span class="detail-value">
 
                         {% if booking.status == "Pending" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ⏳ കെയർഗിവറുടെ സ്ഥിരീകരണത്തിനായി കാത്തിരിക്കുന്നു
+
+                        {% else %}
+
                         ⏳ Waiting for caregiver confirmation
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Accepted" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ✅ കെയർഗിവർ നിങ്ങളുടെ ബുക്കിംഗ് അംഗീകരിച്ചു
+
+                        {% else %}
+
                         ✅ Caregiver accepted your booking
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Completed" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🎉 കെയർഗിവർ സേവനം പൂർത്തിയാക്കി
+
+                        {% else %}
+
                         🎉 Caregiver service completed
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Rejected" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ❌ കെയർഗിവർ നിങ്ങളുടെ ബുക്കിംഗ് നിരസിച്ചു
+
+                        {% else %}
+
                         ❌ Caregiver rejected your booking
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Cancelled" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🚫 ബുക്കിംഗ് റദ്ദാക്കി
+
+                        {% else %}
+
                         🚫 Booking cancelled
+
+                        {% endif %}
+
 
                         {% else %}
 
@@ -633,11 +1088,24 @@ My Bookings
             <div class="description-box">
 
                 <strong>
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    📝 അധിക ആവശ്യകതകൾ
+
+                    {% else %}
+
                     📝 Additional Requirements
+
+                    {% endif %}
+
                 </strong>
 
+
                 <p>
+
                     {{ booking.description }}
+
                 </p>
 
             </div>
@@ -650,7 +1118,16 @@ My Bookings
 
             <div class="booked-on">
 
+                {% if request.user.userprofile.language == 'ml' %}
+
+                ബുക്കിംഗ് അഭ്യർത്ഥന സമർപ്പിച്ചത്
+
+                {% else %}
+
                 Booking request submitted on
+
+                {% endif %}
+
 
                 {% if booking.booked_at %}
 
@@ -658,7 +1135,15 @@ My Bookings
 
                 {% else %}
 
+                {% if request.user.userprofile.language == 'ml' %}
+
+                ലഭ്യമല്ല
+
+                {% else %}
+
                 Not available
+
+                {% endif %}
 
                 {% endif %}
 
@@ -674,15 +1159,39 @@ My Bookings
         <div class="empty-bookings">
 
             <div class="empty-icon">
+
                 👨‍⚕️
+
             </div>
 
+
             <h3>
+
+                {% if request.user.userprofile.language == 'ml' %}
+
+                കെയർഗിവർ ബുക്കിംഗുകൾ ഒന്നുമില്ല
+
+                {% else %}
+
                 No caregiver bookings yet
+
+                {% endif %}
+
             </h3>
 
+
             <p>
+
+                {% if request.user.userprofile.language == 'ml' %}
+
+                നിങ്ങളുടെ കെയർഗിവർ സേവന അഭ്യർത്ഥനകൾ ഇവിടെ കാണിക്കും.
+
+                {% else %}
+
                 Your caregiver service requests will appear here.
+
+                {% endif %}
+
             </p>
 
         </div>
@@ -702,21 +1211,37 @@ My Bookings
         <div class="section-title">
 
             <span style="font-size:28px;">
+
                 🤝
+
             </span>
 
+
             <h2>
+
+                {% if request.user.userprofile.language == 'ml' %}
+
+                എന്റെ വോളണ്ടിയർ ബുക്കിംഗുകൾ
+
+                {% else %}
+
                 My Volunteer Bookings
+
+                {% endif %}
+
             </h2>
 
         </div>
 
 
+
         {% if volunteer_bookings %}
+
 
         {% for booking in volunteer_bookings %}
 
         <div class="booking-card">
+
 
             <!-- HEADER -->
 
@@ -725,17 +1250,33 @@ My Bookings
                 <div class="provider-info">
 
                     <div class="provider-icon volunteer-icon">
+
                         🤝
+
                     </div>
+
 
                     <div>
 
                         <h3>
+
                             {{ booking.volunteer.get_full_name|default:booking.volunteer.username }}
+
                         </h3>
 
+
                         <span class="provider-role">
+
+                            {% if request.user.userprofile.language == 'ml' %}
+
+                            വോളണ്ടിയർ
+
+                            {% else %}
+
                             Volunteer
+
+                            {% endif %}
+
                         </span>
 
                     </div>
@@ -743,42 +1284,100 @@ My Bookings
                 </div>
 
 
-                <!-- CURRENT STATUS -->
+
+                <!-- STATUS -->
 
                 {% if booking.status == "Pending" %}
 
                 <span class="status status-pending">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    ⏳ കാത്തിരിക്കുന്നു
+
+                    {% else %}
+
                     ⏳ Pending
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Accepted" %}
 
                 <span class="status status-accepted">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    ✅ അംഗീകരിച്ചു
+
+                    {% else %}
+
                     ✅ Accepted
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Completed" %}
 
                 <span class="status status-completed">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    🎉 പൂർത്തിയായി
+
+                    {% else %}
+
                     🎉 Completed
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Rejected" %}
 
                 <span class="status status-rejected">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    ❌ നിരസിച്ചു
+
+                    {% else %}
+
                     ❌ Rejected
+
+                    {% endif %}
+
                 </span>
+
 
                 {% elif booking.status == "Cancelled" %}
 
                 <span class="status status-cancelled">
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    🚫 റദ്ദാക്കി
+
+                    {% else %}
+
                     🚫 Cancelled
+
+                    {% endif %}
+
                 </span>
+
 
                 {% else %}
 
                 <span class="status">
+
                     {{ booking.status }}
+
                 </span>
 
                 {% endif %}
@@ -797,14 +1396,28 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🛠️ സേവനം
+
+                        {% else %}
+
                         🛠️ Service
+
+                        {% endif %}
+
                     </span>
 
+
                     <span class="detail-value">
+
                         {{ booking.service|default:"Not specified" }}
+
                     </span>
 
                 </div>
+
 
 
                 <!-- ADDRESS -->
@@ -812,14 +1425,28 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        📍 സേവന വിലാസം
+
+                        {% else %}
+
                         📍 Service Address
+
+                        {% endif %}
+
                     </span>
 
+
                     <span class="detail-value">
+
                         {{ booking.address|default:"Not specified" }}
+
                     </span>
 
                 </div>
+
 
 
                 <!-- DATE -->
@@ -827,8 +1454,19 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        📅 സേവന തീയതി
+
+                        {% else %}
+
                         📅 Service Date
+
+                        {% endif %}
+
                     </span>
+
 
                     <span class="detail-value">
 
@@ -838,7 +1476,15 @@ My Bookings
 
                         {% else %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        വ്യക്തമാക്കിയിട്ടില്ല
+
+                        {% else %}
+
                         Not specified
+
+                        {% endif %}
 
                         {% endif %}
 
@@ -847,13 +1493,25 @@ My Bookings
                 </div>
 
 
+
                 <!-- TIME -->
 
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🕐 സേവന സമയം
+
+                        {% else %}
+
                         🕐 Service Time
+
+                        {% endif %}
+
                     </span>
+
 
                     <span class="detail-value">
 
@@ -863,7 +1521,15 @@ My Bookings
 
                         {% else %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        വ്യക്തമാക്കിയിട്ടില്ല
+
+                        {% else %}
+
                         Not specified
+
+                        {% endif %}
 
                         {% endif %}
 
@@ -872,29 +1538,82 @@ My Bookings
                 </div>
 
 
+
                 <!-- PRIORITY -->
 
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ⚠️ മുൻഗണന
+
+                        {% else %}
+
                         ⚠️ Priority
+
+                        {% endif %}
+
                     </span>
 
+
                     <span class="detail-value
+                        {% if booking.priority == 'Emergency' %}
+                        priority-emergency
+                        {% elif booking.priority == 'High' %}
+                        priority-high
+                        {% endif %}">
 
-                            {% if booking.priority == 'Emergency' %}
-                                priority-emergency
+                        {% if booking.priority == "Emergency" %}
 
-                            {% elif booking.priority == 'High' %}
-                                priority-high
+                        {% if request.user.userprofile.language == 'ml' %}
 
-                            {% endif %}">
+                        അടിയന്തരാവസ്ഥ
 
-                        {{ booking.priority|default:"Not specified" }}
+                        {% else %}
+
+                        Emergency
+
+                        {% endif %}
+
+
+                        {% elif booking.priority == "High" %}
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ഉയർന്നത്
+
+                        {% else %}
+
+                        High
+
+                        {% endif %}
+
+
+                        {% elif booking.priority %}
+
+                        {{ booking.priority }}
+
+
+                        {% else %}
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        വ്യക്തമാക്കിയിട്ടില്ല
+
+                        {% else %}
+
+                        Not specified
+
+                        {% endif %}
+
+                        {% endif %}
 
                     </span>
 
                 </div>
+
 
 
                 <!-- CURRENT STATUS -->
@@ -902,30 +1621,86 @@ My Bookings
                 <div class="detail-box">
 
                     <span class="detail-label">
+
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        📌 നിലവിലെ നില
+
+                        {% else %}
+
                         📌 Current Status
+
+                        {% endif %}
+
                     </span>
+
 
                     <span class="detail-value">
 
                         {% if booking.status == "Pending" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ⏳ വോളണ്ടിയറുടെ സ്ഥിരീകരണത്തിനായി കാത്തിരിക്കുന്നു
+
+                        {% else %}
+
                         ⏳ Waiting for volunteer confirmation
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Accepted" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ✅ വോളണ്ടിയർ നിങ്ങളുടെ ബുക്കിംഗ് അംഗീകരിച്ചു
+
+                        {% else %}
+
                         ✅ Volunteer accepted your booking
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Completed" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🎉 വോളണ്ടിയർ സേവനം പൂർത്തിയാക്കി
+
+                        {% else %}
+
                         🎉 Volunteer service completed
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Rejected" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        ❌ വോളണ്ടിയർ നിങ്ങളുടെ ബുക്കിംഗ് നിരസിച്ചു
+
+                        {% else %}
+
                         ❌ Volunteer rejected your booking
+
+                        {% endif %}
+
 
                         {% elif booking.status == "Cancelled" %}
 
+                        {% if request.user.userprofile.language == 'ml' %}
+
+                        🚫 ബുക്കിംഗ് റദ്ദാക്കി
+
+                        {% else %}
+
                         🚫 Booking cancelled
+
+                        {% endif %}
+
 
                         {% else %}
 
@@ -948,11 +1723,24 @@ My Bookings
             <div class="description-box">
 
                 <strong>
+
+                    {% if request.user.userprofile.language == 'ml' %}
+
+                    📝 അധിക ആവശ്യകതകൾ
+
+                    {% else %}
+
                     📝 Additional Requirements
+
+                    {% endif %}
+
                 </strong>
 
+
                 <p>
+
                     {{ booking.description }}
+
                 </p>
 
             </div>
@@ -965,7 +1753,16 @@ My Bookings
 
             <div class="booked-on">
 
+                {% if request.user.userprofile.language == 'ml' %}
+
+                ബുക്കിംഗ് അഭ്യർത്ഥന സമർപ്പിച്ചത്
+
+                {% else %}
+
                 Booking request submitted on
+
+                {% endif %}
+
 
                 {% if booking.booked_at %}
 
@@ -973,7 +1770,15 @@ My Bookings
 
                 {% else %}
 
+                {% if request.user.userprofile.language == 'ml' %}
+
+                ലഭ്യമല്ല
+
+                {% else %}
+
                 Not available
+
+                {% endif %}
 
                 {% endif %}
 
@@ -989,15 +1794,39 @@ My Bookings
         <div class="empty-bookings">
 
             <div class="empty-icon">
+
                 🤝
+
             </div>
 
+
             <h3>
+
+                {% if request.user.userprofile.language == 'ml' %}
+
+                വോളണ്ടിയർ ബുക്കിംഗുകൾ ഒന്നുമില്ല
+
+                {% else %}
+
                 No volunteer bookings yet
+
+                {% endif %}
+
             </h3>
 
+
             <p>
+
+                {% if request.user.userprofile.language == 'ml' %}
+
+                നിങ്ങളുടെ വോളണ്ടിയർ സേവന അഭ്യർത്ഥനകൾ ഇവിടെ കാണിക്കും.
+
+                {% else %}
+
                 Your volunteer service requests will appear here.
+
+                {% endif %}
+
             </p>
 
         </div>
