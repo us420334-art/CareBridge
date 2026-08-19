@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from datetime import datetime
 from django.http import JsonResponse
+from django.conf import settings
+from django.core.mail import send_mail
 
 from .models import (
     UserProfile,
@@ -13,8 +15,8 @@ from .models import (
     ServiceRequest,
     MedicineReminder,
     EmergencySOS,
-     Feedback,
-     Notification,
+    Feedback,
+    Notification,
 )
 
 def home(request):
@@ -37,12 +39,12 @@ def register(request):
         emergency_contact_name = request.POST.get(
             "emergency_contact_name",
             ""
-        )
+        ).strip()
 
-        emergency_contact_phone = request.POST.get(
-            "emergency_contact_phone",
+        emergency_contact_email = request.POST.get(
+            "emergency_contact_email",
             ""
-        )
+        ).strip()
 
         blood_group = request.POST.get(
             "blood_group",
@@ -55,21 +57,21 @@ def register(request):
         )
 
         # -------------------------------------------------
-        # Basic validation
+        # Check username
         # -------------------------------------------------
 
         if User.objects.filter(username=username).exists():
 
             return render(
                 request,
-                'register.html',
+                "register.html",
                 {
-                    'error': 'Username already exists.'
+                    "error": "Username already exists."
                 }
             )
 
         # -------------------------------------------------
-        # Care Representative fields
+        # Care Representative details
         # -------------------------------------------------
 
         represented_name = ""
@@ -122,35 +124,46 @@ def register(request):
                 ""
             ).strip()
 
-            # Validate represented person details
+            # ---------------------------------------------
+            # Validate represented person
+            # ---------------------------------------------
 
             if not represented_name:
+
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please enter the name of the person being represented.'
+                        "error":
+                        "Please enter the name of the person being represented."
                     }
                 )
 
             if not represented_age:
+
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please enter the age of the person being represented.'
+                        "error":
+                        "Please enter the age of the person being represented."
                     }
                 )
 
             try:
-                represented_age = int(represented_age)
+
+                represented_age = int(
+                    represented_age
+                )
+
             except ValueError:
 
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please enter a valid age.'
+                        "error":
+                        "Please enter a valid age."
                     }
                 )
 
@@ -158,9 +171,10 @@ def register(request):
 
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please enter a valid age between 1 and 120.'
+                        "error":
+                        "Please enter a valid age between 1 and 120."
                     }
                 )
 
@@ -168,9 +182,10 @@ def register(request):
 
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please select the type of person being represented.'
+                        "error":
+                        "Please select the type of person being represented."
                     }
                 )
 
@@ -178,9 +193,10 @@ def register(request):
 
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please select the relationship.'
+                        "error":
+                        "Please select the relationship."
                     }
                 )
 
@@ -188,9 +204,10 @@ def register(request):
 
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please enter the phone number of the person being represented.'
+                        "error":
+                        "Please enter the phone number of the person being represented."
                     }
                 )
 
@@ -198,14 +215,15 @@ def register(request):
 
                 return render(
                     request,
-                    'register.html',
+                    "register.html",
                     {
-                        'error': 'Please enter the address of the person being represented.'
+                        "error":
+                        "Please enter the address of the person being represented."
                     }
                 )
 
         # -------------------------------------------------
-        # Create CareBridge login user
+        # Create Django user
         # -------------------------------------------------
 
         user = User.objects.create_user(
@@ -215,7 +233,7 @@ def register(request):
         )
 
         # -------------------------------------------------
-        # Create user profile
+        # Create UserProfile
         # -------------------------------------------------
 
         UserProfile.objects.create(
@@ -224,13 +242,13 @@ def register(request):
             phone=phone,
             address=address,
             emergency_contact_name=emergency_contact_name,
-            emergency_contact_phone=emergency_contact_phone,
+            emergency_contact_email=emergency_contact_email,
             blood_group=blood_group,
             medical_conditions=medical_conditions
         )
 
         # -------------------------------------------------
-        # If Care Representative, create represented person
+        # Create represented person
         # -------------------------------------------------
 
         if role == "Care Representative":
@@ -247,11 +265,20 @@ def register(request):
                 medical_conditions=represented_medical_conditions
             )
 
-        return redirect('/login/')
+        # -------------------------------------------------
+        # SUCCESS MESSAGE
+        # -------------------------------------------------
+
+        messages.success(
+            request,
+            "Registration successful! Your CareBridge account has been created. Please login to continue."
+        )
+
+        return redirect("/login/")
 
     return render(
         request,
-        'register.html'
+        "register.html"
     )
 
 
@@ -260,6 +287,7 @@ def user_login(request):
     if request.method == "POST":
 
         username = request.POST.get("username")
+
         password = request.POST.get("password")
 
         user = authenticate(
@@ -270,11 +298,28 @@ def user_login(request):
 
         if user is not None:
 
-            login(request, user)
+            login(
+                request,
+                user
+            )
 
-            # Admin / Staff user
+            # -------------------------------------------------
+            # ADMIN / STAFF
+            # -------------------------------------------------
+
             if user.is_staff:
+
+                messages.success(
+                    request,
+                    f"Welcome back, {user.username}! 👋"
+                )
+
                 return redirect("admin_dashboard")
+
+
+            # -------------------------------------------------
+            # GET PROFILE
+            # -------------------------------------------------
 
             try:
 
@@ -282,25 +327,80 @@ def user_login(request):
                     user=user
                 )
 
+                # -------------------------------------------------
+                # CARE REPRESENTATIVE
+                # -------------------------------------------------
+
                 if profile.role == "Care Representative":
 
-                    return redirect("care_rep_dashboard")
+                    messages.success(
+                        request,
+                        f"💙 Welcome back, {user.username}! You are ready to manage care through CareBridge."
+                    )
+
+                    return redirect(
+                        "care_rep_dashboard"
+                    )
+
+
+                # -------------------------------------------------
+                # CAREGIVER
+                # -------------------------------------------------
 
                 elif profile.role == "Caregiver":
 
-                    return redirect("caregiver_dashboard")
+                    messages.success(
+                        request,
+                        f"👋 Welcome back, {user.username}!"
+                    )
+
+                    return redirect(
+                        "caregiver_dashboard"
+                    )
+
+
+                # -------------------------------------------------
+                # VOLUNTEER
+                # -------------------------------------------------
 
                 elif profile.role == "Volunteer":
 
-                    return redirect("volunteer_dashboard")
+                    messages.success(
+                        request,
+                        f"👋 Welcome back, {user.username}!"
+                    )
+
+                    return redirect(
+                        "volunteer_dashboard"
+                    )
+
+
+                # -------------------------------------------------
+                # NORMAL CARE USER
+                # -------------------------------------------------
 
                 else:
 
-                    return redirect("dashboard")
+                    messages.success(
+                        request,
+                        f"👋 Welcome back, {user.username}!"
+                    )
+
+                    return redirect(
+                        "dashboard"
+                    )
+
 
             except UserProfile.DoesNotExist:
 
-                return redirect("dashboard")
+                messages.success(
+                    request,
+                    f"Welcome back, {user.username}! 👋"
+                )
+
+                return redirect(
+                    "dashboard"
+                )
 
         else:
 
@@ -313,7 +413,6 @@ def user_login(request):
         request,
         "login.html"
     )
-
 
 def dashboard(request):
 
@@ -1705,27 +1804,36 @@ def emergency_sos(request):
     if request.method == "POST":
 
         emergency_name = profile.emergency_contact_name.strip()
-        emergency_phone = profile.emergency_contact_phone.strip()
+        emergency_email = profile.emergency_contact_email.strip()
 
+        # ------------------------------------------------
         # Check whether emergency contact details exist
-        if not emergency_name or not emergency_phone:
+        # ------------------------------------------------
+
+        if not emergency_name or not emergency_email:
 
             messages.error(
                 request,
-                "Please add an emergency contact in your profile before using Emergency SOS."
+                "Please add an emergency contact name and email in your profile before using Emergency SOS."
             )
 
             return redirect("emergency_sos")
 
+        # ------------------------------------------------
         # Record the SOS activation
+        # ------------------------------------------------
+
         EmergencySOS.objects.create(
             user=request.user,
             emergency_contact_name=emergency_name,
-            emergency_contact_phone=emergency_phone,
+            emergency_contact_email=emergency_email,
             status="Activated"
         )
 
-        # Create notification
+        # ------------------------------------------------
+        # Create CareBridge notification
+        # ------------------------------------------------
+
         create_notification(
             request.user,
             "Emergency SOS",
@@ -1733,14 +1841,61 @@ def emergency_sos(request):
             "Your Emergency SOS alert has been activated successfully."
         )
 
-        messages.success(
-            request,
-            "Emergency SOS activated successfully."
-        )
+        # ------------------------------------------------
+        # Send Emergency SOS Email
+        # ------------------------------------------------
+
+        try:
+
+            send_mail(
+                subject="🚨 CareBridge Emergency SOS Alert",
+
+                message=(
+                    f"Dear {emergency_name},\n\n"
+
+                    f"This is an emergency alert from CareBridge.\n\n"
+
+                    f"User: {request.user.username}\n\n"
+
+                    f"{request.user.username} has activated "
+                    f"the Emergency SOS feature.\n\n"
+
+                    f"Please contact them immediately and "
+                    f"provide assistance if required.\n\n"
+
+                    f"This is an automatically generated "
+                    f"alert from CareBridge."
+                ),
+
+                from_email=settings.DEFAULT_FROM_EMAIL,
+
+                recipient_list=[
+                    emergency_email
+                ],
+
+                fail_silently=False,
+            )
+
+            messages.success(
+                request,
+                "Emergency SOS activated successfully. Email alert sent."
+            )
+
+        except Exception as e:
+
+            print("EMAIL ERROR:", e)
+
+            messages.warning(
+                request,
+                "Emergency SOS activated, but the email alert could not be sent."
+            )
 
         return redirect("emergency_sos")
 
-    # Get previous SOS alerts for this user
+    # ------------------------------------------------
+    # Previous SOS alerts
+    # ------------------------------------------------
+
     sos_history = EmergencySOS.objects.filter(
         user=request.user
     ).order_by("-triggered_at")

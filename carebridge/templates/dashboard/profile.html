@@ -4,7 +4,6 @@
 My Profile
 {% endblock %}
 
-
 {% block page_title %}
 My Profile
 {% endblock %}
@@ -13,291 +12,294 @@ My Profile
 {% block extra_css %}
 
 <style>
+    /* =====================================================
+   PROFILE PAGE - ISOLATED STYLING
+===================================================== */
 
-/* =========================================
-   PROFILE CONTAINER
-========================================= */
+    /* Force normal dashboard content to behave properly */
 
-.profile-container {
-
-    width: 100%;
-
-    max-width: 900px;
-
-    margin: 0 auto;
-
-    padding: 20px;
-}
+    .profile-page-wrapper {
+        width: 100% !important;
+        max-width: 1100px !important;
+        margin: 0 auto !important;
+        padding: 20px !important;
+        display: block !important;
+    }
 
 
-/* =========================================
-   PROFILE HEADER
-========================================= */
+    /* =====================================================
+   HEADER
+===================================================== */
 
-.profile-header {
+    .cb-profile-header {
+        width: 100% !important;
 
-    background:
-        linear-gradient(
-            135deg,
-            #eaf5fb,
-            #ffffff
-        );
+        background: linear-gradient(135deg,
+                #eaf5fb,
+                #ffffff);
 
-    border-radius: 15px;
+        border: 1px solid #d8e8f0;
 
-    padding: 25px;
+        border-radius: 16px;
 
-    display: flex;
+        padding: 25px;
 
-    align-items: center;
+        margin: 0 0 25px 0 !important;
 
-    gap: 18px;
+        display: flex !important;
 
-    margin-bottom: 25px;
+        align-items: center !important;
 
-    border: 1px solid #dceaf2;
+        gap: 18px;
 
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.06);
-}
+        box-shadow:
+            0 4px 15px rgba(0, 0, 0, 0.06);
 
-
-.profile-icon {
-
-    width: 65px;
-
-    height: 65px;
-
-    border-radius: 50%;
-
-    background: #dff1fa;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 32px;
-
-    flex-shrink: 0;
-}
+        float: none !important;
+    }
 
 
-.profile-header h2 {
+    .cb-profile-avatar {
+        width: 65px;
 
-    margin: 0;
+        height: 65px;
 
-    color: #1b6ca8;
+        min-width: 65px;
 
-    font-size: 23px;
-}
+        border-radius: 50%;
 
+        background: #dff1fa;
 
-.profile-header p {
+        display: flex;
 
-    margin-top: 5px;
+        align-items: center;
 
-    color: #777;
+        justify-content: center;
 
-    font-size: 14px;
-}
-
-
-/* =========================================
-   PROFILE CARD
-========================================= */
-
-.profile-card {
-
-    background: white;
-
-    border-radius: 15px;
-
-    padding: 25px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 4px 15px
-        rgba(0,0,0,0.07);
-
-    border:
-        1px solid #e8eef2;
-}
+        font-size: 32px;
+    }
 
 
-.profile-card h3 {
+    .cb-profile-header-text h2 {
 
-    color: #1b6ca8;
+        margin: 0;
 
-    margin-bottom: 20px;
+        color: #1b6ca8;
 
-    padding-bottom: 10px;
+        font-size: 24px;
 
-    border-bottom:
-        1px solid #e5e7eb;
-
-    font-size: 19px;
-}
+    }
 
 
-/* =========================================
+    .cb-profile-header-text p {
+
+        margin: 6px 0 0 0;
+
+        color: #777;
+
+        font-size: 14px;
+
+    }
+
+
+    /* =====================================================
+   CARD
+===================================================== */
+
+    .cb-profile-card {
+
+        width: 100% !important;
+
+        background: #ffffff;
+
+        border: 1px solid #e3ebf0;
+
+        border-radius: 15px;
+
+        padding: 25px;
+
+        margin: 0 0 22px 0 !important;
+
+        box-shadow:
+            0 4px 15px rgba(0, 0, 0, 0.07);
+
+        display: block !important;
+
+        float: none !important;
+    }
+
+
+    .cb-profile-card h3 {
+
+        margin: 0 0 18px 0;
+
+        padding-bottom: 12px;
+
+        border-bottom: 1px solid #e5e7eb;
+
+        color: #1b6ca8;
+
+        font-size: 19px;
+    }
+
+
+    /* =====================================================
    INFORMATION ROW
-========================================= */
+===================================================== */
 
-.info-row {
+    .cb-profile-row {
 
-    display: flex;
+        display: flex !important;
 
-    justify-content: space-between;
+        justify-content: space-between !important;
 
-    align-items: flex-start;
+        align-items: flex-start !important;
 
-    gap: 20px;
+        gap: 25px;
 
-    padding: 14px 0;
+        padding: 14px 0;
 
-    border-bottom:
-        1px solid #f0f0f0;
-}
+        border-bottom: 1px solid #f0f2f4;
 
+        width: 100% !important;
 
-.info-row:last-child {
-
-    border-bottom: none;
-}
+        float: none !important;
+    }
 
 
-.info-row span {
+    .cb-profile-row:last-child {
 
-    color: #6b7280;
+        border-bottom: none;
 
-    font-weight: 600;
-
-    flex-shrink: 0;
-}
+    }
 
 
-.info-row strong {
+    .cb-profile-label {
 
-    color: #374151;
+        color: #6b7280;
 
-    text-align: right;
+        font-weight: 600;
 
-    max-width: 65%;
+        font-size: 14px;
 
-    word-break: break-word;
+        flex-shrink: 0;
 
-    line-height: 1.5;
-}
+    }
 
 
-/* =========================================
+    .cb-profile-value {
+
+        color: #374151;
+
+        font-weight: 600;
+
+        font-size: 14px;
+
+        text-align: right;
+
+        max-width: 65%;
+
+        word-break: break-word;
+
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+   REPRESENTED PERSON NOTICE
+===================================================== */
+
+    .cb-profile-note {
+
+        background: #eef8fd;
+
+        border-left: 4px solid #1b6ca8;
+
+        border-radius: 7px;
+
+        padding: 13px 15px;
+
+        color: #555;
+
+        font-size: 14px;
+
+        line-height: 1.5;
+
+        margin-bottom: 18px;
+    }
+
+
+    /* =====================================================
    BUTTON
-========================================= */
+===================================================== */
 
-.edit-button {
+    .cb-profile-button {
 
-    margin-bottom: 15px;
-}
+        display: inline-block;
 
+        background: #1b6ca8;
 
-.edit-button a {
+        color: white !important;
 
-    display: inline-block;
+        text-decoration: none !important;
 
-    padding: 12px 20px;
+        padding: 12px 20px;
 
-    background: #1b6ca8;
+        border-radius: 8px;
 
-    color: white;
+        font-weight: bold;
 
-    text-decoration: none;
+        font-size: 14px;
 
-    border-radius: 8px;
+        margin-top: 5px;
 
-    font-weight: bold;
-
-    transition: 0.2s ease;
-}
+        transition: 0.2s ease;
+    }
 
 
-.edit-button a:hover {
+    .cb-profile-button:hover {
 
-    background: #155a8a;
+        background: #155a8a;
 
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 5px 12px
-        rgba(27,108,168,0.20);
-}
+        transform: translateY(-1px);
+    }
 
 
-/* =========================================
-   CARE REPRESENTATIVE INFO
-========================================= */
-
-.care-rep-note {
-
-    background: #eef8fd;
-
-    border-left:
-        4px solid #1b6ca8;
-
-    padding: 14px 16px;
-
-    border-radius: 8px;
-
-    color: #555;
-
-    margin-bottom: 18px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================
+    /* =====================================================
    MOBILE
-========================================= */
+===================================================== */
 
-@media (max-width: 700px) {
+    @media (max-width: 700px) {
 
-    .profile-container {
+        .profile-page-wrapper {
 
-        padding: 10px;
+            padding: 10px !important;
+
+        }
+
+        .cb-profile-header {
+
+            padding: 20px;
+
+        }
+
+        .cb-profile-row {
+
+            flex-direction: column !important;
+
+            gap: 5px;
+
+        }
+
+        .cb-profile-value {
+
+            max-width: 100%;
+
+            text-align: left;
+
+        }
 
     }
-
-
-    .profile-header {
-
-        padding: 20px;
-
-    }
-
-
-    .info-row {
-
-        flex-direction: column;
-
-        gap: 6px;
-
-    }
-
-
-    .info-row strong {
-
-        max-width: 100%;
-
-        text-align: left;
-
-    }
-
-}
-
 </style>
 
 {% endblock %}
@@ -305,23 +307,20 @@ My Profile
 
 {% block content %}
 
+<div class="profile-page-wrapper">
 
-<div class="profile-container">
 
-
-    <!-- =====================================
+    <!-- =================================================
          PROFILE HEADER
-    ====================================== -->
+    ================================================== -->
 
-    <div class="profile-header">
+    <div class="cb-profile-header">
 
-
-        <div class="profile-icon">
+        <div class="cb-profile-avatar">
             👤
         </div>
 
-
-        <div>
+        <div class="cb-profile-header-text">
 
             <h2>
                 {{ request.user.username }}
@@ -333,84 +332,81 @@ My Profile
 
         </div>
 
-
     </div>
 
 
-
-    <!-- =====================================
+    <!-- =================================================
          PERSONAL INFORMATION
-    ====================================== -->
+    ================================================== -->
 
-    <div class="profile-card">
-
+    <div class="cb-profile-card">
 
         <h3>
             📋 Personal Information
         </h3>
 
 
-        <div class="info-row">
+        <div class="cb-profile-row">
 
-            <span>
+            <span class="cb-profile-label">
                 Username
             </span>
 
-            <strong>
+            <span class="cb-profile-value">
                 {{ request.user.username }}
-            </strong>
+            </span>
 
         </div>
 
 
-        <div class="info-row">
+        <div class="cb-profile-row">
 
-            <span>
+            <span class="cb-profile-label">
                 Email
             </span>
 
-            <strong>
+            <span class="cb-profile-value">
                 {{ request.user.email }}
-            </strong>
+            </span>
 
         </div>
 
 
-        <div class="info-row">
+        <div class="cb-profile-row">
 
-            <span>
+            <span class="cb-profile-label">
                 Phone
             </span>
 
-            <strong>
+            <span class="cb-profile-value">
                 {{ profile.phone }}
-            </strong>
+            </span>
 
         </div>
 
 
-        <div class="info-row">
+        <div class="cb-profile-row">
 
-            <span>
+            <span class="cb-profile-label">
                 Address
             </span>
 
-            <strong>
+            <span class="cb-profile-value">
                 {{ profile.address }}
-            </strong>
+            </span>
 
         </div>
 
 
-        <div class="info-row">
+        <div class="cb-profile-row">
 
-            <span>
+            <span class="cb-profile-label">
                 Role
             </span>
 
-            <strong>
+            <span class="cb-profile-value">
                 {{ profile.role }}
-            </strong>
+            </span>
 
         </div>
 
@@ -418,317 +414,276 @@ My Profile
     </div>
 
 
-
-    <!-- =====================================
+    <!-- =================================================
          CARE REPRESENTATIVE
-         REPRESENTED PERSON
-    ====================================== -->
+    ================================================== -->
 
     {% if profile.role == "Care Representative" %}
 
 
-        {% if request.user.represented_person %}
+    {% if request.user.represented_person %}
 
+    <div class="cb-profile-card">
 
-        <div class="profile-card">
+        <h3>
+            💙 Person I Represent
+        </h3>
 
 
-            <h3>
-                💙 Person I Represent
-            </h3>
+        <div class="cb-profile-note">
 
-
-            <div class="care-rep-note">
-
-                You are managing CareBridge services on
-                behalf of this person. Their details are
-                maintained separately from your account.
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Name
-                </span>
-
-                <strong>
-                    {{ request.user.represented_person.full_name }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Age
-                </span>
-
-                <strong>
-                    {{ request.user.represented_person.age }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Person Type
-                </span>
-
-                <strong>
-                    {{ request.user.represented_person.person_type }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Relationship
-                </span>
-
-                <strong>
-                    {{ request.user.represented_person.relationship }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Phone
-                </span>
-
-                <strong>
-                    {{ request.user.represented_person.phone }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Address
-                </span>
-
-                <strong>
-                    {{ request.user.represented_person.address }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Blood Group
-                </span>
-
-                <strong>
-
-                    {% if request.user.represented_person.blood_group %}
-
-                        {{ request.user.represented_person.blood_group }}
-
-                    {% else %}
-
-                        Not Added
-
-                    {% endif %}
-
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Medical Conditions
-                </span>
-
-                <strong>
-
-                    {% if request.user.represented_person.medical_conditions %}
-
-                        {{ request.user.represented_person.medical_conditions }}
-
-                    {% else %}
-
-                        Not Added
-
-                    {% endif %}
-
-                </strong>
-
-            </div>
-
-
-            <div class="edit-button">
-
-                <a href="{% url 'care_circle' %}">
-                    💙 Manage Care Circle
-                </a>
-
-            </div>
-
+            You manage CareBridge services on behalf
+            of this person. Their information is kept
+            separately from your own profile.
 
         </div>
 
 
-        {% else %}
+        <div class="cb-profile-row">
 
+            <span class="cb-profile-label">
+                Name
+            </span>
 
-        <div class="profile-card">
-
-            <h3>
-                💙 Person I Represent
-            </h3>
-
-            <p style="color:#777; margin-bottom:20px;">
-                No represented person details were found.
-            </p>
-
-            <div class="edit-button">
-
-                <a href="{% url 'care_circle' %}">
-                    Add Represented Person
-                </a>
-
-            </div>
+            <span class="cb-profile-value">
+                {{ request.user.represented_person.full_name }}
+            </span>
 
         </div>
 
 
-        {% endif %}
+        <div class="cb-profile-row">
 
+            <span class="cb-profile-label">
+                Age
+            </span>
 
-    {% else %}
-
-
-        <!-- =====================================
-             EMERGENCY INFORMATION
-             OTHER ROLES
-        ====================================== -->
-
-        <div class="profile-card">
-
-
-            <h3>
-                🚨 Emergency Information
-            </h3>
-
-
-            <div class="info-row">
-
-                <span>
-                    Contact Name
-                </span>
-
-                <strong>
-                    {{ profile.emergency_contact_name|default:"Not Added" }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Contact Phone
-                </span>
-
-                <strong>
-                    {{ profile.emergency_contact_phone|default:"Not Added" }}
-                </strong>
-
-            </div>
-
+            <span class="cb-profile-value">
+                {{ request.user.represented_person.age }}
+            </span>
 
         </div>
 
 
+        <div class="cb-profile-row">
 
-        <!-- =====================================
-             MEDICAL INFORMATION
-             OTHER ROLES
-        ====================================== -->
+            <span class="cb-profile-label">
+                Person Type
+            </span>
 
-        <div class="profile-card">
-
-
-            <h3>
-                🏥 Medical Information
-            </h3>
-
-
-            <div class="info-row">
-
-                <span>
-                    Blood Group
-                </span>
-
-                <strong>
-                    {{ profile.blood_group|default:"Not Added" }}
-                </strong>
-
-            </div>
-
-
-            <div class="info-row">
-
-                <span>
-                    Medical Conditions
-                </span>
-
-                <strong>
-                    {{ profile.medical_conditions|default:"Not Added" }}
-                </strong>
-
-            </div>
-
+            <span class="cb-profile-value">
+                {{ request.user.represented_person.person_type }}
+            </span>
 
         </div>
 
 
-        <!-- =====================================
-             MEDICINE REMINDERS
-        ====================================== -->
+        <div class="cb-profile-row">
 
-        <div class="edit-button">
+            <span class="cb-profile-label">
+                Relationship
+            </span>
 
-            <a href="{% url 'medicine_alerts' %}">
-                💊 Medicine Reminders
-            </a>
+            <span class="cb-profile-value">
+                {{ request.user.represented_person.relationship }}
+            </span>
 
         </div>
 
 
-    {% endif %}
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Phone
+            </span>
+
+            <span class="cb-profile-value">
+                {{ request.user.represented_person.phone }}
+            </span>
+
+        </div>
 
 
+        <div class="cb-profile-row">
 
-    <!-- =====================================
-         EDIT PROFILE
-    ====================================== -->
+            <span class="cb-profile-label">
+                Address
+            </span>
 
-    <div class="edit-button">
+            <span class="cb-profile-value">
+                {{ request.user.represented_person.address }}
+            </span>
 
-        <a href="{% url 'edit_profile' %}">
-            ✏️ Edit Profile
+        </div>
+
+
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Blood Group
+            </span>
+
+            <span class="cb-profile-value">
+
+                {% if request.user.represented_person.blood_group %}
+                {{ request.user.represented_person.blood_group }}
+                {% else %}
+                Not Added
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Medical Conditions
+            </span>
+
+            <span class="cb-profile-value">
+
+                {% if request.user.represented_person.medical_conditions %}
+                {{ request.user.represented_person.medical_conditions }}
+                {% else %}
+                Not Added
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <a href="{% url 'care_circle' %}" class="cb-profile-button">
+            💙 Manage Care Circle
         </a>
 
     </div>
 
 
-</div>
+    {% endif %}
 
+
+    {% else %}
+
+
+    <!-- =================================================
+             EMERGENCY INFORMATION
+        ================================================== -->
+
+    <div class="cb-profile-card">
+
+        <h3>
+            🚨 Emergency Information
+        </h3>
+
+
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Contact Name
+            </span>
+
+            <span class="cb-profile-value">
+
+                {% if profile.emergency_contact_name %}
+                {{ profile.emergency_contact_name }}
+                {% else %}
+                Not Added
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Contact Phone
+            </span>
+
+            <span class="cb-profile-value">
+
+                {% if profile.emergency_contact_phone %}
+                {{ profile.emergency_contact_phone }}
+                {% else %}
+                Not Added
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+             MEDICAL INFORMATION
+        ================================================== -->
+
+    <div class="cb-profile-card">
+
+        <h3>
+            🏥 Medical Information
+        </h3>
+
+
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Blood Group
+            </span>
+
+            <span class="cb-profile-value">
+
+                {% if profile.blood_group %}
+                {{ profile.blood_group }}
+                {% else %}
+                Not Added
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        <div class="cb-profile-row">
+
+            <span class="cb-profile-label">
+                Medical Conditions
+            </span>
+
+            <span class="cb-profile-value">
+
+                {% if profile.medical_conditions %}
+                {{ profile.medical_conditions }}
+                {% else %}
+                Not Added
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    {% endif %}
+
+
+    <!-- =================================================
+         EDIT PROFILE
+    ================================================== -->
+
+    <a href="{% url 'edit_profile' %}" class="cb-profile-button">
+        ✏️ Edit Profile
+    </a>
+
+
+</div>
 
 {% endblock %}

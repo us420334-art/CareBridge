@@ -117,7 +117,8 @@
             font-weight: bold;
         }
 
-        /* Both conditional sections are hidden initially */
+        /* Conditional sections */
+
         .conditional-section {
             display: none;
             margin-top: 20px;
@@ -432,10 +433,11 @@
 
 
                 <label>
-                    Emergency Contact Phone
+                    Emergency Contact Email
                 </label>
 
-                <input type="text" name="emergency_contact_phone" id="emergency_contact_phone">
+                <input type="email" name="emergency_contact_email" id="emergency_contact_email"
+                    placeholder="Emergency contact's email address">
 
 
                 <label>
@@ -498,10 +500,12 @@
         const roleSelect =
             document.getElementById("role");
 
+
         const representativeSection =
             document.getElementById(
                 "representative-section"
             );
+
 
         const recipientExtraSection =
             document.getElementById(
@@ -510,28 +514,46 @@
 
 
         /*
-         * Fields inside the Care Representative section
+         * ============================================
+         * Fields inside Care Representative section
+         * ============================================
          */
+
         const representedFields = [
 
-            document.getElementById("represented_name"),
+            document.getElementById(
+                "represented_name"
+            ),
 
-            document.getElementById("represented_age"),
+            document.getElementById(
+                "represented_age"
+            ),
 
-            document.getElementById("represented_type"),
+            document.getElementById(
+                "represented_type"
+            ),
 
-            document.getElementById("represented_relationship"),
+            document.getElementById(
+                "represented_relationship"
+            ),
 
-            document.getElementById("represented_phone"),
+            document.getElementById(
+                "represented_phone"
+            ),
 
-            document.getElementById("represented_address")
+            document.getElementById(
+                "represented_address"
+            )
 
         ];
 
 
         /*
-         * Fields inside the recipient health section
+         * ============================================
+         * Fields inside recipient health section
+         * ============================================
          */
+
         const recipientFields = [
 
             document.getElementById(
@@ -539,7 +561,7 @@
             ),
 
             document.getElementById(
-                "emergency_contact_phone"
+                "emergency_contact_email"
             ),
 
             document.getElementById(
@@ -552,6 +574,12 @@
 
         ];
 
+
+        /*
+         * ============================================
+         * Set required fields
+         * ============================================
+         */
 
         function setRequired(
             fields,
@@ -569,6 +597,12 @@
         }
 
 
+        /*
+         * ============================================
+         * Show / Hide sections according to role
+         * ============================================
+         */
+
         function toggleRoleSections() {
 
             const selectedRole =
@@ -576,9 +610,9 @@
 
 
             /*
-             * =====================================
+             * ========================================
              * CARE REPRESENTATIVE
-             * =====================================
+             * ========================================
              */
 
             if (
@@ -612,9 +646,9 @@
 
 
             /*
-             * =====================================
+             * ========================================
              * CARE RECIPIENTS
-             * =====================================
+             * ========================================
              */
 
             else if (
@@ -641,6 +675,15 @@
                     "block";
 
 
+                /*
+                 * Emergency information is optional
+                 * during registration.
+                 *
+                 * The Emergency SOS page will check
+                 * whether these details exist before
+                 * allowing an SOS alert.
+                 */
+
                 setRequired(
                     representedFields,
                     false
@@ -655,9 +698,9 @@
 
 
             /*
-             * =====================================
+             * ========================================
              * CAREGIVER / VOLUNTEER / EMPTY
-             * =====================================
+             * ========================================
              */
 
             else {
@@ -684,6 +727,12 @@
         }
 
 
+        /*
+         * ============================================
+         * Detect role change
+         * ============================================
+         */
+
         roleSelect.addEventListener(
             "change",
             toggleRoleSections
@@ -691,8 +740,11 @@
 
 
         /*
-         * Run once when the page loads
+         * ============================================
+         * Run when page loads
+         * ============================================
          */
+
         toggleRoleSections();
 
     </script>

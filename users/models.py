@@ -34,8 +34,7 @@ class UserProfile(models.Model):
         blank=True
     )
 
-    emergency_contact_phone = models.CharField(
-        max_length=15,
+    emergency_contact_email = models.EmailField(
         blank=True
     )
 
@@ -385,8 +384,7 @@ class EmergencySOS(models.Model):
         blank=True
     )
 
-    emergency_contact_phone = models.CharField(
-        max_length=15,
+    emergency_contact_email = models.EmailField(
         blank=True
     )
 
@@ -402,6 +400,7 @@ class EmergencySOS(models.Model):
     def __str__(self):
         return f"{self.user.username} - Emergency SOS - {self.status}"
 
+    
 class Feedback(models.Model):
 
     RATING_CHOICES = [

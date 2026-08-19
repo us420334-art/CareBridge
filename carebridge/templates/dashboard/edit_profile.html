@@ -12,46 +12,53 @@ Edit Profile
 {% block extra_css %}
 
 <style>
-    /* =========================================
-   MAIN CONTAINER
-========================================= */
+    /* =====================================================
+       EDIT PROFILE PAGE
+    ===================================================== */
 
-    .edit-profile-container {
+    .cb-edit-page {
 
-        width: 100%;
-        max-width: 900px;
+        width: 100% !important;
+        max-width: 1050px !important;
 
-        margin: 0 auto;
+        margin: 0 auto !important;
+        padding: 20px !important;
 
-        padding: 20px;
+        display: block !important;
+        float: none !important;
     }
 
 
-    /* =========================================
-   HEADER
-========================================= */
+    /* =====================================================
+       HEADER
+    ===================================================== */
 
-    .edit-profile-header {
+    .cb-edit-header {
+
+        width: 100% !important;
 
         background:
             linear-gradient(135deg,
                 #eaf5fb,
                 #ffffff);
 
-        border-radius: 15px;
+        border: 1px solid #d8e8f0;
+
+        border-radius: 16px;
 
         padding: 25px;
 
-        margin-bottom: 25px;
-
-        border: 1px solid #dceaf2;
+        margin: 0 0 25px 0 !important;
 
         box-shadow:
             0 4px 15px rgba(0, 0, 0, 0.06);
+
+        display: block !important;
+        float: none !important;
     }
 
 
-    .edit-profile-header h2 {
+    .cb-edit-header h2 {
 
         margin: 0 0 8px 0;
 
@@ -61,7 +68,7 @@ Edit Profile
     }
 
 
-    .edit-profile-header p {
+    .cb-edit-header p {
 
         margin: 0;
 
@@ -73,56 +80,33 @@ Edit Profile
     }
 
 
-    /* =========================================
-   SUCCESS MESSAGE
-========================================= */
+    /* =====================================================
+       MAIN CARD
+    ===================================================== */
 
-    .edit-message {
+    .cb-edit-card {
 
-        background: #d4edda;
+        width: 100% !important;
 
-        color: #155724;
+        background: #ffffff;
 
-        border: 1px solid #c3e6cb;
-
-        padding: 13px 16px;
-
-        border-radius: 8px;
-
-        margin-bottom: 20px;
-
-        font-weight: bold;
-    }
-
-
-    /* =========================================
-   FORM CARD
-========================================= */
-
-    .edit-card {
-
-        background: white;
+        border: 1px solid #e3ebf0;
 
         border-radius: 15px;
 
         padding: 30px;
 
-        margin-bottom: 25px;
-
-        border: 1px solid #e5edf2;
+        margin: 0 0 22px 0 !important;
 
         box-shadow:
             0 4px 15px rgba(0, 0, 0, 0.07);
+
+        display: block !important;
+        float: none !important;
     }
 
 
-    /* =========================================
-   CARD TITLE
-========================================= */
-
-    .edit-card h3 {
-
-        color: #1b6ca8;
+    .cb-edit-card h3 {
 
         margin: 0 0 8px 0;
 
@@ -131,54 +115,85 @@ Edit Profile
         border-bottom:
             1px solid #e5e7eb;
 
+        color: #1b6ca8;
+
         font-size: 20px;
     }
 
 
-    .card-description {
+    .cb-edit-description {
+
+        margin: 0 0 22px 0;
 
         color: #777;
 
         font-size: 14px;
 
-        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       INFORMATION NOTE
+    ===================================================== */
+
+    .cb-edit-note {
+
+        background: #eef8fd;
+
+        border-left:
+            4px solid #1b6ca8;
+
+        border-radius: 7px;
+
+        padding: 13px 15px;
+
+        margin-bottom: 22px;
+
+        color: #555;
+
+        font-size: 14px;
 
         line-height: 1.5;
     }
 
 
-    /* =========================================
-   FORM GRID
-========================================= */
+    /* =====================================================
+       FORM GRID
+    ===================================================== */
 
-    .form-grid {
+    .cb-edit-grid {
 
-        display: grid;
+        display: grid !important;
 
         grid-template-columns:
-            repeat(2, 1fr);
+            repeat(2, minmax(0, 1fr));
 
         gap: 20px;
+
+        width: 100% !important;
     }
 
 
-    .form-group {
+    .cb-edit-group {
 
-        margin-bottom: 5px;
+        width: 100% !important;
+
+        margin: 0 !important;
     }
 
 
-    .form-group.full-width {
+    .cb-edit-group.full {
 
         grid-column: 1 / -1;
     }
 
 
-    /* =========================================
-   LABEL
-========================================= */
+    /* =====================================================
+       LABEL
+    ===================================================== */
 
-    .form-group label {
+    .cb-edit-group label {
 
         display: block;
 
@@ -192,13 +207,13 @@ Edit Profile
     }
 
 
-    /* =========================================
-   INPUTS
-========================================= */
+    /* =====================================================
+       INPUTS
+    ===================================================== */
 
-    .form-control {
+    .cb-edit-control {
 
-        width: 100%;
+        width: 100% !important;
 
         padding: 12px 13px;
 
@@ -209,7 +224,7 @@ Edit Profile
 
         box-sizing: border-box;
 
-        background: white;
+        background: #ffffff;
 
         color: #374151;
 
@@ -219,7 +234,7 @@ Edit Profile
     }
 
 
-    .form-control:focus {
+    .cb-edit-control:focus {
 
         border-color: #1b6ca8;
 
@@ -228,19 +243,7 @@ Edit Profile
     }
 
 
-    textarea.form-control {
-
-        min-height: 115px;
-
-        resize: vertical;
-    }
-
-
-    /* =========================================
-   READONLY
-========================================= */
-
-    .readonly-field {
+    .cb-edit-control[readonly] {
 
         background: #f3f6f8;
 
@@ -250,46 +253,31 @@ Edit Profile
     }
 
 
-    /* =========================================
-   INFORMATION BOX
-========================================= */
+    .cb-edit-textarea {
 
-    .role-note {
+        min-height: 115px;
 
-        background: #eef8fd;
-
-        border-left:
-            4px solid #1b6ca8;
-
-        padding: 13px 15px;
-
-        border-radius: 7px;
-
-        color: #555;
-
-        font-size: 14px;
-
-        line-height: 1.5;
-
-        margin-bottom: 22px;
+        resize: vertical;
     }
 
 
-    /* =========================================
-   BUTTONS
-========================================= */
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
 
-    .button-row {
+    .cb-edit-buttons {
 
-        display: flex;
+        display: flex !important;
 
         gap: 12px;
 
-        margin-top: 10px;
+        margin-top: 5px;
+
+        width: 100% !important;
     }
 
 
-    .save-button {
+    .cb-save-button {
 
         border: none;
 
@@ -311,26 +299,23 @@ Edit Profile
     }
 
 
-    .save-button:hover {
+    .cb-save-button:hover {
 
         background: #155a8a;
 
         transform: translateY(-1px);
-
-        box-shadow:
-            0 5px 12px rgba(27, 108, 168, 0.20);
     }
 
 
-    .cancel-button {
+    .cb-cancel-button {
 
         display: inline-block;
-
-        text-decoration: none;
 
         background: #eef2f5;
 
         color: #555;
+
+        text-decoration: none;
 
         padding: 13px 25px;
 
@@ -344,54 +329,60 @@ Edit Profile
     }
 
 
-    .cancel-button:hover {
+    .cb-cancel-button:hover {
 
         background: #e1e7eb;
     }
 
 
-    /* =========================================
-   MOBILE
-========================================= */
+    /* =====================================================
+       MOBILE
+    ===================================================== */
 
     @media (max-width: 700px) {
 
-        .edit-profile-container {
+        .cb-edit-page {
 
-            padding: 10px;
+            padding: 10px !important;
+
         }
 
 
-        .edit-card {
+        .cb-edit-card {
 
             padding: 22px;
+
         }
 
 
-        .form-grid {
+        .cb-edit-grid {
 
             grid-template-columns: 1fr;
+
         }
 
 
-        .form-group.full-width {
+        .cb-edit-group.full {
 
             grid-column: auto;
+
         }
 
 
-        .button-row {
+        .cb-edit-buttons {
 
             flex-direction: column;
+
         }
 
 
-        .save-button,
-        .cancel-button {
+        .cb-save-button,
+        .cb-cancel-button {
 
             width: 100%;
 
             text-align: center;
+
         }
 
     }
@@ -402,14 +393,14 @@ Edit Profile
 
 {% block content %}
 
-<div class="edit-profile-container">
+<div class="cb-edit-page">
 
 
-    <!-- =====================================
+    <!-- =================================================
          HEADER
-    ====================================== -->
+    ================================================== -->
 
-    <div class="edit-profile-header">
+    <div class="cb-edit-header">
 
         <h2>
             ✏️ Edit My Profile
@@ -417,134 +408,103 @@ Edit Profile
 
         <p>
             Update your own CareBridge account details.
-            The information of the person you represent
-            is maintained separately in My Care Circle.
+            Your profile information is separate from
+            any person you may represent.
         </p>
 
     </div>
 
 
-    <!-- =====================================
-         MESSAGES
-    ====================================== -->
-
-    {% if messages %}
-
-    {% for message in messages %}
-
-    <div class="edit-message">
-
-        ✔ {{ message }}
-
-    </div>
-
-    {% endfor %}
-
-    {% endif %}
-
-
-    <!-- =====================================
-         EDIT FORM
-    ===================================== -->
+    <!-- =================================================
+         MAIN FORM
+    ================================================== -->
 
     <form method="POST">
 
         {% csrf_token %}
 
 
-        <div class="edit-card">
+        <!-- =================================================
+             ACCOUNT DETAILS
+        ================================================== -->
+
+        <div class="cb-edit-card">
 
             <h3>
                 👤 My Account Details
             </h3>
 
-            <p class="card-description">
-
-                These are the details belonging to
-                your own CareBridge account.
-
+            <p class="cb-edit-description">
+                Update the information belonging to your
+                own CareBridge account.
             </p>
 
 
-            {% if profile.role == "Care Representative" %}
-
-            <div class="role-note">
-
-                💙 You are registered as a
-                <strong>Care Representative</strong>.
-
-                To edit the person you represent,
-                use <strong>My Care Circle</strong>.
-
-            </div>
-
-            {% endif %}
-
-
-            <div class="form-grid">
+            <div class="cb-edit-grid">
 
 
                 <!-- USERNAME -->
 
-                <div class="form-group">
+                <div class="cb-edit-group">
 
                     <label>
                         Username
                     </label>
 
-                    <input type="text" class="form-control readonly-field" value="{{ request.user.username }}" readonly>
+                    <input type="text" class="cb-edit-control" value="{{ request.user.username }}" readonly>
 
                 </div>
 
 
                 <!-- EMAIL -->
 
-                <div class="form-group">
+                <div class="cb-edit-group">
 
                     <label>
                         Email
                     </label>
 
-                    <input type="email" name="email" class="form-control" value="{{ request.user.email }}" required>
+                    <input type="email" name="email" class="cb-edit-control" value="{{ request.user.email }}" required>
 
                 </div>
 
 
                 <!-- PHONE -->
 
-                <div class="form-group">
+                <div class="cb-edit-group">
 
                     <label>
                         Phone Number
                     </label>
 
-                    <input type="text" name="phone" class="form-control" value="{{ profile.phone }}" required>
+                    <input type="text" name="phone" class="cb-edit-control" value="{{ profile.phone }}" required>
 
                 </div>
 
 
                 <!-- ROLE -->
 
-                <div class="form-group">
+                <div class="cb-edit-group">
 
                     <label>
                         Role
                     </label>
 
-                    <input type="text" class="form-control readonly-field" value="{{ profile.role }}" readonly>
+                    <input type="text" class="cb-edit-control" value="{{ profile.role }}" readonly>
 
                 </div>
 
 
                 <!-- ADDRESS -->
 
-                <div class="form-group full-width">
+                <div class="cb-edit-group full">
 
                     <label>
                         Address
                     </label>
 
-                    <textarea name="address" class="form-control" required>{{ profile.address }}</textarea>
+                    <textarea name="address" class="cb-edit-control cb-edit-textarea"
+                        required>{{ profile.address }}</textarea>
 
                 </div>
 
@@ -554,38 +514,34 @@ Edit Profile
         </div>
 
 
-        <!-- =====================================
-             CARE REPRESENTATIVE INFORMATION
-        ====================================== -->
+        <!-- =================================================
+             CARE REPRESENTATIVE
+        ================================================== -->
 
         {% if profile.role == "Care Representative" %}
 
-        <div class="edit-card">
+        <div class="cb-edit-card">
 
             <h3>
                 💙 Care Representative Account
             </h3>
 
-            <p class="card-description">
+            <p class="cb-edit-description">
 
-                Your account is used to manage CareBridge
-                services on behalf of another person.
+                Your Care Representative account is used
+                to manage CareBridge services for another
+                person.
 
             </p>
 
-            <div class="role-note">
+            <div class="cb-edit-note">
 
-                The details of the person you represent
-                are not edited here.
+                The information of the person you represent
+                is maintained separately.
 
-                Use:
-
-                <strong>
-                    💙 My Care Circle
-                </strong>
-
-                from the sidebar to update their
-                information.
+                To edit that information, use
+                <strong>💙 My Care Circle</strong>
+                from your sidebar.
 
             </div>
 
@@ -594,215 +550,80 @@ Edit Profile
         {% endif %}
 
 
-        <!-- =====================================
-             HEALTH INFORMATION
-             ONLY FOR CARE RECIPIENTS
-        ====================================== -->
+        <!-- =================================================
+             ELDERLY PERSON
+        ================================================== -->
 
         {% if profile.role == "Elderly Person" %}
 
-        <div class="edit-card">
+        <div class="cb-edit-card">
 
             <h3>
                 🩺 Health & Emergency Information
             </h3>
 
-            <p class="card-description">
+            <p class="cb-edit-description">
 
-                Update your emergency and health
-                information.
+                Keep your health and emergency details
+                updated for better CareBridge support.
 
             </p>
 
 
-            <div class="form-grid">
+            <div class="cb-edit-grid">
 
 
-                <div class="form-group">
+                <!-- EMERGENCY CONTACT NAME -->
+
+                <div class="cb-edit-group">
 
                     <label>
                         Emergency Contact Name
                     </label>
 
-                    <input type="text" name="emergency_contact_name" class="form-control"
+                    <input type="text" name="emergency_contact_name" class="cb-edit-control"
                         value="{{ profile.emergency_contact_name }}">
 
                 </div>
 
 
-                <div class="form-group">
+                <!-- EMERGENCY CONTACT EMAIL -->
+
+                <div class="cb-edit-group">
 
                     <label>
-                        Emergency Contact Phone
+                        Emergency Contact Email
                     </label>
 
-                    <input type="text" name="emergency_contact_phone" class="form-control"
-                        value="{{ profile.emergency_contact_phone }}">
+                    <input type="email" name="emergency_contact_email" class="cb-edit-control"
+                        value="{{ profile.emergency_contact_email }}" placeholder="example@gmail.com">
 
                 </div>
 
 
-                <div class="form-group">
+                <!-- BLOOD GROUP -->
+
+                <div class="cb-edit-group">
 
                     <label>
                         Blood Group
                     </label>
 
-                    <input type="text" name="blood_group" class="form-control" value="{{ profile.blood_group }}"
+                    <input type="text" name="blood_group" class="cb-edit-control" value="{{ profile.blood_group }}"
                         placeholder="Example: B+">
 
                 </div>
 
 
-                <div class="form-group full-width">
+                <!-- MEDICAL CONDITIONS -->
+
+                <div class="cb-edit-group full">
 
                     <label>
                         Medical Conditions
                     </label>
 
-                    <textarea name="medical_conditions" class="form-control"
-                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
-
-                </div>
-
-
-            </div>
-
-        </div>
-
-        {% elif profile.role == "Person with Mobility Impairment" %}
-
-        <div class="edit-card">
-
-            <h3>
-                🩺 Health & Emergency Information
-            </h3>
-
-            <p class="card-description">
-
-                Update your emergency and health
-                information.
-
-            </p>
-
-
-            <div class="form-grid">
-
-
-                <div class="form-group">
-
-                    <label>
-                        Emergency Contact Name
-                    </label>
-
-                    <input type="text" name="emergency_contact_name" class="form-control"
-                        value="{{ profile.emergency_contact_name }}">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Emergency Contact Phone
-                    </label>
-
-                    <input type="text" name="emergency_contact_phone" class="form-control"
-                        value="{{ profile.emergency_contact_phone }}">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Blood Group
-                    </label>
-
-                    <input type="text" name="blood_group" class="form-control" value="{{ profile.blood_group }}"
-                        placeholder="Example: B+">
-
-                </div>
-
-
-                <div class="form-group full-width">
-
-                    <label>
-                        Medical Conditions
-                    </label>
-
-                    <textarea name="medical_conditions" class="form-control"
-                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
-
-                </div>
-
-
-            </div>
-
-        </div>
-
-        {% elif profile.role == "Person with Hearing Impairment" %}
-
-        <div class="edit-card">
-
-            <h3>
-                🩺 Health & Emergency Information
-            </h3>
-
-            <p class="card-description">
-
-                Update your emergency and health
-                information.
-
-            </p>
-
-
-            <div class="form-grid">
-
-
-                <div class="form-group">
-
-                    <label>
-                        Emergency Contact Name
-                    </label>
-
-                    <input type="text" name="emergency_contact_name" class="form-control"
-                        value="{{ profile.emergency_contact_name }}">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Emergency Contact Phone
-                    </label>
-
-                    <input type="text" name="emergency_contact_phone" class="form-control"
-                        value="{{ profile.emergency_contact_phone }}">
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        Blood Group
-                    </label>
-
-                    <input type="text" name="blood_group" class="form-control" value="{{ profile.blood_group }}"
-                        placeholder="Example: B+">
-
-                </div>
-
-
-                <div class="form-group full-width">
-
-                    <label>
-                        Medical Conditions
-                    </label>
-
-                    <textarea name="medical_conditions" class="form-control"
+                    <textarea name="medical_conditions" class="cb-edit-control cb-edit-textarea"
                         placeholder="Optional">{{ profile.medical_conditions }}</textarea>
 
                 </div>
@@ -815,30 +636,192 @@ Edit Profile
         {% endif %}
 
 
-        <!-- =====================================
-             BUTTONS
-        ====================================== -->
+        <!-- =================================================
+             MOBILITY IMPAIRMENT
+        ================================================== -->
 
-        <div class="button-row">
+        {% if profile.role == "Person with Mobility Impairment" %}
 
-            <button type="submit" class="save-button">
+        <div class="cb-edit-card">
+
+            <h3>
+                🩺 Health & Emergency Information
+            </h3>
+
+            <p class="cb-edit-description">
+
+                Keep your health and emergency details
+                updated for better CareBridge support.
+
+            </p>
+
+
+            <div class="cb-edit-grid">
+
+
+                <!-- EMERGENCY CONTACT NAME -->
+
+                <div class="cb-edit-group">
+
+                    <label>
+                        Emergency Contact Name
+                    </label>
+
+                    <input type="text" name="emergency_contact_name" class="cb-edit-control"
+                        value="{{ profile.emergency_contact_name }}">
+
+                </div>
+
+
+                <!-- EMERGENCY CONTACT EMAIL -->
+
+                <div class="cb-edit-group">
+
+                    <label>
+                        Emergency Contact Email
+                    </label>
+
+                    <input type="email" name="emergency_contact_email" class="cb-edit-control"
+                        value="{{ profile.emergency_contact_email }}" placeholder="example@gmail.com">
+
+                </div>
+
+
+                <!-- BLOOD GROUP -->
+
+                <div class="cb-edit-group">
+
+                    <label>
+                        Blood Group
+                    </label>
+
+                    <input type="text" name="blood_group" class="cb-edit-control" value="{{ profile.blood_group }}"
+                        placeholder="Example: B+">
+
+                </div>
+
+
+                <!-- MEDICAL CONDITIONS -->
+
+                <div class="cb-edit-group full">
+
+                    <label>
+                        Medical Conditions
+                    </label>
+
+                    <textarea name="medical_conditions" class="cb-edit-control cb-edit-textarea"
+                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             HEARING IMPAIRMENT
+        ================================================== -->
+
+        {% if profile.role == "Person with Hearing Impairment" %}
+
+        <div class="cb-edit-card">
+
+            <h3>
+                🩺 Health & Emergency Information
+            </h3>
+
+            <p class="cb-edit-description">
+
+                Keep your health and emergency details
+                updated for better CareBridge support.
+
+            </p>
+
+
+            <div class="cb-edit-grid">
+
+
+                <!-- EMERGENCY CONTACT NAME -->
+
+                <div class="cb-edit-group">
+
+                    <label>
+                        Emergency Contact Name
+                    </label>
+
+                    <input type="text" name="emergency_contact_name" class="cb-edit-control"
+                        value="{{ profile.emergency_contact_name }}">
+
+                </div>
+
+
+                <!-- EMERGENCY CONTACT EMAIL -->
+
+                <div class="cb-edit-group">
+
+                    <label>
+                        Emergency Contact Email
+                    </label>
+
+                    <input type="email" name="emergency_contact_email" class="cb-edit-control"
+                        value="{{ profile.emergency_contact_email }}" placeholder="example@gmail.com">
+
+                </div>
+
+
+                <!-- BLOOD GROUP -->
+
+                <div class="cb-edit-group">
+
+                    <label>
+                        Blood Group
+                    </label>
+
+                    <input type="text" name="blood_group" class="cb-edit-control" value="{{ profile.blood_group }}"
+                        placeholder="Example: B+">
+
+                </div>
+
+
+                <!-- MEDICAL CONDITIONS -->
+
+                <div class="cb-edit-group full">
+
+                    <label>
+                        Medical Conditions
+                    </label>
+
+                    <textarea name="medical_conditions" class="cb-edit-control cb-edit-textarea"
+                        placeholder="Optional">{{ profile.medical_conditions }}</textarea>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             SAVE / CANCEL
+        ================================================== -->
+
+        <div class="cb-edit-buttons">
+
+            <button type="submit" class="cb-save-button">
                 💾 Save Changes
             </button>
 
 
-            {% if profile.role == "Care Representative" %}
-
-            <a href="{% url 'care_rep_dashboard' %}" class="cancel-button">
+            <a href="{% url 'profile' %}" class="cb-cancel-button">
                 Cancel
             </a>
-
-            {% else %}
-
-            <a href="{% url 'profile' %}" class="cancel-button">
-                Cancel
-            </a>
-
-            {% endif %}
 
         </div>
 
