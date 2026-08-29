@@ -1,0 +1,346 @@
+{% extends "dashboard/caregiver_base.html" %}
+
+{% block title %}
+Send Caregiver Bill | CareBridge
+{% endblock %}
+
+{% block page_title %}
+Send Caregiver Bill
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .bill-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 35px;
+    }
+
+    .bill-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    .bill-header {
+        margin-bottom: 25px;
+    }
+
+    .bill-header h2 {
+        margin: 0 0 8px;
+        color: #222;
+    }
+
+    .bill-header p {
+        margin: 0;
+        color: #777;
+    }
+
+    .request-info {
+        background: #f8fafc;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        border-left: 5px solid #4f7cff;
+    }
+
+    .request-info h3 {
+        margin: 0 0 15px;
+        color: #222;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 8px 0;
+        color: #555;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-row strong {
+        color: #222;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .amount-wrapper {
+        position: relative;
+    }
+
+    .currency {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        font-weight: 700;
+        color: #555;
+    }
+
+    .amount-input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 15px 14px 40px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 18px;
+        outline: none;
+    }
+
+    .amount-input:focus {
+        border-color: #4f7cff;
+        box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.12);
+    }
+
+    .bill-note {
+        background: #fff8e1;
+        color: #795548;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 22px;
+        border-radius: 9px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .send-btn {
+        background: #2e7d32;
+        color: white;
+    }
+
+    .send-btn:hover {
+        background: #256628;
+    }
+
+    .cancel-btn {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .cancel-btn:hover {
+        background: #e2e8f0;
+    }
+
+    @media(max-width: 700px) {
+
+        .bill-page {
+            padding: 20px;
+        }
+
+        .info-row {
+            flex-direction: column;
+            gap: 3px;
+        }
+
+    }
+</style>
+
+
+<div class="bill-page">
+
+    <div class="bill-card">
+
+        <div class="bill-header">
+
+            <h2>
+                💳 Send Caregiver Bill
+            </h2>
+
+            <p>
+                Review the service request and enter the amount you want to charge.
+            </p>
+
+        </div>
+
+
+        <!-- REQUEST INFORMATION -->
+
+        <div class="request-info">
+
+            <h3>
+                📋 Request Details
+            </h3>
+
+            <div class="info-row">
+
+                <strong>
+                    Service
+                </strong>
+
+                <span>
+                    {{ booking.service|default:"Care Service" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <strong>
+                    Requester
+                </strong>
+
+                <span>
+
+                    {% if booking.is_care_representative_request %}
+
+                    {{ booking.care_representative.get_full_name|default:booking.care_representative.username }}
+
+                    {% else %}
+
+                    {{ booking.user.get_full_name|default:booking.user.username }}
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <strong>
+                    Date
+                </strong>
+
+                <span>
+                    {{ booking.booking_date|default:"Not specified" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <strong>
+                    Time
+                </strong>
+
+                <span>
+                    {{ booking.booking_time|default:"Not specified" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <strong>
+                    Priority
+                </strong>
+
+                <span>
+                    {{ booking.priority }}
+                </span>
+
+            </div>
+
+
+            {% if booking.description %}
+
+            <div class="info-row">
+
+                <strong>
+                    Description
+                </strong>
+
+                <span>
+                    {{ booking.description }}
+                </span>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- NOTE -->
+
+        <div class="bill-note">
+
+            💡 After you send this bill, the user or care representative
+            will be able to review the amount and either proceed with
+            payment or cancel the bill.
+
+        </div>
+
+
+        <!-- BILL FORM -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+
+                <label for="amount">
+                    💰 Bill Amount
+                </label>
+
+                <div class="amount-wrapper">
+
+                    <span class="currency">
+                        ₹
+                    </span>
+
+                    <input type="number" id="amount" name="amount" class="amount-input" min="1" step="0.01"
+                        placeholder="Enter amount" required>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button type="submit" class="btn send-btn">
+                    💳 Send Bill
+                </button>
+
+
+                <a href="{% url 'caregiver_requests' %}" class="btn cancel-btn">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

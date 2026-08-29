@@ -484,6 +484,97 @@ My Bookings
 
 
 
+
+    /* ==============================
+       CAREGIVER PAYMENT
+    ============================== */
+
+    .payment-box {
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid #e5e7eb;
+        background: #f8fafc;
+    }
+
+    .payment-box h4 {
+        margin: 0 0 12px;
+        color: #1f2937;
+        font-size: 16px;
+    }
+
+    .payment-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .payment-amount {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1769d1;
+    }
+
+    .payment-status {
+        font-size: 13px;
+        font-weight: 700;
+        margin-top: 5px;
+    }
+
+    .payment-pending {
+        color: #ea580c;
+    }
+
+    .payment-paid {
+        color: #15803d;
+    }
+
+    .payment-cancelled {
+        color: #6b7280;
+    }
+
+    .payment-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    .payment-btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+    }
+
+    .payment-btn-view {
+        background: #eef6ff;
+        color: #1769d1;
+    }
+
+    .payment-btn-pay {
+        background: #15803d;
+        color: #ffffff;
+    }
+
+    .payment-btn-cancel {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .payment-note {
+        margin: 8px 0 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
     /* ==============================
        RESPONSIVE
     ============================== */
@@ -1113,6 +1204,165 @@ My Bookings
             {% endif %}
 
 
+
+
+            <!-- CAREGIVER PAYMENT -->
+
+            <div class="payment-box">
+
+                <h4>
+                    {% if request.user.userprofile.language == 'ml' %}
+                    💳 കെയർഗിവർ പേയ്മെന്റ്
+                    {% else %}
+                    💳 Caregiver Payment
+                    {% endif %}
+                </h4>
+
+                {% if booking.payment %}
+
+                    {% if booking.payment.status == "Pending" %}
+
+                        <div class="payment-row">
+
+                            <div>
+                                <div class="payment-amount">
+                                    ₹{{ booking.payment.amount }}
+                                </div>
+
+                                <div class="payment-status payment-pending">
+                                    {% if request.user.userprofile.language == 'ml' %}
+                                    പേയ്മെന്റ് ആവശ്യമാണ്
+                                    {% else %}
+                                    Payment required
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="payment-note">
+                            {% if request.user.userprofile.language == 'ml' %}
+                            കെയർഗിവർ നിങ്ങൾക്കായി ഒരു ബിൽ അയച്ചിട്ടുണ്ട്. സേവനം തുടരാൻ പേയ്മെന്റ് നടത്തുക, അല്ലെങ്കിൽ അഭ്യർത്ഥന റദ്ദാക്കുക.
+                            {% else %}
+                            The caregiver has sent you a bill. Pay the bill to continue, or cancel the request if you no longer need the service.
+                            {% endif %}
+                        </p>
+
+                        <div class="payment-actions">
+
+                            <a href="{% url 'view_caregiver_bill' booking.id %}" class="payment-btn payment-btn-view">
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ബിൽ കാണുക
+                                {% else %}
+                                View Bill
+                                {% endif %}
+                            </a>
+
+                            <a href="{% url 'pay_caregiver_bill' booking.payment.id %}" class="payment-btn payment-btn-pay">
+                                {% if request.user.userprofile.language == 'ml' %}
+                                ഇപ്പോൾ പണമടയ്ക്കുക
+                                {% else %}
+                                Pay Now
+                                {% endif %}
+                            </a>
+
+                            <a href="{% url 'cancel_caregiver_payment' booking.payment.id %}" class="payment-btn payment-btn-cancel">
+                                {% if request.user.userprofile.language == 'ml' %}
+                                അഭ്യർത്ഥന റദ്ദാക്കുക
+                                {% else %}
+                                Cancel Request
+                                {% endif %}
+                            </a>
+
+                        </div>
+
+                    {% elif booking.payment.status == "Paid" %}
+
+                        <div class="payment-row">
+
+                            <div>
+                                <div class="payment-amount">
+                                    ₹{{ booking.payment.amount }}
+                                </div>
+
+                                <div class="payment-status payment-paid">
+                                    {% if request.user.userprofile.language == 'ml' %}
+                                    ✅ പേയ്മെന്റ് വിജയകരമായി പൂർത്തിയായി
+                                    {% else %}
+                                    ✅ Payment successful
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <p class="payment-note">
+                            {% if booking.status == "Accepted" %}
+                                {% if request.user.userprofile.language == 'ml' %}
+                                കെയർഗിവർ നിങ്ങളുടെ ബുക്കിംഗ് അംഗീകരിച്ചു. സേവനം ഇപ്പോൾ പുരോഗതിയിലാണ്.
+                                {% else %}
+                                The caregiver has accepted your booking. The service is now in progress.
+                                {% endif %}
+                            {% elif booking.status == "Completed" %}
+                                {% if request.user.userprofile.language == 'ml' %}
+                                കെയർഗിവർ സേവനം പൂർത്തിയായി.
+                                {% else %}
+                                The caregiver service has been completed.
+                                {% endif %}
+                            {% else %}
+                                {% if request.user.userprofile.language == 'ml' %}
+                                പേയ്മെന്റ് ലഭിച്ചു. കെയർഗിവർ നിങ്ങളുടെ ബുക്കിംഗ് അംഗീകരിക്കുന്നതിനായി കാത്തിരിക്കുന്നു.
+                                {% else %}
+                                Payment received. Waiting for the caregiver to accept your booking.
+                                {% endif %}
+                            {% endif %}
+                        </p>
+
+                    {% elif booking.payment.status == "Cancelled" %}
+
+                        <div class="payment-status payment-cancelled">
+                            {% if request.user.userprofile.language == 'ml' %}
+                            🚫 പേയ്മെന്റ് റദ്ദാക്കി
+                            {% else %}
+                            🚫 Payment cancelled
+                            {% endif %}
+                        </div>
+
+                        <p class="payment-note">
+                            {% if request.user.userprofile.language == 'ml' %}
+                            ഈ കെയർഗിവർ അഭ്യർത്ഥന റദ്ദാക്കിയിരിക്കുന്നു.
+                            {% else %}
+                            This caregiver request has been cancelled.
+                            {% endif %}
+                        </p>
+
+                    {% endif %}
+
+                {% else %}
+
+                    {% if booking.status == "Pending" %}
+
+                        <div class="payment-status payment-pending">
+                            {% if request.user.userprofile.language == 'ml' %}
+                            ⏳ കെയർഗിവർ ബിൽ അയയ്ക്കുന്നതിനായി കാത്തിരിക്കുന്നു
+                            {% else %}
+                            ⏳ Waiting for caregiver to send the bill
+                            {% endif %}
+                        </div>
+
+                        <p class="payment-note">
+                            {% if request.user.userprofile.language == 'ml' %}
+                            കെയർഗിവർ ബിൽ അയച്ചതിന് ശേഷം ഇവിടെ പേയ്മെന്റ് ഓപ്ഷനുകൾ ലഭ്യമാകും.
+                            {% else %}
+                            Payment options will appear here after the caregiver sends the bill.
+                            {% endif %}
+                        </p>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
 
             <!-- BOOKED ON -->
 

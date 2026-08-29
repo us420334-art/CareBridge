@@ -1,0 +1,531 @@
+{% extends base_template %}
+
+{% block title %}
+    {% if request.user.userprofile.language == 'ml' %}
+        പേയ്മെന്റ്
+    {% else %}
+        Payment
+    {% endif %}
+{% endblock %}
+
+{% block page_title %}
+    {% if request.user.userprofile.language == 'ml' %}
+        പേയ്മെന്റ്
+    {% else %}
+        Payment
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+
+<style>
+
+    .payment-page {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .payment-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 35px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    /* HEADER */
+
+    .payment-header {
+        text-align: center;
+        padding-bottom: 25px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .payment-icon {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+
+    .payment-header h1 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 28px;
+    }
+
+    .payment-header p {
+        margin-top: 8px;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    /* AMOUNT */
+
+    .amount-box {
+        background: #eef6ff;
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .amount-label {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .amount {
+        color: #1769d1;
+        font-size: 36px;
+        font-weight: 800;
+    }
+
+    /* BOOKING DETAILS */
+
+    .booking-details {
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 25px;
+    }
+
+    .booking-details h3 {
+        margin: 0 0 15px;
+        color: #1f2937;
+        font-size: 17px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 9px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .detail-value {
+        color: #1f2937;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    /* PAYMENT METHODS */
+
+    .method-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 15px;
+    }
+
+    .payment-method {
+        display: block;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .payment-method:hover {
+        border-color: #1769d1;
+        background: #f8fbff;
+    }
+
+    .payment-method input {
+        margin-right: 10px;
+        accent-color: #1769d1;
+    }
+
+    .method-name {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 15px;
+    }
+
+    .method-description {
+        display: block;
+        margin-left: 27px;
+        margin-top: 5px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    /* DEMO NOTICE */
+
+    .demo-note {
+        margin-top: 20px;
+        padding: 14px;
+        border-radius: 10px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* BUTTONS */
+
+    .payment-actions {
+        margin-top: 25px;
+    }
+
+    .pay-button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        background: #15803d;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .pay-button:hover {
+        background: #166534;
+    }
+
+    .back-button {
+        display: block;
+        text-align: center;
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 10px;
+        background: #eef2f7;
+        color: #374151;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .back-button:hover {
+        background: #e5e7eb;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+        .payment-page {
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .payment-card {
+            padding: 22px;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-value {
+            text-align: left;
+        }
+
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="payment-page">
+
+    <div class="payment-card">
+
+        <!-- HEADER -->
+
+        <div class="payment-header">
+
+            <div class="payment-icon">
+                💳
+            </div>
+
+            <h1>
+                {% if request.user.userprofile.language == 'ml' %}
+                    പേയ്മെന്റ് പൂർത്തിയാക്കുക
+                {% else %}
+                    Complete Payment
+                {% endif %}
+            </h1>
+
+            <p>
+                {% if request.user.userprofile.language == 'ml' %}
+                    നിങ്ങളുടെ കെയർഗിവർ സേവനത്തിനുള്ള പേയ്മെന്റ്
+                {% else %}
+                    Payment for your caregiver service
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="amount-box">
+
+            <div class="amount-label">
+                {% if request.user.userprofile.language == 'ml' %}
+                    അടയ്ക്കേണ്ട തുക
+                {% else %}
+                    Amount to Pay
+                {% endif %}
+            </div>
+
+            <div class="amount">
+                ₹{{ payment.amount }}
+            </div>
+
+        </div>
+
+
+        <!-- BOOKING DETAILS -->
+
+        <div class="booking-details">
+
+            <h3>
+                {% if request.user.userprofile.language == 'ml' %}
+                    📋 ബുക്കിംഗ് വിശദാംശങ്ങൾ
+                {% else %}
+                    📋 Booking Details
+                {% endif %}
+            </h3>
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    {% if request.user.userprofile.language == 'ml' %}
+                        കെയർഗിവർ
+                    {% else %}
+                        Caregiver
+                    {% endif %}
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.caregiver.get_full_name|default:booking.caregiver.username }}
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    {% if request.user.userprofile.language == 'ml' %}
+                        സേവനം
+                    {% else %}
+                        Service
+                    {% endif %}
+                </span>
+
+                <span class="detail-value">
+                    {{ booking.service|default:"Caregiver Service" }}
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    {% if request.user.userprofile.language == 'ml' %}
+                        തീയതി
+                    {% else %}
+                        Date
+                    {% endif %}
+                </span>
+
+                <span class="detail-value">
+
+                    {% if booking.booking_date %}
+                        {{ booking.booking_date|date:"d M Y" }}
+                    {% else %}
+                        Not specified
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT METHOD -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="method-title">
+
+                {% if request.user.userprofile.language == 'ml' %}
+                    പേയ്മെന്റ് രീതി തിരഞ്ഞെടുക്കുക
+                {% else %}
+                    Select Payment Method
+                {% endif %}
+
+            </div>
+
+
+            <!-- UPI -->
+
+            <label class="payment-method">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="UPI"
+                    required
+                >
+
+                <span class="method-name">
+                    📱 UPI
+                </span>
+
+                <span class="method-description">
+                    {% if request.user.userprofile.language == 'ml' %}
+                        UPI ഉപയോഗിച്ച് പേയ്മെന്റ് നടത്തുക
+                    {% else %}
+                        Pay using UPI
+                    {% endif %}
+                </span>
+
+            </label>
+
+
+            <!-- CARD -->
+
+            <label class="payment-method">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="Card"
+                >
+
+                <span class="method-name">
+                    💳 Credit / Debit Card
+                </span>
+
+                <span class="method-description">
+                    {% if request.user.userprofile.language == 'ml' %}
+                        ക്രെഡിറ്റ് അല്ലെങ്കിൽ ഡെബിറ്റ് കാർഡ് ഉപയോഗിക്കുക
+                    {% else %}
+                        Pay using a credit or debit card
+                    {% endif %}
+                </span>
+
+            </label>
+
+
+            <!-- NET BANKING -->
+
+            <label class="payment-method">
+
+                <input
+                    type="radio"
+                    name="payment_method"
+                    value="Net Banking"
+                >
+
+                <span class="method-name">
+                    🏦 Net Banking
+                </span>
+
+                <span class="method-description">
+                    {% if request.user.userprofile.language == 'ml' %}
+                        ബാങ്ക് അക്കൗണ്ട് ഉപയോഗിച്ച് പേയ്മെന്റ് നടത്തുക
+                    {% else %}
+                        Pay using your bank account
+                    {% endif %}
+                </span>
+
+            </label>
+
+
+            <!-- DEMO NOTICE -->
+
+            <div class="demo-note">
+
+                <strong>
+                    {% if request.user.userprofile.language == 'ml' %}
+                        Demo Payment:
+                    {% else %}
+                        Demo Payment:
+                    {% endif %}
+                </strong>
+
+                {% if request.user.userprofile.language == 'ml' %}
+                    ഇത് CareBridge പ്രോജക്റ്റിനായുള്ള
+                    simulated payment ആണ്.
+                    യഥാർത്ഥ പണം ഈടാക്കുകയില്ല.
+                    യഥാർത്ഥ ബാങ്കിംഗ് വിവരങ്ങൾ നൽകേണ്ടതില്ല.
+                {% else %}
+                    This is a simulated payment for the CareBridge project.
+                    No real money will be charged and no real banking
+                    information is required.
+                {% endif %}
+
+            </div>
+
+
+            <!-- PAY BUTTON -->
+
+            <div class="payment-actions">
+
+                <button
+                    type="submit"
+                    class="pay-button"
+                >
+
+                    {% if request.user.userprofile.language == 'ml' %}
+                        💳 ₹{{ payment.amount }} അടയ്ക്കുക
+                    {% else %}
+                        💳 Pay ₹{{ payment.amount }}
+                    {% endif %}
+
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- BACK BUTTON -->
+
+        <a
+            href="{% url 'view_caregiver_bill' booking.id %}"
+            class="back-button"
+        >
+
+            {% if request.user.userprofile.language == 'ml' %}
+                ← ബില്ലിലേക്ക് മടങ്ങുക
+            {% else %}
+                ← Back to Bill
+            {% endif %}
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

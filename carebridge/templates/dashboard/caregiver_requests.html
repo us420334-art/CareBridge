@@ -1,0 +1,1636 @@
+{% extends "dashboard/caregiver_base.html" %}
+
+{% block title %}
+Caregiver Requests | CareBridge
+{% endblock %}
+
+{% block page_title %}
+Caregiver Requests
+{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =====================================================
+   PAGE
+===================================================== */
+
+    .caregiver-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 35px;
+    }
+
+
+    /* =====================================================
+   HEADER
+===================================================== */
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-title h1 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        color: #222;
+    }
+
+    .dashboard-title p {
+        margin-top: 8px;
+        color: #666;
+        font-size: 15px;
+    }
+
+    .caregiver-badge {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 10px 18px;
+        border-radius: 25px;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+   SECTION HEADER
+===================================================== */
+
+    .section-header {
+        margin-bottom: 22px;
+    }
+
+    .section-header h2 {
+        margin: 0;
+        font-size: 24px;
+        color: #222;
+    }
+
+    .section-header p {
+        margin-top: 7px;
+        color: #777;
+    }
+
+
+    /* =====================================================
+   REQUEST TYPE CARDS
+===================================================== */
+
+    .request-type-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 35px;
+    }
+
+    .request-type-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition: 0.25s ease;
+        position: relative;
+    }
+
+    .request-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .request-type-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        margin-bottom: 18px;
+    }
+
+    .direct-icon {
+        background: #e3f2fd;
+    }
+
+    .representative-icon {
+        background: #f3e5f5;
+    }
+
+    .request-type-card h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        color: #222;
+    }
+
+    .request-type-card p {
+        color: #777;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .view-arrow {
+        display: block;
+        margin-top: 18px;
+        color: #1565c0;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+   REQUEST SECTIONS
+===================================================== */
+
+    .request-section {
+        display: none;
+        margin-top: 30px;
+        margin-bottom: 40px;
+    }
+
+    .request-section.active {
+        display: block;
+    }
+
+    .request-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .request-section-header h2 {
+        margin: 0;
+        font-size: 23px;
+        color: #222;
+    }
+
+    .close-section {
+        border: none;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 9px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .close-section:hover {
+        background: #e2e8f0;
+    }
+
+
+    /* =====================================================
+   BOOKING CARDS
+===================================================== */
+
+    .bookings-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .booking-card {
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eee;
+    }
+
+    .booking-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .booking-header h3 {
+        margin: 0 0 10px;
+        font-size: 20px;
+        color: #222;
+    }
+
+    .request-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #eef4ff;
+        color: #3157a4;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+   STATUS
+===================================================== */
+
+    .status {
+        display: inline-block;
+        padding: 7px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .status.pending {
+        background: #fff4d6;
+        color: #946200;
+    }
+
+    .status.accepted {
+        background: #e5f7eb;
+        color: #218739;
+    }
+
+    .status.completed {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status.rejected {
+        background: #fdeaea;
+        color: #c62828;
+    }
+
+    .status.cancelled {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+
+    /* =====================================================
+   PERSON BOX
+===================================================== */
+
+    .person-box {
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 5px solid #4f7cff;
+    }
+
+    .person-box.representative-person {
+        border-left-color: #8e44ad;
+    }
+
+    .person-box h4 {
+        margin: 0 0 15px;
+        color: #222;
+    }
+
+    .person-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 25px;
+    }
+
+    .person-item {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .person-item strong {
+        color: #222;
+    }
+
+
+    /* =====================================================
+   BOOKING DETAILS
+===================================================== */
+
+    .booking-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 25px;
+        margin-bottom: 20px;
+    }
+
+    .booking-detail {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .booking-detail strong {
+        color: #222;
+    }
+
+
+    /* =====================================================
+   DESCRIPTION
+===================================================== */
+
+    .description-box {
+        background: #fafafa;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid #eee;
+    }
+
+    .description-box strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #222;
+    }
+
+    .description-box p {
+        margin: 0;
+        color: #666;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+   PAYMENT BOX
+===================================================== */
+
+    .payment-box {
+        background: #f8fafc;
+        border: 1px solid #dbe4ee;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .payment-box h4 {
+        margin: 0 0 15px;
+        color: #222;
+    }
+
+    .payment-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 25px;
+        margin-bottom: 15px;
+    }
+
+    .payment-detail {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .payment-detail strong {
+        color: #222;
+    }
+
+    .payment-amount {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1565c0;
+    }
+
+    .payment-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .payment-status.pending {
+        background: #fff4d6;
+        color: #946200;
+    }
+
+    .payment-status.paid {
+        background: #e5f7eb;
+        color: #218739;
+    }
+
+    .payment-status.cancelled {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .cancellation-box {
+        background: #fff5f5;
+        border: 1px solid #f2caca;
+        border-radius: 10px;
+        padding: 14px;
+        margin-top: 15px;
+    }
+
+    .cancellation-box strong {
+        color: #c62828;
+    }
+
+    .cancellation-box p {
+        margin: 7px 0 0;
+        color: #666;
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+   BILL MESSAGE
+===================================================== */
+
+    .bill-required-message {
+        background: #fff8e1;
+        border-left: 5px solid #f9a825;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        color: #795548;
+        font-weight: 600;
+    }
+
+    .payment-pending-message {
+        background: #fff8e1;
+        border-left: 5px solid #f9a825;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        color: #795548;
+        font-weight: 600;
+    }
+
+    .payment-received-message {
+        background: #e8f5e9;
+        border-left: 5px solid #2e7d32;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        color: #2e7d32;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+   ACTION BUTTONS
+===================================================== */
+
+    .booking-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        text-decoration: none;
+        padding: 11px 20px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+    }
+
+    .bill-btn {
+        background: #7b1fa2;
+        color: white;
+    }
+
+    .bill-btn:hover {
+        background: #641782;
+    }
+
+    .accept-btn {
+        background: #2e7d32;
+        color: white;
+    }
+
+    .accept-btn:hover {
+        background: #256628;
+    }
+
+    .reject-btn {
+        background: #c62828;
+        color: white;
+    }
+
+    .reject-btn:hover {
+        background: #a91f1f;
+    }
+
+    .complete-btn {
+        background: #1565c0;
+        color: white;
+    }
+
+    .complete-btn:hover {
+        background: #0d4f9b;
+    }
+
+
+    /* =====================================================
+   COMPLETED / REJECTED / CANCELLED MESSAGES
+===================================================== */
+
+    .completed-message {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .rejected-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .cancelled-message {
+        background: #f3f4f6;
+        color: #6b7280;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+   EMPTY STATE
+===================================================== */
+
+    .empty-state {
+        background: white;
+        border-radius: 18px;
+        padding: 50px 30px;
+        text-align: center;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.07);
+        border: 1px solid #eee;
+    }
+
+    .empty-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 10px;
+        color: #222;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #777;
+    }
+
+
+    /* =====================================================
+   RESPONSIVE
+===================================================== */
+
+    @media(max-width: 900px) {
+
+        .request-type-grid {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+    @media(max-width: 700px) {
+
+        .caregiver-page {
+            padding: 20px;
+        }
+
+        .person-grid,
+        .booking-details,
+        .payment-info {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-card {
+            padding: 18px;
+        }
+
+        .dashboard-title h1 {
+            font-size: 25px;
+        }
+
+    }
+</style>
+
+<div class="caregiver-page">
+
+    <!-- =====================================================
+     HEADER
+===================================================== -->
+
+    <div class="dashboard-header">
+
+        <div class="dashboard-title">
+
+            <h1>
+                📋 Caregiver Requests
+            </h1>
+
+            <p>
+                Review requests, send bills, manage payments and provide care.
+            </p>
+
+        </div>
+
+        <div class="caregiver-badge">
+            👨‍⚕️ Caregiver
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     REQUEST TYPES
+===================================================== -->
+
+    <div class="section-header">
+
+        <h2>
+            📋 Request Types
+        </h2>
+
+        <p>
+            Select one of the options below to view the corresponding requests.
+        </p>
+
+    </div>
+
+
+    <div class="request-type-grid">
+
+
+        <!-- DIRECT USER -->
+
+        <div class="request-type-card"
+             onclick="showRequestSection('direct-section')"
+             role="button"
+             tabindex="0">
+
+            <div class="request-type-icon direct-icon">
+                👤
+            </div>
+
+            <h3>
+                Direct User Requests
+            </h3>
+
+            <p>
+                View caregiver requests sent directly by
+                users who require care and assistance.
+            </p>
+
+            <span class="view-arrow">
+                View Requests →
+            </span>
+
+        </div>
+
+
+        <!-- CARE REPRESENTATIVE -->
+
+        <div class="request-type-card"
+             onclick="showRequestSection('representative-section')"
+             role="button"
+             tabindex="0">
+
+            <div class="request-type-icon representative-icon">
+                👥
+            </div>
+
+            <h3>
+                Care Representative Requests
+            </h3>
+
+            <p>
+                View caregiver requests submitted by
+                care representatives on behalf of users.
+            </p>
+
+            <span class="view-arrow">
+                View Requests →
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     DIRECT USER REQUESTS
+===================================================== -->
+
+    <div id="direct-section" class="request-section">
+
+        <div class="request-section-header">
+
+            <h2>
+                👤 Direct User Requests
+            </h2>
+
+            <button type="button"
+                    class="close-section"
+                    onclick="hideRequestSections()">
+                ✕ Close
+            </button>
+
+        </div>
+
+
+        <div class="bookings-container">
+
+
+            {% for booking in direct_requests %}
+
+            <div class="booking-card">
+
+
+                <!-- HEADER -->
+
+                <div class="booking-header">
+
+                    <div>
+
+                        <h3>
+                            {{ booking.service|default:"Care Service" }}
+                        </h3>
+
+                        <span class="request-badge">
+                            👤 Direct User Request
+                        </span>
+
+                    </div>
+
+
+                    {% if booking.status == "Pending" %}
+
+                    <span class="status pending">
+                        ⏳ Pending
+                    </span>
+
+                    {% elif booking.status == "Accepted" %}
+
+                    <span class="status accepted">
+                        ✓ Accepted
+                    </span>
+
+                    {% elif booking.status == "Completed" %}
+
+                    <span class="status completed">
+                        ✓ Completed
+                    </span>
+
+                    {% elif booking.status == "Rejected" %}
+
+                    <span class="status rejected">
+                        ✕ Rejected
+                    </span>
+
+                    {% elif booking.status == "Cancelled" %}
+
+                    <span class="status cancelled">
+                        ⚠ Cancelled
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- USER INFORMATION -->
+
+                <div class="person-box">
+
+                    <h4>
+                        👤 User Requiring Care
+                    </h4>
+
+                    <div class="person-grid">
+
+                        <div class="person-item">
+                            <strong>Name:</strong>
+                            {{ booking.user.get_full_name|default:booking.user.username }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Phone:</strong>
+                            {{ booking.user.userprofile.phone|default:"Not provided" }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>User Type:</strong>
+                            {{ booking.user.userprofile.role|default:"User" }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Address:</strong>
+                            {{ booking.address|default:"Not specified" }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOOKING DETAILS -->
+
+                <div class="booking-details">
+
+                    <div class="booking-detail">
+                        <strong>📍 Address:</strong>
+                        {{ booking.address|default:"Not specified" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>📅 Date:</strong>
+                        {{ booking.booking_date|default:"Not specified" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>⏰ Time:</strong>
+                        {{ booking.booking_time|default:"Not specified" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>⚡ Priority:</strong>
+                        {{ booking.priority|default:"Medium" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>🕐 Requested:</strong>
+                        {{ booking.booked_at|date:"d M Y, h:i A" }}
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                {% if booking.description %}
+
+                <div class="description-box">
+
+                    <strong>
+                        📝 Description
+                    </strong>
+
+                    <p>
+                        {{ booking.description }}
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                 PAYMENT INFORMATION
+            ================================================= -->
+
+                {% if booking.payment %}
+
+                <div class="payment-box">
+
+                    <h4>
+                        💳 Payment Information
+                    </h4>
+
+                    <div class="payment-info">
+
+                        <div class="payment-detail">
+
+                            <strong>Bill Amount:</strong><br>
+
+                            <span class="payment-amount">
+                                ₹{{ booking.payment.amount }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="payment-detail">
+
+                            <strong>Payment Status:</strong><br>
+
+                            {% if booking.payment.status == "Pending" %}
+
+                            <span class="payment-status pending">
+                                ⏳ Payment Pending
+                            </span>
+
+                            {% elif booking.payment.status == "Paid" %}
+
+                            <span class="payment-status paid">
+                                ✓ Payment Received
+                            </span>
+
+                            {% elif booking.payment.status == "Cancelled" %}
+
+                            <span class="payment-status cancelled">
+                                ⚠ Payment Cancelled
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    {% if booking.payment.status == "Cancelled" and booking.payment.cancellation_reason %}
+
+                    <div class="cancellation-box">
+
+                        <strong>
+                            ⚠ Cancellation Reason
+                        </strong>
+
+                        <p>
+                            {{ booking.payment.cancellation_reason }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- PAYMENT STATE -->
+
+                {% if booking.payment.status == "Pending" %}
+
+                <div class="payment-pending-message">
+                    ⏳ Bill sent successfully. Waiting for the user to complete or cancel the payment.
+                </div>
+
+                {% elif booking.payment.status == "Paid" %}
+
+                <div class="payment-received-message">
+                    ✓ Payment received successfully. You can now accept or reject this caregiver request.
+                </div>
+
+                {% elif booking.payment.status == "Cancelled" %}
+
+                <div class="cancelled-message">
+                    ⚠ The user cancelled the caregiver request. The request cannot be accepted.
+                </div>
+
+                {% if booking.payment.cancellation_reason %}
+
+                <div class="cancellation-box">
+
+                    <strong>
+                        ⚠ Cancellation Reason from User
+                    </strong>
+
+                    <p>
+                        {{ booking.payment.cancellation_reason }}
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+                {% endif %}
+
+
+                {% else %}
+
+                {% if booking.status == "Pending" %}
+
+                <div class="bill-required-message">
+                    💰 No bill has been sent yet. Review the request and send a bill before accepting or rejecting it.
+                </div>
+
+                {% endif %}
+
+                {% endif %}
+
+
+                <!-- =================================================
+                 ACTIONS
+            ================================================= -->
+
+                <div class="booking-actions">
+
+                    {% if booking.status == "Pending" %}
+
+                        {% if not booking.payment %}
+
+                        <a href="{% url 'send_caregiver_bill' booking.id %}"
+                           class="btn bill-btn">
+                            💰 Add Amount &amp; Send Bill
+                        </a>
+
+                        {% elif booking.payment.status == "Pending" %}
+
+                        <span class="payment-pending-message">
+                            ⏳ Waiting for Payment
+                        </span>
+
+                        {% elif booking.payment.status == "Cancelled" %}
+
+                        <span class="cancelled-message">
+                            ⚠ Payment Cancelled
+                        </span>
+
+                        {% elif booking.payment.status == "Paid" %}
+
+                        <a href="{% url 'accept_caregiver_booking' booking.id %}"
+                           class="btn accept-btn">
+                            ✓ Accept Request
+                        </a>
+
+                        <a href="{% url 'reject_caregiver_booking' booking.id %}"
+                           class="btn reject-btn">
+                            ✕ Reject Request
+                        </a>
+
+                        {% endif %}
+
+                    {% elif booking.status == "Accepted" %}
+
+                    <a href="{% url 'complete_caregiver_service' booking.id %}"
+                       class="btn complete-btn">
+                        ✓ Mark as Completed
+                    </a>
+
+                    {% elif booking.status == "Completed" %}
+
+                    <div class="completed-message">
+                        ✓ Service Completed
+                    </div>
+
+                    {% elif booking.status == "Rejected" %}
+
+                    <div class="rejected-message">
+                        ✕ Request Rejected
+                    </div>
+
+                    {% elif booking.status == "Cancelled" %}
+
+                    <div class="cancelled-message">
+                        ⚠ Request Cancelled
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+
+            {% empty %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    👤
+                </div>
+
+                <h3>
+                    No Direct User Requests
+                </h3>
+
+                <p>
+                    There are currently no direct caregiver requests.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     CARE REPRESENTATIVE REQUESTS
+===================================================== -->
+
+    <div id="representative-section" class="request-section">
+
+        <div class="request-section-header">
+
+            <h2>
+                👥 Care Representative Requests
+            </h2>
+
+            <button type="button"
+                    class="close-section"
+                    onclick="hideRequestSections()">
+                ✕ Close
+            </button>
+
+        </div>
+
+
+        <div class="bookings-container">
+
+
+            {% for booking in representative_requests %}
+
+            <div class="booking-card">
+
+
+                <!-- HEADER -->
+
+                <div class="booking-header">
+
+                    <div>
+
+                        <h3>
+                            {{ booking.service|default:"Care Service" }}
+                        </h3>
+
+                        <span class="request-badge">
+                            👥 Care Representative Request
+                        </span>
+
+                    </div>
+
+
+                    {% if booking.status == "Pending" %}
+
+                    <span class="status pending">
+                        ⏳ Pending
+                    </span>
+
+                    {% elif booking.status == "Accepted" %}
+
+                    <span class="status accepted">
+                        ✓ Accepted
+                    </span>
+
+                    {% elif booking.status == "Completed" %}
+
+                    <span class="status completed">
+                        ✓ Completed
+                    </span>
+
+                    {% elif booking.status == "Rejected" %}
+
+                    <span class="status rejected">
+                        ✕ Rejected
+                    </span>
+
+                    {% elif booking.status == "Cancelled" %}
+
+                    <span class="status cancelled">
+                        ⚠ Cancelled
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- REPRESENTED PERSON -->
+
+                {% if booking.represented_person %}
+
+                <div class="person-box representative-person">
+
+                    <h4>
+                        👤 Person Requiring Care
+                    </h4>
+
+                    <div class="person-grid">
+
+                        <div class="person-item">
+                            <strong>Name:</strong>
+                            {{ booking.represented_person.full_name }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Age:</strong>
+                            {{ booking.represented_person.age }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Type:</strong>
+                            {{ booking.represented_person.person_type }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Relationship:</strong>
+                            {{ booking.represented_person.relationship }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Phone:</strong>
+                            {{ booking.represented_person.phone }}
+                        </div>
+
+                        <div class="person-item">
+                            <strong>Address:</strong>
+                            {{ booking.represented_person.address }}
+                        </div>
+
+
+                        {% if booking.represented_person.blood_group %}
+
+                        <div class="person-item">
+                            <strong>Blood Group:</strong>
+                            {{ booking.represented_person.blood_group }}
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if booking.represented_person.medical_conditions %}
+
+                        <div class="person-item">
+                            <strong>Medical Conditions:</strong>
+                            {{ booking.represented_person.medical_conditions }}
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- CARE REPRESENTATIVE -->
+
+                {% if booking.care_representative %}
+
+                <div class="person-box">
+
+                    <h4>
+                        👥 Care Representative
+                    </h4>
+
+                    <div class="person-grid">
+
+                        <div class="person-item">
+
+                            <strong>Name:</strong>
+
+                            {{ booking.care_representative.get_full_name|default:booking.care_representative.username }}
+
+                        </div>
+
+                        <div class="person-item">
+
+                            <strong>Username:</strong>
+
+                            {{ booking.care_representative.username }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- BOOKING DETAILS -->
+
+                <div class="booking-details">
+
+                    <div class="booking-detail">
+                        <strong>📍 Address:</strong>
+                        {{ booking.address|default:"Not specified" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>📅 Date:</strong>
+                        {{ booking.booking_date|default:"Not specified" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>⏰ Time:</strong>
+                        {{ booking.booking_time|default:"Not specified" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>⚡ Priority:</strong>
+                        {{ booking.priority|default:"Medium" }}
+                    </div>
+
+                    <div class="booking-detail">
+                        <strong>🕐 Requested:</strong>
+                        {{ booking.booked_at|date:"d M Y, h:i A" }}
+                    </div>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                {% if booking.description %}
+
+                <div class="description-box">
+
+                    <strong>
+                        📝 Description
+                    </strong>
+
+                    <p>
+                        {{ booking.description }}
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                 PAYMENT INFORMATION
+            ================================================= -->
+
+                {% if booking.payment %}
+
+                <div class="payment-box">
+
+                    <h4>
+                        💳 Payment Information
+                    </h4>
+
+                    <div class="payment-info">
+
+                        <div class="payment-detail">
+
+                            <strong>Bill Amount:</strong><br>
+
+                            <span class="payment-amount">
+                                ₹{{ booking.payment.amount }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="payment-detail">
+
+                            <strong>Payment Status:</strong><br>
+
+                            {% if booking.payment.status == "Pending" %}
+
+                            <span class="payment-status pending">
+                                ⏳ Payment Pending
+                            </span>
+
+                            {% elif booking.payment.status == "Paid" %}
+
+                            <span class="payment-status paid">
+                                ✓ Payment Received
+                            </span>
+
+                            {% elif booking.payment.status == "Cancelled" %}
+
+                            <span class="payment-status cancelled">
+                                ⚠ Payment Cancelled
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    {% if booking.payment.status == "Cancelled" and booking.payment.cancellation_reason %}
+
+                    <div class="cancellation-box">
+
+                        <strong>
+                            ⚠ Cancellation Reason
+                        </strong>
+
+                        <p>
+                            {{ booking.payment.cancellation_reason }}
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- PAYMENT STATE -->
+
+                {% if booking.payment.status == "Pending" %}
+
+                <div class="payment-pending-message">
+                    ⏳ Bill sent successfully. Waiting for the care representative to complete or cancel the payment.
+                </div>
+
+                {% elif booking.payment.status == "Paid" %}
+
+                <div class="payment-received-message">
+                    ✓ Payment received successfully. You can now accept or reject this caregiver request.
+                </div>
+
+                {% elif booking.payment.status == "Cancelled" %}
+
+                <div class="cancelled-message">
+                    ⚠ The care representative cancelled the caregiver request. The request cannot be accepted.
+                </div>
+
+                {% if booking.payment.cancellation_reason %}
+
+                <div class="cancellation-box">
+
+                    <strong>
+                        ⚠ Cancellation Reason from Care Representative
+                    </strong>
+
+                    <p>
+                        {{ booking.payment.cancellation_reason }}
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+                {% endif %}
+
+
+                {% else %}
+
+                {% if booking.status == "Pending" %}
+
+                <div class="bill-required-message">
+                    💰 No bill has been sent yet. Review the request and send a bill before accepting or rejecting it.
+                </div>
+
+                {% endif %}
+
+                {% endif %}
+
+
+                <!-- =================================================
+                 ACTIONS
+            ================================================= -->
+
+                <div class="booking-actions">
+
+                    {% if booking.status == "Pending" %}
+
+                        {% if not booking.payment %}
+
+                        <a href="{% url 'send_caregiver_bill' booking.id %}"
+                           class="btn bill-btn">
+                            💰 Add Amount &amp; Send Bill
+                        </a>
+
+                        {% elif booking.payment.status == "Pending" %}
+
+                        <span class="payment-pending-message">
+                            ⏳ Waiting for Payment
+                        </span>
+
+                        {% elif booking.payment.status == "Cancelled" %}
+
+                        <span class="cancelled-message">
+                            ⚠ Payment Cancelled
+                        </span>
+
+                        {% elif booking.payment.status == "Paid" %}
+
+                        <a href="{% url 'accept_caregiver_booking' booking.id %}"
+                           class="btn accept-btn">
+                            ✓ Accept Request
+                        </a>
+
+                        <a href="{% url 'reject_caregiver_booking' booking.id %}"
+                           class="btn reject-btn">
+                            ✕ Reject Request
+                        </a>
+
+                        {% endif %}
+
+                    {% elif booking.status == "Accepted" %}
+
+                    <a href="{% url 'complete_caregiver_service' booking.id %}"
+                       class="btn complete-btn">
+                        ✓ Mark as Completed
+                    </a>
+
+                    {% elif booking.status == "Completed" %}
+
+                    <div class="completed-message">
+                        ✓ Service Completed
+                    </div>
+
+                    {% elif booking.status == "Rejected" %}
+
+                    <div class="rejected-message">
+                        ✕ Request Rejected
+                    </div>
+
+                    {% elif booking.status == "Cancelled" %}
+
+                    <div class="cancelled-message">
+                        ⚠ Request Cancelled
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+
+            {% empty %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    👥
+                </div>
+
+                <h3>
+                    No Care Representative Requests
+                </h3>
+
+                <p>
+                    There are currently no caregiver requests from care representatives.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+    function showRequestSection(sectionId) {
+
+        document.querySelectorAll(".request-section").forEach(
+            function (section) {
+
+                section.classList.remove("active");
+
+            }
+        );
+
+
+        const section = document.getElementById(sectionId);
+
+
+        if (section) {
+
+            section.classList.add("active");
+
+            section.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+
+
+    function hideRequestSections() {
+
+        document.querySelectorAll(".request-section").forEach(
+            function (section) {
+
+                section.classList.remove("active");
+
+            }
+        );
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+</script>
+
+{% endblock %}

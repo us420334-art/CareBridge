@@ -5,291 +5,763 @@
 
 <head>
 
-    {% load static %}
+    <meta charset="UTF-8">
 
-    <!DOCTYPE html>
-    <html lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <head>
+    <title>
+        {% block title %}
+        Caregiver Dashboard | CareBridge
+        {% endblock %}
+    </title>
 
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* =====================================================
+           RESET
+        ===================================================== */
 
-        <title>
-            {% block title %}
-            CareBridge
-            {% endblock %}
-        </title>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                font-family: Arial, Helvetica, sans-serif;
-            }
 
-            body {
-                display: flex;
-                background: #f4f7fc;
-                color: #333;
-            }
+        /* =====================================================
+           BODY
+        ===================================================== */
+
+        body {
+
+            display: flex;
+
+            background: #f4f7fc;
+
+            color: #333;
+
+            min-height: 100vh;
+
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+
+            width: 270px;
+
+            height: 100vh;
+
+            position: fixed;
+
+            left: 0;
+
+            top: 0;
+
+            overflow-y: auto;
+
+            background:
+                linear-gradient(180deg,
+                    #0d47a1,
+                    #1976d2,
+                    #42a5f5);
+
+            color: white;
+
+            box-shadow:
+                5px 0 20px rgba(0, 0, 0, 0.15);
+
+            z-index: 1000;
+
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
+
+        .logo {
+
+            text-align: center;
+
+            padding: 35px 20px;
+
+            border-bottom:
+                1px solid rgba(255, 255, 255, 0.2);
+
+        }
+
+
+        .logo h2 {
+
+            font-size: 27px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .logo p {
+
+            font-size: 14px;
+
+            opacity: 0.9;
+
+        }
+
+
+        /* =====================================================
+           SIDEBAR MENU
+        ===================================================== */
+
+        .sidebar ul {
+
+            list-style: none;
+
+            margin-top: 20px;
+
+            padding: 0;
+
+        }
+
+
+        .sidebar li {
+
+            margin: 7px 12px;
+
+        }
+
+
+        .sidebar li:hover {
+
+            background:
+                rgba(255, 255, 255, 0.18);
+
+            border-radius: 12px;
+
+        }
+
+
+        .sidebar a {
+
+            display: block;
+
+            padding: 14px 18px;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 16px;
+
+            border-radius: 12px;
+
+            transition: 0.25s ease;
+
+        }
+
+
+        .sidebar a:hover {
+
+            padding-left: 26px;
+
+        }
+
+
+        /* Active dashboard item */
+
+        .sidebar .active {
+
+            background:
+                rgba(255, 255, 255, 0.20);
+
+            border-radius: 12px;
+
+        }
+
+
+        /* =====================================================
+           MAIN AREA
+        ===================================================== */
+
+        .main {
+
+            margin-left: 270px;
+
+            flex: 1;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+        /* =====================================================
+           TOP BAR
+        ===================================================== */
+
+        .topbar {
+
+            background: white;
+
+            padding: 20px 40px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.08);
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 900;
+
+        }
+
+
+        .topbar-left h2 {
+
+            margin: 0;
+
+            color: #222;
+
+            font-size: 24px;
+
+        }
+
+
+        .topbar-left p {
+
+            color: #777;
+
+            margin-top: 6px;
+
+            font-size: 14px;
+
+        }
+
+
+        .top-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+
+        }
+
+
+        .username {
+
+            color: #1565c0;
+
+            font-weight: bold;
+
+        }
+
+
+        /* =====================================================
+           LOGOUT BUTTON
+        ===================================================== */
+
+        .logout {
+
+            background: #ef5350;
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 10px 20px;
+
+            border-radius: 25px;
+
+            transition: 0.3s;
+
+            font-weight: 600;
+
+        }
+
+
+        .logout:hover {
+
+            background: #c62828;
+
+        }
+
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+
+            padding: 0;
+
+            flex: 1;
+
+        }
+
+
+        /* =====================================================
+           COMMON BUTTON
+        ===================================================== */
+
+        button {
+
+            border: none;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 15px;
+
+        }
+
+
+        button:hover {
+
+            transform: scale(1.03);
+
+        }
+
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 20px;
+
+            background: white;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 5px 20px rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        table th {
+
+            background: #1565c0;
+
+            color: white;
+
+            padding: 15px;
+
+            text-align: left;
+
+        }
+
+
+        table td {
+
+            padding: 15px;
+
+            border-bottom:
+                1px solid #eee;
+
+        }
+
+
+        table tr:nth-child(even) {
+
+            background: #f8fbff;
+
+        }
+
+
+        table tr:hover {
+
+            background: #eef7ff;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 900px) {
 
             .sidebar {
-                width: 270px;
-                height: 100vh;
-                position: fixed;
-                left: 0;
-                top: 0;
-                overflow-y: auto;
-                background: linear-gradient(180deg, #0d47a1, #1976d2, #42a5f5);
-                color: white;
-                box-shadow: 5px 0 20px rgba(0, 0, 0, .15);
+
+                width: 220px;
+
             }
 
-            .logo {
-                text-align: center;
-                padding: 35px 20px;
-                border-bottom: 1px solid rgba(255, 255, 255, .2);
-            }
-
-            .logo h2 {
-                font-size: 28px;
-                margin-bottom: 8px;
-            }
-
-            .logo p {
-                font-size: 14px;
-                opacity: .9;
-            }
-
-            .sidebar ul {
-                list-style: none;
-                margin-top: 20px;
-            }
-
-            .sidebar li {
-                margin: 8px 12px;
-            }
-
-            .sidebar li:hover {
-                background: rgba(255, 255, 255, .18);
-                border-radius: 12px;
-            }
-
-            .sidebar a {
-                display: block;
-                padding: 15px 20px;
-                color: white;
-                text-decoration: none;
-                font-size: 16px;
-                border-radius: 12px;
-                transition: .3s;
-            }
-
-            .sidebar a:hover {
-                padding-left: 28px;
-            }
 
             .main {
-                margin-left: 270px;
-                flex: 1;
-                min-height: 100vh;
-                display: flex;
-                flex-direction: column;
+
+                margin-left: 220px;
+
             }
+
 
             .topbar {
-                background: white;
-                padding: 20px 40px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+
+                padding: 18px 20px;
+
             }
 
-            .top-right {
-                display: flex;
-                align-items: center;
-                gap: 20px;
+
+            .topbar-left h2 {
+
+                font-size: 20px;
+
             }
+
 
             .username {
-                color: #1565c0;
-                font-weight: bold;
+
+                display: none;
+
             }
 
-            .logout {
-                background: #ef5350;
-                color: white;
-                text-decoration: none;
-                padding: 10px 20px;
-                border-radius: 25px;
-                transition: .3s;
+        }
+
+
+        @media (max-width: 650px) {
+
+            .sidebar {
+
+                width: 75px;
+
             }
 
-            .logout:hover {
-                background: #b52a37;
+
+            .main {
+
+                margin-left: 75px;
+
             }
 
-            .content {
-                padding: 35px;
+
+            .logo {
+
+                padding: 20px 5px;
+
             }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
-                background: white;
-                border-radius: 15px;
-                overflow: hidden;
-                box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
+
+            .logo h2 {
+
+                font-size: 0;
+
             }
 
-            table th {
-                background: #1565c0;
-                color: white;
+
+            .logo h2:first-letter {
+
+                font-size: 28px;
+
+            }
+
+
+            .logo p {
+
+                display: none;
+
+            }
+
+
+            .sidebar a {
+
+                text-align: center;
+
+                padding: 15px 5px;
+
+                font-size: 0;
+
+            }
+
+
+            .sidebar a:first-letter {
+
+                font-size: 20px;
+
+            }
+
+
+            .topbar {
+
                 padding: 15px;
-                text-align: left;
+
             }
 
-            table td {
-                padding: 15px;
-                border-bottom: 1px solid #eee;
+
+            .top-right .logout {
+
+                padding: 8px 12px;
+
+                font-size: 13px;
+
             }
 
-            table tr:nth-child(even) {
-                background: #f8fbff;
-            }
+        }
+    </style>
 
-            table tr:hover {
-                background: #eef7ff;
-            }
 
-            button {
-                border: none;
-                padding: 10px 18px;
-                border-radius: 8px;
-                color: white;
-                cursor: pointer;
-                font-size: 15px;
-            }
-
-            button:hover {
-                transform: scale(1.03);
-            }
-        </style>
-
-    </head>
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 
+
 <body>
 
-    <!-- Template Load Check -->
-    <div id="template-loaded" style="display:none;" data-template="caregiver_base">
-        CAREGIVER_BASE_LOADED
-    </div>
 
-    <div class="sidebar">
+    <!-- =====================================================
+         CAREGIVER SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- LOGO -->
 
         <div class="logo">
-            <h2>❤️ CareBridge</h2>
-            <p>Care Beyond Boundaries</p>
+
+            <h2>
+                ❤️ CareBridge
+            </h2>
+
+            <p>
+                Care Beyond Boundaries
+            </p>
+
         </div>
+
+
+        <!-- MENU -->
 
         <ul>
 
-            <li>
-                <a href="/caregiver-dashboard/">
+
+            <!-- DASHBOARD -->
+
+            <li class="active">
+
+                <a href="{% url 'caregiver_dashboard' %}">
+
                     🏠 Dashboard
+
                 </a>
+
             </li>
 
-            <li>
-                <a href="/caregiver-dashboard/">
-                    📥 Booking Requests
-                </a>
-            </li>
+
+            <!-- REQUESTS -->
 
             <li>
-                <a href="/caregiver-dashboard/">
+
+                <a href="{% url 'caregiver_requests' %}">
+                    📋 Caregiver Requests
+                </a>
+
+            </li>
+
+
+            <!-- ASSIGNED USERS -->
+
+            <li>
+
+                <a href="{% url 'caregiver_dashboard' %}">
+
                     👥 Assigned Users
+
                 </a>
+
             </li>
 
+
+            <!-- SCHEDULE -->
+
             <li>
-                <a href="/caregiver-schedule/">
+
+                <a href="{% url 'caregiver_schedule' %}">
+
                     📅 Today's Schedule
+
                 </a>
+
             </li>
 
+
+            <!-- COMPLETED SERVICES -->
+
             <li>
+
                 <a href="{% url 'completed_services' %}">
+
                     ✅ Completed Services
+
                 </a>
+
             </li>
 
+
+            <!-- NOTIFICATIONS -->
+
             <li>
-                <a href="/profile/">
+
+                <a href="{% url 'notifications' %}">
+
+                    🔔 Notifications
+
+                </a>
+
+            </li>
+
+
+            <!-- PROFILE -->
+
+            <li>
+
+                <a href="{% url 'profile' %}">
+
                     👤 My Profile
+
                 </a>
+
             </li>
 
+
+            <!-- LOGOUT -->
+
             <li>
+
                 <a href="/logout/">
+
                     🚪 Logout
+
                 </a>
+
             </li>
+
 
         </ul>
 
-    </div>
+
+    </aside>
 
 
-    <div class="main">
 
-        <div class="topbar">
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
 
-            <div>
+    <main class="main">
+
+
+        <!-- =================================================
+             TOP BAR
+        ================================================== -->
+
+        <header class="topbar">
+
+
+            <!-- LEFT -->
+
+            <div class="topbar-left">
 
                 <h2>
 
                     {% block page_title %}
+
                     Caregiver Dashboard
+
                     {% endblock %}
 
                 </h2>
 
-                <p style="color:#777;margin-top:5px;">
-                    Welcome, {{ request.user.first_name|default:request.user.username }}
+
+                <p>
+
+                    Welcome,
+                    {{ request.user.first_name|default:request.user.username }}
+
                 </p>
 
             </div>
 
+
+            <!-- RIGHT -->
+
             <div class="top-right">
 
+
                 <span class="username">
+
                     👋 {{ request.user.username }}
+
                 </span>
 
+
                 <a href="/logout/" class="logout">
+
                     Logout
+
                 </a>
+
 
             </div>
 
-        </div>
 
-        <div class="content">
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE CONTENT
+        ================================================== -->
+
+        <section class="content">
 
             {% block content %}
 
             {% endblock %}
 
-        </div>
+        </section>
 
-    </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT BLOCK
+    ====================================================== -->
+
+    {% block extra_js %}
+    {% endblock %}
+
 
 </body>
 

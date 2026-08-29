@@ -146,7 +146,34 @@ path(
         views.caregiver_dashboard,
         name='caregiver_dashboard'
     ),
+path(
+    'caregiver-requests/',
+    views.caregiver_requests,
+    name='caregiver_requests'
+),
 
+path(
+    'send-caregiver-bill/<int:booking_id>/',
+    views.send_caregiver_bill,
+    name='send_caregiver_bill'
+),
+path(
+    'caregiver-bill/<int:booking_id>/',
+    views.view_caregiver_bill,
+    name='view_caregiver_bill'
+),
+
+path(
+    'pay-caregiver-bill/<int:payment_id>/',
+    views.pay_caregiver_bill,
+    name='pay_caregiver_bill'
+),
+
+path(
+    'cancel-caregiver-payment/<int:payment_id>/',
+    views.cancel_caregiver_payment,
+    name='cancel_caregiver_payment'
+),
     path(
         'caregiver-schedule/',
         views.caregiver_schedule,
@@ -168,7 +195,7 @@ path(
     path(
     'complete-caregiver-service/<int:booking_id>/',
     views.complete_caregiver_service,
-    name='complete_caregiver_booking'
+    name='complete_caregiver_service'
 ),
 
     path(
@@ -226,11 +253,7 @@ path(
         views.volunteer_dashboard,
         name='volunteer_dashboard'
     ),
-    path(
-    'volunteer-booking/<int:booking_id>/<str:status>/',
-    views.update_volunteer_booking_status,
-    name='update_volunteer_booking_status'
-),
+    
 
     path(
         'accept-volunteer-booking/<int:booking_id>/',

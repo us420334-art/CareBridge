@@ -59,7 +59,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-    
+
 class RepresentedPerson(models.Model):
 
     PERSON_TYPE_CHOICES = [
@@ -146,12 +146,17 @@ class DirectCaregiverBooking(models.Model):
     ]
 
     SERVICE_CHOICES = [
-    ('Home Support', 'Home Support'),
-    ('Hospital Assistance', 'Hospital Assistance'),
-    ('Medication Support', 'Medication Support'),
-    ('Health & Wellness Support', 'Health & Wellness Support'),
-    ('Post-Hospital Care', 'Post-Hospital Care'),
-]
+        ('Home Support', 'Home Support'),
+        ('Hospital Assistance', 'Hospital Assistance'),
+        ('Medication Support', 'Medication Support'),
+        ('Health & Wellness Support', 'Health & Wellness Support'),
+        ('Post-Hospital Care', 'Post-Hospital Care'),
+    ]
+
+    # =====================================================
+    # USER / CAREGIVER
+    # =====================================================
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -163,6 +168,34 @@ class DirectCaregiverBooking(models.Model):
         on_delete=models.CASCADE,
         related_name='caregiver_direct_bookings'
     )
+
+    # =====================================================
+    # CARE REPRESENTATIVE INFORMATION
+    # =====================================================
+
+    is_care_representative_request = models.BooleanField(
+        default=False
+    )
+
+    care_representative = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='care_representative_caregiver_bookings'
+    )
+
+    represented_person = models.ForeignKey(
+        RepresentedPerson,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='caregiver_service_bookings'
+    )
+
+    # =====================================================
+    # SERVICE DETAILS
+    # =====================================================
 
     service = models.CharField(
         max_length=50,
@@ -197,6 +230,10 @@ class DirectCaregiverBooking(models.Model):
         default=''
     )
 
+    # =====================================================
+    # STATUS
+    # =====================================================
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -208,7 +245,85 @@ class DirectCaregiverBooking(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username} booked {self.caregiver.username}"
+
+        if self.is_care_representative_request:
+            return (
+                f"{self.care_representative.username} "
+                f"requested caregiver {self.caregiver.username} "
+                f"for {self.represented_person.full_name}"
+            )
+
+        return (
+            f"{self.user.username} "
+            f"booked {self.caregiver.username}"
+        )
+
+
+class CaregiverPayment(models.Model):
+
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Paid', 'Paid'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    # =====================================================
+    # BOOKING
+    # =====================================================
+
+    booking = models.OneToOneField(
+        DirectCaregiverBooking,
+        on_delete=models.CASCADE,
+        related_name='payment'
+    )
+
+    # =====================================================
+    # PAYMENT DETAILS
+    # =====================================================
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='Pending'
+    )
+
+    # =====================================================
+    # CANCELLATION
+    # =====================================================
+
+    cancellation_reason = models.TextField(
+        blank=True,
+        default=''
+    )
+
+    # =====================================================
+    # TIMESTAMPS
+    # =====================================================
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    paid_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    # =====================================================
+    # STRING REPRESENTATION
+    # =====================================================
+
+    def __str__(self):
+
+        return (
+            f"Payment for Booking #{self.booking.id} - "
+            f"{self.status}"
+        )
 
     
 class DirectVolunteerBooking(models.Model):
@@ -236,6 +351,10 @@ class DirectVolunteerBooking(models.Model):
         ('General Support', 'General Support'),
     ]
 
+    # =====================================================
+    # USER / VOLUNTEER
+    # =====================================================
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -247,6 +366,34 @@ class DirectVolunteerBooking(models.Model):
         on_delete=models.CASCADE,
         related_name='volunteer_direct_bookings'
     )
+
+    # =====================================================
+    # CARE REPRESENTATIVE INFORMATION
+    # =====================================================
+
+    is_care_representative_request = models.BooleanField(
+        default=False
+    )
+
+    care_representative = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='care_representative_volunteer_bookings'
+    )
+
+    represented_person = models.ForeignKey(
+        RepresentedPerson,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='volunteer_service_bookings'
+    )
+
+    # =====================================================
+    # SERVICE DETAILS
+    # =====================================================
 
     service = models.CharField(
         max_length=50,
@@ -281,6 +428,10 @@ class DirectVolunteerBooking(models.Model):
         default=''
     )
 
+    # =====================================================
+    # STATUS
+    # =====================================================
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -292,10 +443,20 @@ class DirectVolunteerBooking(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username} booked {self.volunteer.username}"
 
-    
-    
+        if self.is_care_representative_request:
+            return (
+                f"{self.care_representative.username} "
+                f"requested volunteer {self.volunteer.username} "
+                f"for {self.represented_person.full_name}"
+            )
+
+        return (
+            f"{self.user.username} "
+            f"booked {self.volunteer.username}"
+        )
+
+
 class ServiceRequest(models.Model):
 
     PRIORITY_CHOICES = [
@@ -337,6 +498,7 @@ class ServiceRequest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.priority}"
+
 
 class MedicineReminder(models.Model):
 
@@ -381,6 +543,7 @@ class MedicineReminder(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.medicine_name}"
 
+
 class EmergencySOS(models.Model):
 
     user = models.ForeignKey(
@@ -414,7 +577,7 @@ class EmergencySOS(models.Model):
     def __str__(self):
         return f"{self.user.username} - Emergency SOS - {self.status}"
 
-    
+
 class Feedback(models.Model):
 
     RATING_CHOICES = [
@@ -444,7 +607,6 @@ class Feedback(models.Model):
         default='Other'
     )
 
-    # The caregiver or volunteer being reviewed
     service_provider = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -464,21 +626,28 @@ class Feedback(models.Model):
     )
 
     def __str__(self):
+
         if self.service_provider:
-            return f"{self.user.username} → {self.service_provider.username} - {self.rating} Stars"
+            return (
+                f"{self.user.username} → "
+                f"{self.service_provider.username} - "
+                f"{self.rating} Stars"
+            )
 
         return f"{self.user.username} - {self.rating} Stars"
+
 
 class Notification(models.Model):
 
     NOTIFICATION_TYPES = [
-    ('Booking', 'Booking'),
-    ('Service', 'Service'),
-    ('Medicine', 'Medicine'),
-    ('SOS', 'SOS'),
-    ('Feedback', 'Feedback'),
-    ('System', 'System'),
-]
+        ('Booking', 'Booking'),
+        ('Service', 'Service'),
+        ('Medicine', 'Medicine'),
+        ('SOS', 'SOS'),
+        ('Feedback', 'Feedback'),
+        ('System', 'System'),
+    ]
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

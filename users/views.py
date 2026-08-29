@@ -7,11 +7,15 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import DirectCaregiverBooking
+from decimal import Decimal, InvalidOperation
 
 from .models import (
     UserProfile,
     RepresentedPerson,
     DirectCaregiverBooking,
+    CaregiverPayment,
     DirectVolunteerBooking,
     ServiceRequest,
     MedicineReminder,
@@ -685,40 +689,11 @@ def care_rep_dashboard(request):
             "unread_notifications_count": unread_notifications_count,
         }
     )
-def caregiver_dashboard(request):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    profile = UserProfile.objects.get(
-        user=request.user
-    )
-
-    if profile.role != "Caregiver":
-        return redirect('/dashboard/')
-
-    bookings = DirectCaregiverBooking.objects.filter(
-        caregiver=request.user
-    ).order_by('-booked_at')
-
-    return render(
-        request,
-        "dashboard/caregiver_dashboard.html",
-        {
-            "profile": profile,
-            "bookings": bookings,
-        }
-    )
 
 def book_caregiver(request):
 
     if not request.user.is_authenticated:
         return redirect('/login/')
-
-    active_booking = DirectCaregiverBooking.objects.filter(
-        user=request.user,
-        status__in=["Pending", "Accepted"]
-    ).first()
 
     profile = get_object_or_404(
         UserProfile,
@@ -728,6 +703,19 @@ def book_caregiver(request):
     caregivers = UserProfile.objects.filter(
         role="Caregiver"
     )
+
+    # =====================================================
+    # CHECK ACTIVE BOOKING
+    # =====================================================
+
+    active_booking = DirectCaregiverBooking.objects.filter(
+        user=request.user,
+        status__in=["Pending", "Accepted"]
+    ).first()
+
+    # =====================================================
+    # POST
+    # =====================================================
 
     if request.method == "POST":
 
@@ -748,6 +736,10 @@ def book_caregiver(request):
             ""
         )
 
+        # =================================================
+        # CHECK ACTIVE BOOKING
+        # =================================================
+
         if active_booking:
 
             messages.warning(
@@ -757,22 +749,93 @@ def book_caregiver(request):
 
             return redirect("book_caregiver")
 
+        # =================================================
+        # GET CAREGIVER
+        # =================================================
+
         caregiver = get_object_or_404(
             User,
             id=caregiver_id
         )
 
-        DirectCaregiverBooking.objects.create(
-            user=request.user,
-            caregiver=caregiver,
-            service=service,
-            address=address,
-            booking_date=booking_date,
-            booking_time=booking_time,
-            priority=priority,
-            description=description,
-            status="Pending"
-        )
+        # =================================================
+        # CARE REPRESENTATIVE REQUEST
+        # =================================================
+
+        if profile.role == "Care Representative":
+
+            represented_person = get_object_or_404(
+                RepresentedPerson,
+                care_representative=request.user
+            )
+
+            DirectCaregiverBooking.objects.create(
+
+                # The care representative is technically
+                # the user creating the booking
+                user=request.user,
+
+                caregiver=caregiver,
+
+                # IMPORTANT
+                is_care_representative_request=True,
+
+                care_representative=request.user,
+
+                represented_person=represented_person,
+
+                service=service,
+
+                address=address,
+
+                booking_date=booking_date,
+
+                booking_time=booking_time,
+
+                priority=priority,
+
+                description=description,
+
+                status="Pending"
+            )
+
+        # =================================================
+        # NORMAL USER REQUEST
+        # =================================================
+
+        else:
+
+            DirectCaregiverBooking.objects.create(
+
+                user=request.user,
+
+                caregiver=caregiver,
+
+                # IMPORTANT
+                is_care_representative_request=False,
+
+                care_representative=None,
+
+                represented_person=None,
+
+                service=service,
+
+                address=address,
+
+                booking_date=booking_date,
+
+                booking_time=booking_time,
+
+                priority=priority,
+
+                description=description,
+
+                status="Pending"
+            )
+
+        # =================================================
+        # SUCCESS
+        # =================================================
 
         messages.success(
             request,
@@ -781,9 +844,9 @@ def book_caregiver(request):
 
         return redirect("book_caregiver")
 
-    # ---------------------------------------------
-    # Select dashboard layout
-    # ---------------------------------------------
+    # =====================================================
+    # TEMPLATE
+    # =====================================================
 
     if profile.role == "Care Representative":
 
@@ -805,105 +868,512 @@ def book_caregiver(request):
     )
 
 
-def confirm_caregiver_booking(request, caregiver_id):
+@login_required
+def caregiver_dashboard(request):
 
-    if not request.user.is_authenticated:
-        return redirect('/login/')
+    # Only caregivers can access this dashboard
+    if request.user.userprofile.role != "Caregiver":
+        return redirect("dashboard")
 
-    # Check whether the user already has an active caregiver booking
-    active_booking = DirectCaregiverBooking.objects.filter(
-        user=request.user,
-        status__in=["Pending", "Accepted"]
-    ).first()
+    # Get all caregiver bookings assigned to the logged-in caregiver
+    bookings = DirectCaregiverBooking.objects.filter(
+        caregiver=request.user
+    ).order_by("-booked_at")
 
-    if active_booking:
+    # -----------------------------------------------------
+    # DIRECT USER REQUESTS
+    # -----------------------------------------------------
 
-        if active_booking.caregiver_id == caregiver_id:
-
-            messages.warning(
-                request,
-                "You already have an active booking request with this caregiver."
-            )
-
-        else:
-
-            messages.warning(
-                request,
-                "You already have an active caregiver booking. "
-                "You can book another caregiver after the current booking "
-                "is completed, rejected, or cancelled."
-            )
-
-        return redirect('book_caregiver')
-
-    # Get selected caregiver
-    caregiver = get_object_or_404(
-        User,
-        id=caregiver_id
+    direct_requests = bookings.filter(
+        is_care_representative_request=False
     )
 
-    # Get the logged-in user's profile
+    # -----------------------------------------------------
+    # CARE REPRESENTATIVE REQUESTS
+    # -----------------------------------------------------
+
+    representative_requests = bookings.filter(
+        is_care_representative_request=True
+    )
+
+    # -----------------------------------------------------
+    # SEND DATA TO TEMPLATE
+    # -----------------------------------------------------
+
+    return render(
+        request,
+        "dashboard/caregiver_dashboard.html",
+        {
+            "direct_requests": direct_requests,
+            "representative_requests": representative_requests,
+        }
+    )
+
+@login_required
+def caregiver_requests(request):
+
+    direct_requests = DirectCaregiverBooking.objects.filter(
+        caregiver=request.user,
+        is_care_representative_request=False
+    ).order_by("-booked_at")
+
+    representative_requests = DirectCaregiverBooking.objects.filter(
+        caregiver=request.user,
+        is_care_representative_request=True
+    ).order_by("-booked_at")
+
+    return render(
+        request,
+        "dashboard/caregiver_requests.html",
+        {
+            "direct_requests": direct_requests,
+            "representative_requests": representative_requests,
+        }
+    )
+
+@login_required
+def send_caregiver_bill(request, booking_id):
+
+    # =====================================================
+    # ONLY CAREGIVERS CAN SEND BILLS
+    # =====================================================
+
+    if request.user.userprofile.role != "Caregiver":
+        return redirect("dashboard")
+
+    # =====================================================
+    # GET BOOKING
+    # =====================================================
+
+    booking = get_object_or_404(
+        DirectCaregiverBooking,
+        id=booking_id,
+        caregiver=request.user
+    )
+
+    # =====================================================
+    # ONLY PENDING BOOKINGS CAN RECEIVE A BILL
+    # =====================================================
+
+    if booking.status != "Pending":
+
+        messages.warning(
+            request,
+            "A bill can only be sent for a pending caregiver request."
+        )
+
+        return redirect("caregiver_requests")
+
+    # =====================================================
+    # CHECK WHETHER A PAYMENT ALREADY EXISTS
+    # =====================================================
+
+    existing_payment = CaregiverPayment.objects.filter(
+        booking=booking
+    ).first()
+
+    if existing_payment:
+
+        messages.warning(
+            request,
+            "A bill has already been created for this booking."
+        )
+
+        return redirect("caregiver_requests")
+
+    # =====================================================
+    # POST
+    # =====================================================
+
+    if request.method == "POST":
+
+        amount = request.POST.get("amount", "").strip()
+
+        # -------------------------------------------------
+        # CHECK AMOUNT
+        # -------------------------------------------------
+
+        if not amount:
+
+            messages.error(
+                request,
+                "Please enter a bill amount."
+            )
+
+            return redirect("caregiver_requests")
+
+        try:
+
+            amount = Decimal(amount)
+
+        except (InvalidOperation, ValueError):
+
+            messages.error(
+                request,
+                "Please enter a valid amount."
+            )
+
+            return redirect("caregiver_requests")
+
+        # -------------------------------------------------
+        # AMOUNT MUST BE GREATER THAN ZERO
+        # -------------------------------------------------
+
+        if amount <= 0:
+
+            messages.error(
+                request,
+                "Bill amount must be greater than ₹0."
+            )
+
+            return redirect("caregiver_requests")
+
+        # -------------------------------------------------
+        # CREATE PAYMENT/BILL
+        # -------------------------------------------------
+
+        payment = CaregiverPayment.objects.create(
+
+            booking=booking,
+
+            amount=amount,
+
+            status="Pending"
+
+        )
+
+        # =================================================
+        # NOTIFY USER / CARE REPRESENTATIVE
+        # =================================================
+
+        create_notification(
+
+            booking.user,
+
+            "Booking",
+
+            "Caregiver Bill Received",
+
+            (
+                f"Your caregiver has sent a bill of "
+                f"₹{payment.amount} for the requested "
+                f"caregiver service. Please review the bill "
+                f"and proceed with payment or cancel the bill."
+            )
+
+        )
+
+        # =================================================
+        # SUCCESS MESSAGE
+        # =================================================
+
+        messages.success(
+
+            request,
+
+            f"Bill of ₹{payment.amount} sent successfully."
+
+        )
+
+        return redirect("caregiver_requests")
+
+    # =====================================================
+    # GET
+    # =====================================================
+
+    return render(
+
+        request,
+
+        "dashboard/send_caregiver_bill.html",
+
+        {
+            "booking": booking,
+        }
+
+    )
+
+@login_required
+def view_caregiver_bill(request, booking_id):
+
+    booking = get_object_or_404(
+        DirectCaregiverBooking,
+        id=booking_id
+    )
+
+    # Only the person who created the booking can view the bill
+    if booking.user != request.user:
+        messages.error(
+            request,
+            "You are not authorized to view this bill."
+        )
+        return redirect("my_bookings")
+
+    payment = get_object_or_404(
+        CaregiverPayment,
+        booking=booking
+    )
+
+    # Select dashboard layout
     profile = get_object_or_404(
         UserProfile,
         user=request.user
     )
 
-    # If the booking form was submitted
+    if profile.role == "Care Representative":
+        base_template = "dashboard/care_rep_base.html"
+    else:
+        base_template = "dashboard/base_dashboard.html"
+
+    return render(
+        request,
+        "dashboard/caregiver_bill.html",
+        {
+            "booking": booking,
+            "payment": payment,
+            "profile": profile,
+            "base_template": base_template,
+        }
+    )
+
+
+@login_required
+def pay_caregiver_bill(request, payment_id):
+
+    payment = get_object_or_404(
+        CaregiverPayment,
+        id=payment_id
+    )
+
+    booking = payment.booking
+
+    # Only booking owner can pay
+    if booking.user != request.user:
+        messages.error(
+            request,
+            "You are not authorized to make this payment."
+        )
+        return redirect("my_bookings")
+
+    # Payment must still be pending
+    if payment.status != "Pending":
+        messages.warning(
+            request,
+            "This payment has already been processed."
+        )
+        return redirect("my_bookings")
+
+    # -------------------------------------------------
+    # PAYMENT CHECKOUT PAGE
+    # -------------------------------------------------
+
+    if request.method == "GET":
+
+        profile = get_object_or_404(
+            UserProfile,
+            user=request.user
+        )
+
+        if profile.role == "Care Representative":
+            base_template = "dashboard/care_rep_base.html"
+        else:
+            base_template = "dashboard/base_dashboard.html"
+
+        return render(
+            request,
+            "dashboard/caregiver_payment.html",
+            {
+                "payment": payment,
+                "booking": booking,
+                "base_template": base_template,
+            }
+        )
+
+    # -------------------------------------------------
+    # PROCESS DEMO PAYMENT
+    # -------------------------------------------------
+
     if request.method == "POST":
 
-        service = request.POST.get("service")
-        booking_date = request.POST.get("booking_date")
-        booking_time = request.POST.get("booking_time")
-        priority = request.POST.get("priority")
-        description = request.POST.get("description")
+        payment_method = request.POST.get("payment_method")
 
-        # Use the user's registered address
-        address = profile.address
+        if payment_method not in [
+            "UPI",
+            "Card",
+            "Net Banking"
+        ]:
+            messages.error(
+                request,
+                "Please select a valid payment method."
+            )
+            return redirect(
+                "pay_caregiver_bill",
+                payment_id=payment.id
+            )
 
-        # Create the booking
-        DirectCaregiverBooking.objects.create(
-            user=request.user,
-            caregiver=caregiver,
-            service=service,
-            address=address,
-            booking_date=booking_date,
-            booking_time=booking_time,
-            priority=priority,
-            description=description,
-            status="Pending"
+        # Demo payment — no real money transaction
+        payment.status = "Paid"
+        payment.paid_at = timezone.now()
+        payment.save()
+
+        # -------------------------------------------------
+        # NOTIFY CAREGIVER
+        # -------------------------------------------------
+
+        create_notification(
+            booking.caregiver,
+            "Booking",
+            "Payment Received",
+            (
+                f"Payment of ₹{payment.amount} has been received "
+                f"for the caregiver booking of "
+                f"{booking.user.get_full_name() or booking.user.username}. "
+                f"You can now accept or reject the booking."
+            )
+        )
+
+        # -------------------------------------------------
+        # NOTIFY USER
+        # -------------------------------------------------
+
+        create_notification(
+            request.user,
+            "Booking",
+            "Payment Successful",
+            (
+                f"Your payment of ₹{payment.amount} for the caregiver "
+                f"service was successful using {payment_method}. "
+                f"The caregiver can now accept or reject your booking."
+            )
         )
 
         messages.success(
             request,
-            "Caregiver booking request sent successfully."
+            "Payment completed successfully."
         )
 
-        return redirect('book_caregiver')
+        return redirect("my_bookings")
 
-    # Show booking form
+@login_required
+def cancel_caregiver_payment(request, payment_id):
+    payment = get_object_or_404(
+        CaregiverPayment,
+        id=payment_id
+    )
+
+    booking = payment.booking
+
+    # Only the user who made the booking can cancel the payment
+    if booking.user != request.user:
+        messages.error(
+            request,
+            "You are not authorized to cancel this payment."
+        )
+        return redirect("my_bookings")
+
+    # Payment can only be cancelled while it is pending
+    if payment.status != "Pending":
+        messages.error(
+            request,
+            "This payment cannot be cancelled."
+        )
+        return redirect(
+            "view_caregiver_bill",
+            booking_id=booking.id
+        )
+
+    if request.method == "POST":
+        cancellation_feedback = request.POST.get(
+            "cancellation_feedback",
+            ""
+        ).strip()
+
+        # Cancellation reason is required
+        if not cancellation_feedback:
+            messages.error(
+                request,
+                "Please provide a reason for cancellation."
+            )
+            return redirect(
+                "view_caregiver_bill",
+                booking_id=booking.id
+            )
+
+        # Cancel the payment
+        payment.status = "Cancelled"
+        payment.cancellation_reason = cancellation_feedback
+        payment.save()
+
+        # Cancel the caregiver booking
+        booking.status = "Cancelled"
+        booking.save()
+
+        # Notify caregiver
+        create_notification(
+            booking.caregiver,
+            "Booking",
+            "Caregiver Payment Cancelled",
+            f"The payment for the caregiver request from "
+            f"{booking.user.get_full_name() or booking.user.username} "
+            f"has been cancelled."
+        )
+
+        # Notify requester
+        create_notification(
+            booking.user,
+            "Booking",
+            "Caregiver Request Cancelled",
+            "Your caregiver request has been cancelled because "
+            "the payment was cancelled."
+        )
+
+        messages.success(
+            request,
+            "Payment and caregiver request cancelled successfully."
+        )
+
+        return redirect("my_bookings")
+
+    # GET request → show cancellation form
     return render(
         request,
-        "dashboard/confirm_caregiver_booking.html",
+        "dashboard/cancel_caregiver_payment.html",
         {
-            "caregiver": caregiver,
-            "profile": profile,
+            "payment": payment,
+            "booking": booking,
         }
     )
 
+
+@login_required
 def my_bookings(request):
 
     if not request.user.is_authenticated:
         return redirect('/login/')
 
+    # ---------------------------------------------
+    # CAREGIVER BOOKINGS
+    # ---------------------------------------------
+
     caregiver_bookings = DirectCaregiverBooking.objects.filter(
         user=request.user
+    ).select_related(
+        'caregiver',
+        'payment'
     ).order_by('-booked_at')
+
+    # ---------------------------------------------
+    # VOLUNTEER BOOKINGS
+    # ---------------------------------------------
 
     volunteer_bookings = DirectVolunteerBooking.objects.filter(
         user=request.user
     ).order_by('-booked_at')
 
+    # ---------------------------------------------
     # Latest booking status for sidebar
+    # ---------------------------------------------
+
     latest_caregiver_booking = caregiver_bookings.first()
 
     latest_volunteer_booking = volunteer_bookings.first()
@@ -925,6 +1395,10 @@ def my_bookings(request):
 
         base_template = "dashboard/base_dashboard.html"
 
+    # ---------------------------------------------
+    # RENDER MY BOOKINGS
+    # ---------------------------------------------
+
     return render(
         request,
         'dashboard/my_bookings.html',
@@ -938,10 +1412,8 @@ def my_bookings(request):
     )
 
 
+@login_required
 def accept_caregiver_booking(request, booking_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
 
     booking = get_object_or_404(
         DirectCaregiverBooking,
@@ -949,14 +1421,52 @@ def accept_caregiver_booking(request, booking_id):
         caregiver=request.user
     )
 
+    # -------------------------------------------------
+    # CHECK PAYMENT
+    # -------------------------------------------------
+
+    payment = CaregiverPayment.objects.filter(
+        booking=booking
+    ).first()
+
+    if not payment:
+
+        messages.error(
+            request,
+            "You cannot accept this booking because no payment bill exists."
+        )
+
+        return redirect("caregiver_dashboard")
+
+    if payment.status != "Paid":
+
+        messages.warning(
+            request,
+            "You can accept this booking only after the user completes the payment."
+        )
+
+        return redirect("caregiver_dashboard")
+
+    # -------------------------------------------------
+    # ACCEPT BOOKING
+    # -------------------------------------------------
+
     booking.status = "Accepted"
     booking.save()
+
+    # -------------------------------------------------
+    # NOTIFY USER / CARE REPRESENTATIVE
+    # -------------------------------------------------
 
     create_notification(
         booking.user,
         "Booking",
         "Caregiver Booking Accepted",
-        f"Your caregiver booking with {request.user.get_full_name() or request.user.username} has been accepted."
+        (
+            f"Your caregiver booking with "
+            f"{request.user.get_full_name() or request.user.username} "
+            f"has been accepted."
+        )
     )
 
     messages.success(
@@ -964,12 +1474,10 @@ def accept_caregiver_booking(request, booking_id):
         "Booking accepted successfully."
     )
 
-    return redirect('caregiver_dashboard')
+    return redirect("caregiver_dashboard")
 
+@login_required
 def reject_caregiver_booking(request, booking_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
 
     booking = get_object_or_404(
         DirectCaregiverBooking,
@@ -977,14 +1485,52 @@ def reject_caregiver_booking(request, booking_id):
         caregiver=request.user
     )
 
+    # -------------------------------------------------
+    # CHECK PAYMENT
+    # -------------------------------------------------
+
+    payment = CaregiverPayment.objects.filter(
+        booking=booking
+    ).first()
+
+    if not payment:
+
+        messages.error(
+            request,
+            "You cannot reject this booking because no payment bill exists."
+        )
+
+        return redirect("caregiver_dashboard")
+
+    if payment.status != "Paid":
+
+        messages.warning(
+            request,
+            "You can reject this booking only after the payment is completed."
+        )
+
+        return redirect("caregiver_dashboard")
+
+    # -------------------------------------------------
+    # REJECT BOOKING
+    # -------------------------------------------------
+
     booking.status = "Rejected"
     booking.save()
+
+    # -------------------------------------------------
+    # NOTIFY USER
+    # -------------------------------------------------
 
     create_notification(
         booking.user,
         "Booking",
         "Caregiver Booking Rejected",
-        f"Your caregiver booking with {request.user.get_full_name() or request.user.username} has been rejected."
+        (
+            f"Your caregiver booking with "
+            f"{request.user.get_full_name() or request.user.username} "
+            f"has been rejected."
+        )
     )
 
     messages.success(
@@ -992,7 +1538,7 @@ def reject_caregiver_booking(request, booking_id):
         "Booking rejected."
     )
 
-    return redirect('caregiver_dashboard')
+    return redirect("caregiver_dashboard")
 
 
 def service_requests(request):
@@ -1201,11 +1747,6 @@ def book_volunteer(request):
     if not request.user.is_authenticated:
         return redirect('/login/')
 
-    active_booking = DirectVolunteerBooking.objects.filter(
-        user=request.user,
-        status__in=["Pending", "Accepted"]
-    ).first()
-
     profile = get_object_or_404(
         UserProfile,
         user=request.user
@@ -1215,67 +1756,26 @@ def book_volunteer(request):
         role="Volunteer"
     )
 
-    if request.method == "POST":
-
-        volunteer_id = request.POST.get("volunteer_id")
-
-        service = request.POST.get("service")
-
-        address = request.POST.get("address")
-
-        booking_date = request.POST.get("booking_date")
-
-        booking_time = request.POST.get("booking_time")
-
-        priority = request.POST.get("priority")
-
-        description = request.POST.get(
-            "description",
-            ""
-        )
-
-        if active_booking:
-
-            messages.warning(
-                request,
-                "You already have an active volunteer booking."
-            )
-
-            return redirect("book_volunteer")
-
-        volunteer = get_object_or_404(
-            User,
-            id=volunteer_id
-        )
-
-        DirectVolunteerBooking.objects.create(
-            user=request.user,
-            volunteer=volunteer,
-            service=service,
-            address=address,
-            booking_date=booking_date,
-            booking_time=booking_time,
-            priority=priority,
-            description=description,
-            status="Pending"
-        )
-
-        messages.success(
-            request,
-            "Volunteer booking request sent successfully."
-        )
-
-        return redirect("book_volunteer")
-
     # ---------------------------------------------
-    # Select dashboard layout
+    # Check active booking
     # ---------------------------------------------
 
     if profile.role == "Care Representative":
 
+        active_booking = DirectVolunteerBooking.objects.filter(
+            care_representative=request.user,
+            status__in=["Pending", "Accepted"]
+        ).first()
+
         base_template = "dashboard/care_rep_base.html"
 
     else:
+
+        active_booking = DirectVolunteerBooking.objects.filter(
+            user=request.user,
+            is_care_representative_request=False,
+            status__in=["Pending", "Accepted"]
+        ).first()
 
         base_template = "dashboard/base_dashboard.html"
 
@@ -1290,84 +1790,197 @@ def book_volunteer(request):
         }
     )
 
+@login_required
 def confirm_volunteer_booking(request, volunteer_id):
 
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    # Check whether the user already has an active volunteer booking
-    active_booking = DirectVolunteerBooking.objects.filter(
-        user=request.user,
-        status__in=["Pending", "Accepted"]
-    ).first()
-
-    if active_booking:
-
-        if active_booking.volunteer_id == volunteer_id:
-
-            messages.warning(
-                request,
-                "You already have an active booking request with this volunteer."
-            )
-
-        else:
-
-            messages.warning(
-                request,
-                "You already have an active volunteer booking. "
-                "You can book another volunteer after the current booking "
-                "is completed, rejected, or cancelled."
-            )
-
-        return redirect('book_volunteer')
-
-    # Get selected volunteer
     volunteer = get_object_or_404(
         User,
         id=volunteer_id
     )
 
-    # Get logged-in user's profile
     profile = get_object_or_404(
         UserProfile,
         user=request.user
     )
 
-    # =========================
-    # FORM SUBMISSION
-    # =========================
+    # =====================================================
+    # CARE REPRESENTATIVE BOOKING
+    # =====================================================
+
+    if profile.role == "Care Representative":
+
+        try:
+            represented_person = request.user.represented_person
+        except RepresentedPerson.DoesNotExist:
+
+            messages.error(
+                request,
+                "Please add a represented person before booking a volunteer."
+            )
+
+            return redirect("care_rep_dashboard")
+
+        # Check active booking
+        active_booking = DirectVolunteerBooking.objects.filter(
+            care_representative=request.user,
+            status__in=["Pending", "Accepted"]
+        ).first()
+
+        if active_booking:
+
+            messages.warning(
+                request,
+                "You already have an active volunteer booking."
+            )
+
+            return redirect("care_rep_dashboard")
+
+        if request.method == "POST":
+
+            booking = DirectVolunteerBooking.objects.create(
+
+                # The Care Representative is the requester
+                user=request.user,
+
+                volunteer=volunteer,
+
+                # Care Representative information
+                is_care_representative_request=True,
+
+                care_representative=request.user,
+
+                represented_person=represented_person,
+
+                # Service information
+                service=request.POST.get(
+                    "service",
+                    ""
+                ),
+
+                address=request.POST.get(
+                    "address",
+                    represented_person.address
+                ),
+
+                booking_date=request.POST.get(
+                    "booking_date"
+                ) or None,
+
+                booking_time=request.POST.get(
+                    "booking_time"
+                ) or None,
+
+                priority=request.POST.get(
+                    "priority",
+                    "Medium"
+                ),
+
+                description=request.POST.get(
+                    "description",
+                    ""
+                ),
+
+                status="Pending"
+            )
+
+            # ---------------------------------------------
+            # Notify Volunteer
+            # ---------------------------------------------
+
+            Notification.objects.create(
+                user=volunteer,
+                notification_type="Booking",
+                title="New Care Representative Request",
+                message=(
+                    f"{request.user.get_full_name() or request.user.username} "
+                    f"has requested your volunteer service for "
+                    f"{represented_person.full_name}."
+                )
+            )
+
+            messages.success(
+                request,
+                "Volunteer request sent successfully."
+            )
+
+            return redirect("care_rep_dashboard")
+
+    # =====================================================
+    # NORMAL USER BOOKING
+    # =====================================================
+
+    active_booking = DirectVolunteerBooking.objects.filter(
+        user=request.user,
+        is_care_representative_request=False,
+        status__in=["Pending", "Accepted"]
+    ).first()
+
+    if active_booking:
+
+        messages.warning(
+            request,
+            "You already have an active volunteer booking."
+        )
+
+        return redirect("book_volunteer")
 
     if request.method == "POST":
 
-        service = request.POST.get("service")
-        booking_date = request.POST.get("booking_date")
-        booking_time = request.POST.get("booking_time")
-        priority = request.POST.get("priority")
-        description = request.POST.get("description", "")
-
-        # Use registered address
-        address = profile.address
-
-        # Create volunteer booking
         booking = DirectVolunteerBooking.objects.create(
+
             user=request.user,
+
             volunteer=volunteer,
-            service=service,
-            address=address,
-            booking_date=booking_date,
-            booking_time=booking_time,
-            priority=priority,
-            description=description,
+
+            is_care_representative_request=False,
+
+            care_representative=None,
+
+            represented_person=None,
+
+            service=request.POST.get(
+                "service",
+                ""
+            ),
+
+            address=request.POST.get(
+                "address",
+                ""
+            ),
+
+            booking_date=request.POST.get(
+                "booking_date"
+            ) or None,
+
+            booking_time=request.POST.get(
+                "booking_time"
+            ) or None,
+
+            priority=request.POST.get(
+                "priority",
+                "Medium"
+            ),
+
+            description=request.POST.get(
+                "description",
+                ""
+            ),
+
             status="Pending"
         )
 
-        # Notification to volunteer
-        create_notification(
-            volunteer,
-            "Booking",
-            "New Volunteer Booking",
-            f"You have received a new volunteer booking request "
-            f"from {request.user.get_full_name() or request.user.username}."
+        # ---------------------------------------------
+        # Notify Volunteer
+        # ---------------------------------------------
+
+        Notification.objects.create(
+            user=volunteer,
+            notification_type="Booking",
+            title="New Direct Booking Request",
+            message=(
+                f"{request.user.get_full_name() or request.user.username} "
+                f"has sent you a direct volunteer booking request."
+            )
         )
 
         messages.success(
@@ -1375,15 +1988,11 @@ def confirm_volunteer_booking(request, volunteer_id):
             "Volunteer booking request sent successfully."
         )
 
-        return redirect('book_volunteer')
-
-    # =========================
-    # SHOW CONFIRMATION FORM
-    # =========================
+        return redirect("my_bookings")
 
     return render(
         request,
-        "dashboard/confirm_volunteer_booking.html",
+        "book_volunteer_confirm.html",
         {
             "volunteer": volunteer,
             "profile": profile,
@@ -1391,35 +2000,8 @@ def confirm_volunteer_booking(request, volunteer_id):
     )
 
 
+@login_required
 def volunteer_dashboard(request):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
-    profile = UserProfile.objects.get(
-        user=request.user
-    )
-
-    if profile.role != "Volunteer":
-        return redirect('/dashboard/')
-
-    bookings = DirectVolunteerBooking.objects.filter(
-        volunteer=request.user
-    ).order_by('-booked_at')
-
-    return render(
-        request,
-        'dashboard/volunteer_dashboard.html',
-        {
-            'profile': profile,
-            'bookings': bookings,
-        }
-    )
-
-def update_volunteer_booking_status(request, booking_id, status):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
 
     profile = get_object_or_404(
         UserProfile,
@@ -1427,151 +2009,104 @@ def update_volunteer_booking_status(request, booking_id, status):
     )
 
     if profile.role != "Volunteer":
-        return redirect('/dashboard/')
+        return redirect("dashboard")
 
-    booking = get_object_or_404(
-        DirectVolunteerBooking,
-        id=booking_id,
+    # All bookings assigned to this volunteer
+    bookings = DirectVolunteerBooking.objects.filter(
         volunteer=request.user
+    ).select_related(
+        "user",
+        "care_representative",
+        "represented_person",
+        "user__userprofile",
+        "care_representative__userprofile"
+    ).order_by("-booked_at")
+
+    # Separate the requests
+    direct_requests = bookings.filter(
+        is_care_representative_request=False
     )
 
-    # =========================
-    # ACCEPT BOOKING
-    # =========================
+    representative_requests = bookings.filter(
+        is_care_representative_request=True
+    )
 
-    if status == "Accepted":
+    return render(
+        request,
+        "dashboard/volunteer_dashboard.html",
+        {
+            "profile": profile,
+            "direct_requests": direct_requests,
+            "representative_requests": representative_requests,
+        }
+    )
 
-        if booking.status == "Pending":
-
-            booking.status = "Accepted"
-            booking.save()
-
-            create_notification(
-                booking.user,
-                "Booking",
-                "Volunteer Booking Accepted",
-                f"Your volunteer booking with "
-                f"{request.user.get_full_name() or request.user.username} "
-                f"has been accepted."
-            )
-
-            messages.success(
-                request,
-                "Volunteer booking accepted successfully."
-            )
-
-
-    # =========================
-    # REJECT BOOKING
-    # =========================
-
-    elif status == "Rejected":
-
-        if booking.status == "Pending":
-
-            booking.status = "Rejected"
-            booking.save()
-
-            create_notification(
-                booking.user,
-                "Booking",
-                "Volunteer Booking Rejected",
-                f"Your volunteer booking with "
-                f"{request.user.get_full_name() or request.user.username} "
-                f"has been rejected."
-            )
-
-            messages.warning(
-                request,
-                "Volunteer booking rejected."
-            )
-
-
-    # =========================
-    # COMPLETE BOOKING
-    # =========================
-
-    elif status == "Completed":
-
-        if booking.status == "Accepted":
-
-            booking.status = "Completed"
-            booking.save()
-
-            create_notification(
-                booking.user,
-                "Booking",
-                "Volunteer Service Completed",
-                f"Your volunteer service with "
-                f"{request.user.get_full_name() or request.user.username} "
-                f"has been completed successfully."
-            )
-
-            messages.success(
-                request,
-                "Volunteer service marked as completed."
-            )
-
-    return redirect('volunteer_dashboard')
-
-
+@login_required
 def accept_volunteer_booking(request, booking_id):
 
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
     booking = get_object_or_404(
         DirectVolunteerBooking,
         id=booking_id,
         volunteer=request.user
     )
 
-    booking.status = "Accepted"
-    booking.save()
+    # Only Pending bookings can be accepted
+    if booking.status == "Pending":
 
-    # Send notification to the user who made the booking
-    create_notification(
-        booking.user,
-        "Booking",
-        "Volunteer Booking Accepted",
-        f"Your volunteer booking with {request.user.get_full_name() or request.user.username} has been accepted."
-    )
+        booking.status = "Accepted"
+        booking.save(update_fields=["status"])
 
-    messages.success(
-        request,
-        "Volunteer booking accepted successfully."
-    )
+        # Notification to the person who requested the service
+        create_notification(
+            booking.user,
+            "Booking",
+            "Volunteer Booking Accepted",
+            f"Your volunteer booking with "
+            f"{request.user.get_full_name() or request.user.username} "
+            f"has been accepted."
+        )
 
-    return redirect('volunteer_dashboard')
+        messages.success(
+            request,
+            "Volunteer booking accepted successfully."
+        )
 
+    return redirect("volunteer_dashboard")
+
+
+@login_required
 def reject_volunteer_booking(request, booking_id):
 
-    if not request.user.is_authenticated:
-        return redirect('/login/')
-
     booking = get_object_or_404(
         DirectVolunteerBooking,
         id=booking_id,
         volunteer=request.user
     )
 
-    booking.status = "Rejected"
-    booking.save()
+    # Only Pending bookings can be rejected
+    if booking.status == "Pending":
 
-    # Send notification to the user who made the booking
-    create_notification(
-        booking.user,
-        "Booking",
-        "Volunteer Booking Rejected",
-        f"Your volunteer booking with {request.user.get_full_name() or request.user.username} has been rejected."
-    )
+        booking.status = "Rejected"
+        booking.save(update_fields=["status"])
 
-    messages.success(
-        request,
-        "Volunteer booking rejected."
-    )
+        # Notification to the person who requested the service
+        create_notification(
+            booking.user,
+            "Booking",
+            "Volunteer Booking Rejected",
+            f"Your volunteer booking with "
+            f"{request.user.get_full_name() or request.user.username} "
+            f"has been rejected."
+        )
 
-    return redirect('volunteer_dashboard')
+        messages.warning(
+            request,
+            "Volunteer booking rejected."
+        )
+
+    return redirect("volunteer_dashboard")
+
+
 
 
 def caregiver_schedule(request):
@@ -3079,3 +3614,92 @@ def care_timeline(request):
             "timeline": timeline[:30],
         }
     )
+
+
+@login_required
+def confirm_caregiver_booking(request, caregiver_id):
+
+    caregiver = get_object_or_404(
+        User,
+        id=caregiver_id
+    )
+
+    # =====================================================
+    # MAKE SURE SELECTED USER IS A CAREGIVER
+    # =====================================================
+
+    caregiver_profile = get_object_or_404(
+        UserProfile,
+        user=caregiver,
+        role='Caregiver'
+    )
+
+    # =====================================================
+    # CARE REPRESENTATIVE REQUEST
+    # =====================================================
+
+    if request.user.userprofile.role == 'Care Representative':
+
+        represented_person = get_object_or_404(
+            RepresentedPerson,
+            care_representative=request.user
+        )
+
+        booking = DirectCaregiverBooking.objects.create(
+
+            # The person making the booking
+            user=request.user,
+
+            # Selected caregiver
+            caregiver=caregiver,
+
+            # IMPORTANT
+            is_care_representative_request=True,
+
+            # Care representative
+            care_representative=request.user,
+
+            # Person receiving the care
+            represented_person=represented_person,
+
+            # Service details
+            service=request.POST.get('service', 'Home Support'),
+            address=request.POST.get('address', represented_person.address),
+            booking_date=request.POST.get('booking_date') or None,
+            booking_time=request.POST.get('booking_time') or None,
+            priority=request.POST.get('priority', 'Medium'),
+            description=request.POST.get('description', ''),
+        )
+
+    # =====================================================
+    # NORMAL USER REQUEST
+    # =====================================================
+
+    else:
+
+        profile = get_object_or_404(
+            UserProfile,
+            user=request.user
+        )
+
+        booking = DirectCaregiverBooking.objects.create(
+
+            # Normal user
+            user=request.user,
+
+            # Selected caregiver
+            caregiver=caregiver,
+
+            # IMPORTANT
+            is_care_representative_request=False,
+
+            # Service details
+            service=request.POST.get('service', 'Home Support'),
+            address=request.POST.get('address', profile.address),
+            booking_date=request.POST.get('booking_date') or None,
+            booking_time=request.POST.get('booking_time') or None,
+            priority=request.POST.get('priority', 'Medium'),
+            description=request.POST.get('description', ''),
+        )
+
+    return redirect('request_submitted')
