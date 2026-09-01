@@ -33,7 +33,7 @@ Manage Caregivers
         <p style="
             margin:0;
         ">
-            View all registered CareBridge caregivers.
+            View registered caregivers and verify their professional documents.
         </p>
 
     </div>
@@ -86,7 +86,7 @@ Manage Caregivers
         <table style="
             width:100%;
             border-collapse:collapse;
-            min-width:850px;
+            min-width:1400px;
         ">
 
             <thead>
@@ -116,7 +116,19 @@ Manage Caregivers
                     </th>
 
                     <th style="padding:12px;text-align:left;">
-                        Status
+                        Account Status
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Verification
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Documents
+                    </th>
+
+                    <th style="padding:12px;text-align:left;">
+                        Actions
                     </th>
 
                     <th style="padding:12px;text-align:left;">
@@ -134,6 +146,7 @@ Manage Caregivers
 
                 <tr style="
                     border-bottom:1px solid #eee;
+                    vertical-align:top;
                 ">
 
                     <!-- ID -->
@@ -181,7 +194,7 @@ Manage Caregivers
                     </td>
 
 
-                    <!-- STATUS -->
+                    <!-- ACCOUNT STATUS -->
 
                     <td style="padding:12px;">
 
@@ -194,6 +207,7 @@ Manage Caregivers
                             border-radius:20px;
                             font-size:12px;
                             font-weight:bold;
+                            white-space:nowrap;
                         ">
                             Active
                         </span>
@@ -207,9 +221,311 @@ Manage Caregivers
                             border-radius:20px;
                             font-size:12px;
                             font-weight:bold;
+                            white-space:nowrap;
                         ">
                             Inactive
                         </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- VERIFICATION STATUS -->
+
+                    <td style="padding:12px;">
+
+                        {% if caregiver.userprofile.verification_status == "Verified" %}
+
+                        <span style="
+                            background:#dff7e5;
+                            color:#198754;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                            white-space:nowrap;
+                        ">
+                            ✓ Verified
+                        </span>
+
+                        {% elif caregiver.userprofile.verification_status == "Rejected" %}
+
+                        <span style="
+                            background:#ffe0e0;
+                            color:#dc3545;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                            white-space:nowrap;
+                        ">
+                            ✗ Rejected
+                        </span>
+
+                        {% else %}
+
+                        <span style="
+                            background:#fff3cd;
+                            color:#856404;
+                            padding:6px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:bold;
+                            white-space:nowrap;
+                        ">
+                            ⏳ Pending
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- DOCUMENTS -->
+
+                    <td style="padding:12px;">
+
+                        {% for document in caregiver.caregiver_documents.all %}
+
+                        <div style="
+                            margin-bottom:8px;
+                            padding:8px;
+                            background:#f8f9fa;
+                            border-radius:8px;
+                        ">
+
+                            <div style="
+                                font-size:13px;
+                                font-weight:bold;
+                                margin-bottom:5px;
+                            ">
+                                📄 {{ document.document_type }}
+                            </div>
+
+
+                            <a
+                                href="{{ document.document.url }}"
+                                target="_blank"
+                                style="
+                                    display:inline-block;
+                                    background:#6a5acd;
+                                    color:white;
+                                    padding:5px 10px;
+                                    border-radius:6px;
+                                    text-decoration:none;
+                                    font-size:12px;
+                                "
+                            >
+                                View Document
+                            </a>
+
+
+                            {% if document.verification_status == "Verified" %}
+
+                            <span style="
+                                color:#198754;
+                                font-size:11px;
+                                font-weight:bold;
+                                margin-left:5px;
+                            ">
+                                ✓ Verified
+                            </span>
+
+                            {% elif document.verification_status == "Rejected" %}
+
+                            <span style="
+                                color:#dc3545;
+                                font-size:11px;
+                                font-weight:bold;
+                                margin-left:5px;
+                            ">
+                                ✗ Rejected
+                            </span>
+
+                            {% else %}
+
+                            <span style="
+                                color:#856404;
+                                font-size:11px;
+                                font-weight:bold;
+                                margin-left:5px;
+                            ">
+                                ⏳ Pending
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% empty %}
+
+                        <span style="
+                            color:#777;
+                            font-size:13px;
+                        ">
+                            No documents uploaded
+                        </span>
+
+                        {% endfor %}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td style="padding:12px;">
+
+                        {% if caregiver.userprofile.verification_status == "Pending" %}
+
+                        <div style="
+                            display:flex;
+                            flex-direction:column;
+                            gap:8px;
+                            min-width:150px;
+                        ">
+
+
+                            <!-- ACCEPT CAREGIVER -->
+
+                            <a
+                                href="{% url 'admin_verify_caregiver' caregiver.id %}"
+                                style="
+                                    display:inline-block;
+                                    background:#198754;
+                                    color:white;
+                                    padding:8px 12px;
+                                    border-radius:7px;
+                                    text-decoration:none;
+                                    font-size:12px;
+                                    font-weight:bold;
+                                    text-align:center;
+                                "
+                                onclick="return confirm('Are you sure you want to verify this caregiver?');"
+                            >
+                                ✓ Accept Caregiver
+                            </a>
+
+
+                            <!-- REJECT CAREGIVER -->
+
+                            <button
+                                type="button"
+                                onclick="showRejectForm('{{ caregiver.id }}')"
+                                style="
+                                    background:#dc3545;
+                                    color:white;
+                                    padding:8px 12px;
+                                    border:none;
+                                    border-radius:7px;
+                                    font-size:12px;
+                                    font-weight:bold;
+                                    cursor:pointer;
+                                "
+                            >
+                                ✕ Reject
+                            </button>
+
+
+                            <!-- REJECTION FORM -->
+
+                            <form
+                                id="reject-form-{{ caregiver.id }}"
+                                method="POST"
+                                action="{% url 'admin_reject_caregiver' caregiver.id %}"
+                                style="display:none;"
+                            >
+
+                                {% csrf_token %}
+
+                                <textarea
+                                    name="rejection_reason"
+                                    placeholder="Enter rejection reason..."
+                                    required
+                                    style="
+                                        width:100%;
+                                        min-height:80px;
+                                        padding:8px;
+                                        border:1px solid #ddd;
+                                        border-radius:7px;
+                                        box-sizing:border-box;
+                                        font-size:12px;
+                                        margin-bottom:6px;
+                                    "
+                                ></textarea>
+
+
+                                <button
+                                    type="submit"
+                                    style="
+                                        width:100%;
+                                        background:#dc3545;
+                                        color:white;
+                                        padding:7px;
+                                        border:none;
+                                        border-radius:6px;
+                                        font-size:12px;
+                                        font-weight:bold;
+                                        cursor:pointer;
+                                    "
+                                >
+                                    Confirm Rejection
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
+                        {% elif caregiver.userprofile.verification_status == "Verified" %}
+
+                        <span style="
+                            background:#dff7e5;
+                            color:#198754;
+                            padding:7px 10px;
+                            border-radius:7px;
+                            font-size:12px;
+                            font-weight:bold;
+                            display:inline-block;
+                        ">
+                            ✓ Caregiver Verified
+                        </span>
+
+
+                        {% elif caregiver.userprofile.verification_status == "Rejected" %}
+
+                        <div>
+
+                            <span style="
+                                background:#ffe0e0;
+                                color:#dc3545;
+                                padding:7px 10px;
+                                border-radius:7px;
+                                font-size:12px;
+                                font-weight:bold;
+                                display:inline-block;
+                            ">
+                                ✗ Caregiver Rejected
+                            </span>
+
+
+                            {% if caregiver.userprofile.verification_reason %}
+
+                            <div style="
+                                margin-top:8px;
+                                padding:8px;
+                                background:#fff5f5;
+                                border-radius:7px;
+                                font-size:11px;
+                                color:#555;
+                            ">
+                                <strong>Reason:</strong><br>
+                                {{ caregiver.userprofile.verification_reason }}
+                            </div>
+
+                            {% endif %}
+
+                        </div>
 
                         {% endif %}
 
@@ -231,7 +547,7 @@ Manage Caregivers
 
                 <tr>
 
-                    <td colspan="7" style="
+                    <td colspan="10" style="
                         padding:30px;
                         text-align:center;
                         color:#777;
@@ -252,5 +568,31 @@ Manage Caregivers
     </div>
 
 </div>
+
+
+<!-- REJECTION FORM JAVASCRIPT -->
+
+<script>
+
+function showRejectForm(caregiverId) {
+
+    const form = document.getElementById(
+        "reject-form-" + caregiverId
+    );
+
+    if (form.style.display === "none") {
+
+        form.style.display = "block";
+
+    } else {
+
+        form.style.display = "none";
+
+    }
+
+}
+
+</script>
+
 
 {% endblock %}

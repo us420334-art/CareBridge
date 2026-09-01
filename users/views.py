@@ -16,6 +16,7 @@ from .models import (
     RepresentedPerson,
     DirectCaregiverBooking,
     CaregiverPayment,
+    CaregiverDocument,
     DirectVolunteerBooking,
     ServiceRequest,
     MedicineReminder,
@@ -62,6 +63,22 @@ def register(request):
         )
 
         # -------------------------------------------------
+        # CAREGIVER DOCUMENTS
+        # -------------------------------------------------
+
+        identity_document = request.FILES.get(
+            "identity_document"
+        )
+
+        qualification_document = request.FILES.get(
+            "qualification_document"
+        )
+
+        experience_document = request.FILES.get(
+            "experience_document"
+        )
+
+        # -------------------------------------------------
         # Check username
         # -------------------------------------------------
 
@@ -74,6 +91,73 @@ def register(request):
                     "error": "Username already exists."
                 }
             )
+
+        # -------------------------------------------------
+        # CAREGIVER DOCUMENT VALIDATION
+        # -------------------------------------------------
+
+        if role == "Caregiver":
+
+            if not identity_document:
+                return render(
+                    request,
+                    "register.html",
+                    {
+                        "error":
+                        "Please upload your Identity Proof."
+                    }
+                )
+
+            if not qualification_document:
+                return render(
+                    request,
+                    "register.html",
+                    {
+                        "error":
+                        "Please upload your Qualification Certificate."
+                    }
+                )
+
+            if not experience_document:
+                return render(
+                    request,
+                    "register.html",
+                    {
+                        "error":
+                        "Please upload your Experience Certificate."
+                    }
+                )
+
+            # Allowed file types
+            allowed_extensions = [
+                ".pdf",
+                ".jpg",
+                ".jpeg",
+                ".png"
+            ]
+
+            documents = [
+                identity_document,
+                qualification_document,
+                experience_document
+            ]
+
+            for document in documents:
+
+                extension = document.name.lower()
+
+                if not any(
+                    extension.endswith(ext)
+                    for ext in allowed_extensions
+                ):
+                    return render(
+                        request,
+                        "register.html",
+                        {
+                            "error":
+                            "Only PDF, JPG, JPEG and PNG files are allowed."
+                        }
+                    )
 
         # -------------------------------------------------
         # Care Representative details
@@ -231,17 +315,22 @@ def register(request):
         # Create Django user
         # -------------------------------------------------
 
+        # Caregivers remain inactive until admin approval
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password
         )
 
+        if role == "Caregiver":
+            user.is_active = False
+            user.save(update_fields=["is_active"])
+
         # -------------------------------------------------
         # Create UserProfile
         # -------------------------------------------------
 
-        UserProfile.objects.create(
+        profile = UserProfile.objects.create(
             user=user,
             role=role,
             phone=phone,
@@ -251,6 +340,46 @@ def register(request):
             blood_group=blood_group,
             medical_conditions=medical_conditions
         )
+
+        # -------------------------------------------------
+        # CAREGIVER VERIFICATION STATUS
+        # -------------------------------------------------
+
+        if role == "Caregiver":
+
+            profile.verification_status = "Pending"
+            profile.verification_reason = ""
+            profile.save(
+                update_fields=[
+                    "verification_status",
+                    "verification_reason"
+                ]
+            )
+
+            # -------------------------------------------------
+            # Save caregiver documents
+            # -------------------------------------------------
+
+            CaregiverDocument.objects.create(
+                caregiver=user,
+                document_type="Identity Proof",
+                document=identity_document,
+                verification_status="Pending"
+            )
+
+            CaregiverDocument.objects.create(
+                caregiver=user,
+                document_type="Qualification Certificate",
+                document=qualification_document,
+                verification_status="Pending"
+            )
+
+            CaregiverDocument.objects.create(
+                caregiver=user,
+                document_type="Experience Certificate",
+                document=experience_document,
+                verification_status="Pending"
+            )
 
         # -------------------------------------------------
         # Create represented person
@@ -274,10 +403,22 @@ def register(request):
         # SUCCESS MESSAGE
         # -------------------------------------------------
 
-        messages.success(
-            request,
-            "Registration successful! Your CareBridge account has been created. Please login to continue."
-        )
+        if role == "Caregiver":
+
+            messages.success(
+                request,
+                "Caregiver registration submitted successfully! "
+                "Your documents will be reviewed by the CareBridge administrator."
+            )
+
+        else:
+
+            messages.success(
+                request,
+                "Registration successful! "
+                "Your CareBridge account has been created. "
+                "Please login to continue."
+            )
 
         return redirect("/login/")
 
@@ -286,13 +427,11 @@ def register(request):
         "register.html"
     )
 
-
 def user_login(request):
 
     if request.method == "POST":
 
         username = request.POST.get("username")
-
         password = request.POST.get("password")
 
         user = authenticate(
@@ -332,6 +471,7 @@ def user_login(request):
                     user=user
                 )
 
+
                 # -------------------------------------------------
                 # CARE REPRESENTATIVE
                 # -------------------------------------------------
@@ -340,7 +480,8 @@ def user_login(request):
 
                     messages.success(
                         request,
-                        f"💙 Welcome back, {user.username}! You are ready to manage care through CareBridge."
+                        f"💙 Welcome back, {user.username}! "
+                        f"You are ready to manage care through CareBridge."
                     )
 
                     return redirect(
@@ -354,9 +495,76 @@ def user_login(request):
 
                 elif profile.role == "Caregiver":
 
+                    # Only VERIFIED caregivers can enter
+                    # the caregiver dashboard.
+
+                    if profile.verification_status != "Verified":
+
+                        logout(request)
+
+                        # -----------------------------------------
+                        # PENDING CAREGIVER
+                        # -----------------------------------------
+
+                        if profile.verification_status == "Pending":
+
+                            messages.warning(
+                                request,
+                                "⏳ Your caregiver verification is still pending. "
+                                "Your documents are being reviewed by the "
+                                "CareBridge administrator. "
+                                "You will be able to access your caregiver "
+                                "account after approval."
+                            )
+
+                        # -----------------------------------------
+                        # REJECTED CAREGIVER
+                        # -----------------------------------------
+
+                        elif profile.verification_status == "Rejected":
+
+                            reason = profile.verification_reason.strip()
+
+                            if reason:
+
+                                messages.error(
+                                    request,
+                                    f"❌ Caregiver Verification Rejected. "
+                                    f"Your caregiver registration has been rejected. "
+                                    f"Reason: {reason}"
+                                )
+
+                            else:
+
+                                messages.error(
+                                    request,
+                                    "❌ Caregiver Verification Rejected. "
+                                    "Your caregiver registration has been rejected. "
+                                    "No rejection reason was provided."
+                                )
+
+                        # -----------------------------------------
+                        # OTHER VERIFICATION STATUS
+                        # -----------------------------------------
+
+                        else:
+
+                            messages.warning(
+                                request,
+                                "⚠️ Your caregiver account is not currently verified."
+                            )
+
+                        return redirect("login")
+
+
+                    # -----------------------------------------
+                    # VERIFIED CAREGIVER
+                    # -----------------------------------------
+
                     messages.success(
                         request,
-                        f"👋 Welcome back, {user.username}!"
+                        f"👋 Welcome back, {user.username}! "
+                        f"Your caregiver account is verified."
                     )
 
                     return redirect(
@@ -407,17 +615,140 @@ def user_login(request):
                     "dashboard"
                 )
 
+
         else:
+
+            # -------------------------------------------------
+            # CHECK IF AN INACTIVE USER EXISTS
+            # -------------------------------------------------
+
+            try:
+
+                inactive_user = User.objects.get(
+                    username=username
+                )
+
+                # -------------------------------------------------
+                # INACTIVE USER
+                # -------------------------------------------------
+
+                if not inactive_user.is_active:
+
+                    try:
+
+                        profile = UserProfile.objects.get(
+                            user=inactive_user
+                        )
+
+
+                        # =========================================
+                        # INACTIVE CAREGIVER
+                        # =========================================
+
+                        if profile.role == "Caregiver":
+
+
+                            # -------------------------------------
+                            # PENDING
+                            # -------------------------------------
+
+                            if profile.verification_status == "Pending":
+
+                                messages.warning(
+                                    request,
+                                    "⏳ Your caregiver verification is still pending. "
+                                    "Your documents are currently being reviewed "
+                                    "by the CareBridge administrator. "
+                                    "You will be able to log in after approval."
+                                )
+
+                                return redirect("login")
+
+
+                            # -------------------------------------
+                            # REJECTED
+                            # -------------------------------------
+
+                            elif profile.verification_status == "Rejected":
+
+                                reason = profile.verification_reason.strip()
+
+                                if reason:
+
+                                    messages.error(
+                                        request,
+                                        f"❌ Caregiver Verification Rejected. "
+                                        f"Your caregiver registration has been rejected. "
+                                        f"Reason: {reason}"
+                                    )
+
+                                else:
+
+                                    messages.error(
+                                        request,
+                                        "❌ Caregiver Verification Rejected. "
+                                        "Your caregiver registration has been rejected. "
+                                        "No rejection reason was provided by the administrator."
+                                    )
+
+                                return redirect("login")
+
+
+                            # -------------------------------------
+                            # OTHER CAREGIVER STATUS
+                            # -------------------------------------
+
+                            else:
+
+                                messages.warning(
+                                    request,
+                                    "⚠️ Your caregiver account is currently inactive "
+                                    "and cannot be used for login."
+                                )
+
+                                return redirect("login")
+
+
+                        # =========================================
+                        # OTHER INACTIVE USERS
+                        # =========================================
+
+                        else:
+
+                            messages.error(
+                                request,
+                                "Your account is currently inactive. "
+                                "Please contact the CareBridge administrator."
+                            )
+
+                            return redirect("login")
+
+
+                    except UserProfile.DoesNotExist:
+
+                        pass
+
+
+            except User.DoesNotExist:
+
+                pass
+
+
+            # -------------------------------------------------
+            # NORMAL INVALID LOGIN
+            # -------------------------------------------------
 
             messages.error(
                 request,
                 "Invalid Username or Password."
             )
 
+
     return render(
         request,
         "login.html"
     )
+
 
 def dashboard(request):
 
@@ -505,16 +836,33 @@ def profile(request):
 
         base_template = "dashboard/care_rep_base.html"
 
+    elif profile.role == "Caregiver":
+
+        base_template = "dashboard/caregiver_base.html"
+
     else:
 
         base_template = "dashboard/base_dashboard.html"
 
+    # ---------------------------------------------
+    # Caregiver verification documents
+    # ---------------------------------------------
+
+    caregiver_documents = []
+
+    if profile.role == "Caregiver":
+
+        caregiver_documents = CaregiverDocument.objects.filter(
+            caregiver=request.user
+        ).order_by("document_type")
+
     return render(
         request,
-        'dashboard/profile.html',
+        "dashboard/profile.html",
         {
-            'profile': profile,
-            'base_template': base_template,
+            "profile": profile,
+            "base_template": base_template,
+            "caregiver_documents": caregiver_documents,
         }
     )
 
@@ -557,6 +905,7 @@ def edit_profile(request):
 
         # ---------------------------------------------
         # HEALTH & EMERGENCY INFORMATION
+        # Only for normal care users
         # ---------------------------------------------
 
         recipient_roles = [
@@ -594,7 +943,6 @@ def edit_profile(request):
             "Your profile has been updated successfully."
         )
 
-        # IMPORTANT:
         # Return to My Profile after saving
         return redirect("profile")
 
@@ -605,6 +953,10 @@ def edit_profile(request):
     if profile.role == "Care Representative":
 
         base_template = "dashboard/care_rep_base.html"
+
+    elif profile.role == "Caregiver":
+
+        base_template = "dashboard/caregiver_base.html"
 
     else:
 
@@ -622,7 +974,6 @@ def edit_profile(request):
             "base_template": base_template,
         }
     )
-
 
 def user_logout(request):
 
@@ -700,8 +1051,14 @@ def book_caregiver(request):
         user=request.user
     )
 
+    # =====================================================
+    # ONLY VERIFIED + ACTIVE CAREGIVERS
+    # =====================================================
+
     caregivers = UserProfile.objects.filter(
-        role="Caregiver"
+        role="Caregiver",
+        verification_status="Verified",
+        user__is_active=True
     )
 
     # =====================================================
@@ -722,13 +1079,9 @@ def book_caregiver(request):
         caregiver_id = request.POST.get("caregiver_id")
 
         service = request.POST.get("service")
-
         address = request.POST.get("address")
-
         booking_date = request.POST.get("booking_date")
-
         booking_time = request.POST.get("booking_time")
-
         priority = request.POST.get("priority")
 
         description = request.POST.get(
@@ -750,12 +1103,15 @@ def book_caregiver(request):
             return redirect("book_caregiver")
 
         # =================================================
-        # GET CAREGIVER
+        # GET VERIFIED CAREGIVER
         # =================================================
 
         caregiver = get_object_or_404(
             User,
-            id=caregiver_id
+            id=caregiver_id,
+            is_active=True,
+            userprofile__role="Caregiver",
+            userprofile__verification_status="Verified"
         )
 
         # =================================================
@@ -2769,6 +3125,10 @@ def notifications(request):
 
         base_template = "dashboard/care_rep_base.html"
 
+    elif profile.role == "Caregiver":
+
+        base_template = "dashboard/caregiver_base.html"
+
     else:
 
         base_template = "dashboard/base_dashboard.html"
@@ -3233,6 +3593,8 @@ def admin_caregivers(request):
 
     caregivers = User.objects.select_related(
         'userprofile'
+    ).prefetch_related(
+        'caregiver_documents'
     ).filter(
         userprofile__role='Caregiver'
     ).order_by('-date_joined')
@@ -3244,6 +3606,208 @@ def admin_caregivers(request):
             'caregivers': caregivers,
         }
     )
+
+# ==============================
+# ADMIN - VERIFY CAREGIVER
+# ==============================
+
+def admin_verify_caregiver(request, user_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    caregiver = get_object_or_404(
+        User,
+        id=user_id,
+        userprofile__role='Caregiver'
+    )
+
+    profile = caregiver.userprofile
+
+    documents = caregiver.caregiver_documents.all()
+
+    # Required documents
+    required_document_types = {
+        'Identity Proof',
+        'Qualification Certificate',
+        'Experience Certificate'
+    }
+
+    uploaded_document_types = {
+        document.document_type
+        for document in documents
+    }
+
+    # Make sure all required documents exist
+    if not required_document_types.issubset(
+        uploaded_document_types
+    ):
+
+        messages.error(
+            request,
+            "Cannot verify this caregiver because all required documents have not been uploaded."
+        )
+
+        return redirect('admin_caregivers')
+
+
+    # -------------------------------------------------
+    # VERIFY CAREGIVER
+    # -------------------------------------------------
+
+    profile.verification_status = 'Verified'
+    profile.verification_reason = ''
+    profile.save()
+
+
+    # -------------------------------------------------
+    # ACTIVATE CAREGIVER ACCOUNT
+    # -------------------------------------------------
+
+    caregiver.is_active = True
+    caregiver.save()
+
+
+    # -------------------------------------------------
+    # VERIFY ALL DOCUMENTS
+    # -------------------------------------------------
+
+    for document in documents:
+
+        document.verification_status = 'Verified'
+        document.rejection_reason = ''
+        document.save()
+
+
+    # -------------------------------------------------
+    # CREATE NOTIFICATION
+    # -------------------------------------------------
+
+    Notification.objects.create(
+        user=caregiver,
+        notification_type='System',
+        title='Caregiver Account Verified',
+        message=(
+            '🎉 Your CareBridge caregiver account has been '
+            'verified successfully. Your professional documents '
+            'have been reviewed and approved. You can now log in '
+            'and access your caregiver dashboard.'
+        )
+    )
+
+
+    messages.success(
+        request,
+        f"{caregiver.username} has been verified successfully."
+    )
+
+    return redirect('admin_caregivers')
+
+# ==============================
+# ADMIN - REJECT CAREGIVER
+# ==============================
+
+# ==============================
+# ADMIN - REJECT CAREGIVER
+# ==============================
+
+def admin_reject_caregiver(request, user_id):
+
+    if not request.user.is_authenticated:
+        return redirect('/login/')
+
+    if not request.user.is_staff:
+        return redirect('dashboard')
+
+    caregiver = get_object_or_404(
+        User,
+        id=user_id,
+        userprofile__role='Caregiver'
+    )
+
+    profile = caregiver.userprofile
+
+
+    # -------------------------------------------------
+    # REJECTION
+    # -------------------------------------------------
+
+    if request.method == 'POST':
+
+        reason = request.POST.get(
+            'rejection_reason',
+            ''
+        ).strip()
+
+
+        # Reason is required
+
+        if not reason:
+
+            messages.error(
+                request,
+                "Please provide a reason for rejecting the caregiver."
+            )
+
+            return redirect('admin_caregivers')
+
+
+        # -------------------------------------------------
+        # UPDATE CAREGIVER VERIFICATION STATUS
+        # -------------------------------------------------
+
+        profile.verification_status = 'Rejected'
+        profile.verification_reason = reason
+        profile.save()
+
+
+        # -------------------------------------------------
+        # KEEP ACCOUNT INACTIVE
+        # -------------------------------------------------
+
+        caregiver.is_active = False
+        caregiver.save()
+
+
+        # -------------------------------------------------
+        # REJECT DOCUMENTS
+        # -------------------------------------------------
+
+        for document in caregiver.caregiver_documents.all():
+
+            document.verification_status = 'Rejected'
+            document.rejection_reason = reason
+            document.save()
+
+
+        # -------------------------------------------------
+        # CREATE NOTIFICATION
+        # -------------------------------------------------
+
+        Notification.objects.create(
+            user=caregiver,
+            notification_type='System',
+            title='Caregiver Verification Rejected',
+            message=(
+                '❌ Your CareBridge caregiver registration '
+                'was not approved. '
+                f'Reason: {reason}'
+            )
+        )
+
+
+        messages.warning(
+            request,
+            f"{caregiver.username} has been rejected."
+        )
+
+        return redirect('admin_caregivers')
+
+
+    return redirect('admin_caregivers')
 
 # ==============================
 # ADMIN - MANAGE VOLUNTEERS

@@ -10,6 +10,7 @@
     <title>CareBridge Register</title>
 
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -78,6 +79,12 @@
             font-size: 15px;
         }
 
+        input[type="file"] {
+            background: white;
+            padding: 10px;
+            cursor: pointer;
+        }
+
         textarea {
             resize: vertical;
             min-height: 80px;
@@ -142,6 +149,25 @@
             font-size: 14px;
             line-height: 1.5;
         }
+
+        .file-help {
+            display: block;
+            margin-top: 6px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .verification-note {
+            background: #fff8e6;
+            border-left: 4px solid #e0a800;
+            padding: 12px 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            color: #665500;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
     </style>
 
 </head>
@@ -167,7 +193,12 @@
         {% endif %}
 
 
-        <form method="POST">
+        <!-- IMPORTANT:
+             multipart/form-data is required
+             for caregiver document uploads.
+        -->
+
+        <form method="POST" enctype="multipart/form-data">
 
             {% csrf_token %}
 
@@ -185,42 +216,65 @@
                 Username
             </label>
 
-            <input type="text" name="username" required>
+            <input
+                type="text"
+                name="username"
+                required
+            >
 
 
             <label>
                 Email
             </label>
 
-            <input type="email" name="email" required>
+            <input
+                type="email"
+                name="email"
+                required
+            >
 
 
             <label>
                 Password
             </label>
 
-            <input type="password" name="password" required>
+            <input
+                type="password"
+                name="password"
+                required
+            >
 
 
             <label>
                 Phone Number
             </label>
 
-            <input type="text" name="phone" required>
+            <input
+                type="text"
+                name="phone"
+                required
+            >
 
 
             <label>
                 Address
             </label>
 
-            <textarea name="address" required></textarea>
+            <textarea
+                name="address"
+                required
+            ></textarea>
 
 
             <label>
                 Role
             </label>
 
-            <select name="role" id="role" required>
+            <select
+                name="role"
+                id="role"
+                required
+            >
 
                 <option value="">
                     Select Role
@@ -258,7 +312,10 @@
             <!-- ONLY FOR CARE REPRESENTATIVE -->
             <!-- ===================================== -->
 
-            <div id="representative-section" class="conditional-section">
+            <div
+                id="representative-section"
+                class="conditional-section"
+            >
 
                 <h3 class="section-title">
                     💙 Person Being Represented
@@ -278,21 +335,34 @@
                     Full Name
                 </label>
 
-                <input type="text" name="represented_name" id="represented_name">
+                <input
+                    type="text"
+                    name="represented_name"
+                    id="represented_name"
+                >
 
 
                 <label>
                     Age
                 </label>
 
-                <input type="number" name="represented_age" id="represented_age" min="1" max="120">
+                <input
+                    type="number"
+                    name="represented_age"
+                    id="represented_age"
+                    min="1"
+                    max="120"
+                >
 
 
                 <label>
                     Person Type
                 </label>
 
-                <select name="represented_type" id="represented_type">
+                <select
+                    name="represented_type"
+                    id="represented_type"
+                >
 
                     <option value="">
                         Select Type
@@ -317,7 +387,10 @@
                     Relationship
                 </label>
 
-                <select name="represented_relationship" id="represented_relationship">
+                <select
+                    name="represented_relationship"
+                    id="represented_relationship"
+                >
 
                     <option value="">
                         Select Relationship
@@ -362,21 +435,31 @@
                     Phone Number
                 </label>
 
-                <input type="text" name="represented_phone" id="represented_phone">
+                <input
+                    type="text"
+                    name="represented_phone"
+                    id="represented_phone"
+                >
 
 
                 <label>
                     Address
                 </label>
 
-                <textarea name="represented_address" id="represented_address"></textarea>
+                <textarea
+                    name="represented_address"
+                    id="represented_address"
+                ></textarea>
 
 
                 <label>
                     Blood Group
                 </label>
 
-                <select name="represented_blood_group" id="represented_blood_group">
+                <select
+                    name="represented_blood_group"
+                    id="represented_blood_group"
+                >
 
                     <option value="">
                         Select Blood Group
@@ -398,8 +481,111 @@
                     Medical Conditions
                 </label>
 
-                <textarea name="represented_medical_conditions" id="represented_medical_conditions"
-                    placeholder="Optional"></textarea>
+                <textarea
+                    name="represented_medical_conditions"
+                    id="represented_medical_conditions"
+                    placeholder="Optional"
+                ></textarea>
+
+            </div>
+
+
+            <!-- ===================================== -->
+            <!-- CAREGIVER VERIFICATION DOCUMENTS -->
+            <!-- ONLY FOR CAREGIVER -->
+            <!-- ===================================== -->
+
+            <div
+                id="caregiver-document-section"
+                class="conditional-section"
+            >
+
+                <h3 class="section-title">
+                    📄 Caregiver Verification Documents
+                </h3>
+
+
+                <div class="info-box">
+
+                    <strong>Verification Required</strong>
+
+                    <p>
+                        Caregivers must upload the following
+                        documents for CareBridge administrator
+                        verification.
+                    </p>
+
+                    <p>
+                        Your caregiver registration will be
+                        reviewed before your account is activated.
+                    </p>
+
+                </div>
+
+
+                <!-- IDENTITY PROOF -->
+
+                <label for="identity_document">
+                    Identity Proof
+                </label>
+
+                <input
+                    type="file"
+                    name="identity_document"
+                    id="identity_document"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+
+                <small class="file-help">
+                    Accepted formats: PDF, JPG, JPEG, PNG
+                </small>
+
+
+                <!-- QUALIFICATION CERTIFICATE -->
+
+                <label for="qualification_document">
+                    Caregiving Qualification Certificate
+                </label>
+
+                <input
+                    type="file"
+                    name="qualification_document"
+                    id="qualification_document"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+
+                <small class="file-help">
+                    Accepted formats: PDF, JPG, JPEG, PNG
+                </small>
+
+
+                <!-- EXPERIENCE CERTIFICATE -->
+
+                <label for="experience_document">
+                    Experience Certificate
+                </label>
+
+                <input
+                    type="file"
+                    name="experience_document"
+                    id="experience_document"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                >
+
+                <small class="file-help">
+                    Accepted formats: PDF, JPG, JPEG, PNG
+                </small>
+
+
+                <div class="verification-note">
+
+                    <strong>Important:</strong>
+
+                    Your caregiver registration will remain
+                    pending until the CareBridge administrator
+                    reviews and approves your submitted documents.
+
+                </div>
 
             </div>
 
@@ -409,7 +595,10 @@
             <!-- ONLY FOR CARE RECIPIENTS -->
             <!-- ===================================== -->
 
-            <div id="recipient-extra-section" class="conditional-section">
+            <div
+                id="recipient-extra-section"
+                class="conditional-section"
+            >
 
                 <h3 class="section-title">
                     🩺 Health & Emergency Information
@@ -429,22 +618,33 @@
                     Emergency Contact Name
                 </label>
 
-                <input type="text" name="emergency_contact_name" id="emergency_contact_name">
+                <input
+                    type="text"
+                    name="emergency_contact_name"
+                    id="emergency_contact_name"
+                >
 
 
                 <label>
                     Emergency Contact Email
                 </label>
 
-                <input type="email" name="emergency_contact_email" id="emergency_contact_email"
-                    placeholder="Emergency contact's email address">
+                <input
+                    type="email"
+                    name="emergency_contact_email"
+                    id="emergency_contact_email"
+                    placeholder="Emergency contact's email address"
+                >
 
 
                 <label>
                     Blood Group
                 </label>
 
-                <select name="blood_group" id="blood_group">
+                <select
+                    name="blood_group"
+                    id="blood_group"
+                >
 
                     <option value="">
                         Select Blood Group
@@ -466,7 +666,11 @@
                     Medical Conditions
                 </label>
 
-                <textarea name="medical_conditions" id="medical_conditions" placeholder="Optional"></textarea>
+                <textarea
+                    name="medical_conditions"
+                    id="medical_conditions"
+                    placeholder="Optional"
+                ></textarea>
 
             </div>
 
@@ -513,8 +717,13 @@
             );
 
 
-        /*
-         * ============================================
+        const caregiverDocumentSection =
+            document.getElementById(
+                "caregiver-document-section"
+            );
+
+
+        /* ============================================
          * Fields inside Care Representative section
          * ============================================
          */
@@ -548,8 +757,7 @@
         ];
 
 
-        /*
-         * ============================================
+        /* ============================================
          * Fields inside recipient health section
          * ============================================
          */
@@ -575,8 +783,29 @@
         ];
 
 
-        /*
+        /* ============================================
+         * Caregiver document fields
          * ============================================
+         */
+
+        const caregiverDocumentFields = [
+
+            document.getElementById(
+                "identity_document"
+            ),
+
+            document.getElementById(
+                "qualification_document"
+            ),
+
+            document.getElementById(
+                "experience_document"
+            )
+
+        ];
+
+
+        /* ============================================
          * Set required fields
          * ============================================
          */
@@ -589,7 +818,9 @@
             fields.forEach(
                 function (field) {
 
-                    field.required = required;
+                    if (field) {
+                        field.required = required;
+                    }
 
                 }
             );
@@ -597,8 +828,7 @@
         }
 
 
-        /*
-         * ============================================
+        /* ============================================
          * Show / Hide sections according to role
          * ============================================
          */
@@ -609,8 +839,7 @@
                 roleSelect.value;
 
 
-            /*
-             * ========================================
+            /* ========================================
              * CARE REPRESENTATIVE
              * ========================================
              */
@@ -626,11 +855,11 @@
                 recipientExtraSection.style.display =
                     "none";
 
+                caregiverDocumentSection.style.display =
+                    "none";
 
-                /*
-                 * Represented person's
-                 * important fields are required.
-                 */
+
+                /* Represented person fields required */
 
                 setRequired(
                     representedFields,
@@ -642,11 +871,15 @@
                     false
                 );
 
+                setRequired(
+                    caregiverDocumentFields,
+                    false
+                );
+
             }
 
 
-            /*
-             * ========================================
+            /* ========================================
              * CARE RECIPIENTS
              * ========================================
              */
@@ -674,14 +907,13 @@
                 recipientExtraSection.style.display =
                     "block";
 
+                caregiverDocumentSection.style.display =
+                    "none";
+
 
                 /*
                  * Emergency information is optional
                  * during registration.
-                 *
-                 * The Emergency SOS page will check
-                 * whether these details exist before
-                 * allowing an SOS alert.
                  */
 
                 setRequired(
@@ -694,12 +926,59 @@
                     false
                 );
 
+                setRequired(
+                    caregiverDocumentFields,
+                    false
+                );
+
             }
 
 
-            /*
+            /* ========================================
+             * CAREGIVER
              * ========================================
-             * CAREGIVER / VOLUNTEER / EMPTY
+             */
+
+            else if (
+                selectedRole ===
+                "Caregiver"
+            ) {
+
+                representativeSection.style.display =
+                    "none";
+
+                recipientExtraSection.style.display =
+                    "none";
+
+                caregiverDocumentSection.style.display =
+                    "block";
+
+
+                setRequired(
+                    representedFields,
+                    false
+                );
+
+                setRequired(
+                    recipientFields,
+                    false
+                );
+
+                /*
+                 * All three caregiver documents
+                 * are required.
+                 */
+
+                setRequired(
+                    caregiverDocumentFields,
+                    true
+                );
+
+            }
+
+
+            /* ========================================
+             * VOLUNTEER / EMPTY
              * ========================================
              */
 
@@ -709,6 +988,9 @@
                     "none";
 
                 recipientExtraSection.style.display =
+                    "none";
+
+                caregiverDocumentSection.style.display =
                     "none";
 
 
@@ -722,13 +1004,17 @@
                     false
                 );
 
+                setRequired(
+                    caregiverDocumentFields,
+                    false
+                );
+
             }
 
         }
 
 
-        /*
-         * ============================================
+        /* ============================================
          * Detect role change
          * ============================================
          */
@@ -739,8 +1025,7 @@
         );
 
 
-        /*
-         * ============================================
+        /* ============================================
          * Run when page loads
          * ============================================
          */

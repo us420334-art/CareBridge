@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# =====================================================
+# USER PROFILE
+# =====================================================
+
 class UserProfile(models.Model):
 
     ROLE_CHOICES = [
@@ -13,6 +17,12 @@ class UserProfile(models.Model):
         ('Volunteer', 'Volunteer'),
     ]
 
+    VERIFICATION_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Verified', 'Verified'),
+        ('Rejected', 'Rejected'),
+    ]
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE
@@ -21,6 +31,21 @@ class UserProfile(models.Model):
     role = models.CharField(
         max_length=50,
         choices=ROLE_CHOICES
+    )
+
+    # =====================================================
+    # CAREGIVER VERIFICATION
+    # =====================================================
+
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VERIFICATION_STATUS_CHOICES,
+        default='Pending'
+    )
+
+    verification_reason = models.TextField(
+        blank=True,
+        default=''
     )
 
     language = models.CharField(
@@ -59,6 +84,66 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+
+# =====================================================
+# CAREGIVER DOCUMENT
+# =====================================================
+
+class CaregiverDocument(models.Model):
+
+    DOCUMENT_TYPE_CHOICES = [
+        ('Identity Proof', 'Identity Proof'),
+        ('Qualification Certificate', 'Qualification Certificate'),
+        ('Experience Certificate', 'Experience Certificate'),
+    ]
+
+    VERIFICATION_STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Verified', 'Verified'),
+        ('Rejected', 'Rejected'),
+    ]
+
+    caregiver = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='caregiver_documents'
+    )
+
+    document_type = models.CharField(
+        max_length=50,
+        choices=DOCUMENT_TYPE_CHOICES
+    )
+
+    document = models.FileField(
+        upload_to='caregiver_documents/'
+    )
+
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VERIFICATION_STATUS_CHOICES,
+        default='Pending'
+    )
+
+    rejection_reason = models.TextField(
+        blank=True,
+        default=''
+    )
+
+    uploaded_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return (
+            f"{self.caregiver.username} - "
+            f"{self.document_type} - "
+            f"{self.verification_status}"
+        )
+
+
+# =====================================================
+# REPRESENTED PERSON
+# =====================================================
 
 class RepresentedPerson(models.Model):
 
@@ -125,8 +210,15 @@ class RepresentedPerson(models.Model):
     )
 
     def __str__(self):
-        return f"{self.full_name} - represented by {self.care_representative.username}"
+        return (
+            f"{self.full_name} - "
+            f"represented by {self.care_representative.username}"
+        )
 
+
+# =====================================================
+# DIRECT CAREGIVER BOOKING
+# =====================================================
 
 class DirectCaregiverBooking(models.Model):
 
@@ -259,6 +351,10 @@ class DirectCaregiverBooking(models.Model):
         )
 
 
+# =====================================================
+# CAREGIVER PAYMENT
+# =====================================================
+
 class CaregiverPayment(models.Model):
 
     STATUS_CHOICES = [
@@ -325,7 +421,11 @@ class CaregiverPayment(models.Model):
             f"{self.status}"
         )
 
-    
+
+# =====================================================
+# DIRECT VOLUNTEER BOOKING
+# =====================================================
+
 class DirectVolunteerBooking(models.Model):
 
     STATUS_CHOICES = [
@@ -457,6 +557,10 @@ class DirectVolunteerBooking(models.Model):
         )
 
 
+# =====================================================
+# SERVICE REQUEST
+# =====================================================
+
 class ServiceRequest(models.Model):
 
     PRIORITY_CHOICES = [
@@ -499,6 +603,10 @@ class ServiceRequest(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.priority}"
 
+
+# =====================================================
+# MEDICINE REMINDER
+# =====================================================
 
 class MedicineReminder(models.Model):
 
@@ -544,6 +652,10 @@ class MedicineReminder(models.Model):
         return f"{self.user.username} - {self.medicine_name}"
 
 
+# =====================================================
+# EMERGENCY SOS
+# =====================================================
+
 class EmergencySOS(models.Model):
 
     user = models.ForeignKey(
@@ -575,8 +687,15 @@ class EmergencySOS(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.username} - Emergency SOS - {self.status}"
+        return (
+            f"{self.user.username} - "
+            f"Emergency SOS - {self.status}"
+        )
 
+
+# =====================================================
+# FEEDBACK
+# =====================================================
 
 class Feedback(models.Model):
 
@@ -634,8 +753,15 @@ class Feedback(models.Model):
                 f"{self.rating} Stars"
             )
 
-        return f"{self.user.username} - {self.rating} Stars"
+        return (
+            f"{self.user.username} - "
+            f"{self.rating} Stars"
+        )
 
+
+# =====================================================
+# NOTIFICATION
+# =====================================================
 
 class Notification(models.Model):
 

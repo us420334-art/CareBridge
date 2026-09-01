@@ -50,6 +50,17 @@ path(
     name='admin_caregivers'
 ),
 path(
+    'admin-caregivers/<int:user_id>/verify/',
+    views.admin_verify_caregiver,
+    name='admin_verify_caregiver'
+),
+
+path(
+    'admin-caregivers/<int:user_id>/reject/',
+    views.admin_reject_caregiver,
+    name='admin_reject_caregiver'
+),
+path(
     'admin-volunteers/',
     views.admin_volunteers,
     name='admin_volunteers'
