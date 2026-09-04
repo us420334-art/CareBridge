@@ -171,3 +171,5 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # ------------------------------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
