@@ -442,10 +442,7 @@ def user_login(request):
 
         if user is not None:
 
-            login(
-                request,
-                user
-            )
+            login(request, user)
 
             # -------------------------------------------------
             # ADMIN / STAFF
@@ -460,7 +457,6 @@ def user_login(request):
 
                 return redirect("admin_dashboard")
 
-
             # -------------------------------------------------
             # GET PROFILE
             # -------------------------------------------------
@@ -471,7 +467,6 @@ def user_login(request):
                     user=user
                 )
 
-
                 # -------------------------------------------------
                 # CARE REPRESENTATIVE
                 # -------------------------------------------------
@@ -480,14 +475,12 @@ def user_login(request):
 
                     messages.success(
                         request,
-                        f"💙 Welcome back, {user.username}! "
-                        f"You are ready to manage care through CareBridge."
+                        f"Welcome back, {user.username}! 👋"
                     )
 
                     return redirect(
                         "care_rep_dashboard"
                     )
-
 
                 # -------------------------------------------------
                 # CAREGIVER
@@ -556,21 +549,18 @@ def user_login(request):
 
                         return redirect("login")
 
-
                     # -----------------------------------------
                     # VERIFIED CAREGIVER
                     # -----------------------------------------
 
                     messages.success(
                         request,
-                        f"👋 Welcome back, {user.username}! "
-                        f"Your caregiver account is verified."
+                        f"Welcome back, {user.username}! 👋"
                     )
 
                     return redirect(
                         "caregiver_dashboard"
                     )
-
 
                 # -------------------------------------------------
                 # VOLUNTEER
@@ -580,13 +570,12 @@ def user_login(request):
 
                     messages.success(
                         request,
-                        f"👋 Welcome back, {user.username}!"
+                        f"Welcome back, {user.username}! 👋"
                     )
 
                     return redirect(
                         "volunteer_dashboard"
                     )
-
 
                 # -------------------------------------------------
                 # NORMAL CARE USER
@@ -596,13 +585,12 @@ def user_login(request):
 
                     messages.success(
                         request,
-                        f"👋 Welcome back, {user.username}!"
+                        f"Welcome back, {user.username}! 👋"
                     )
 
                     return redirect(
                         "dashboard"
                     )
-
 
             except UserProfile.DoesNotExist:
 
@@ -614,7 +602,6 @@ def user_login(request):
                 return redirect(
                     "dashboard"
                 )
-
 
         else:
 
@@ -628,10 +615,6 @@ def user_login(request):
                     username=username
                 )
 
-                # -------------------------------------------------
-                # INACTIVE USER
-                # -------------------------------------------------
-
                 if not inactive_user.is_active:
 
                     try:
@@ -640,13 +623,11 @@ def user_login(request):
                             user=inactive_user
                         )
 
-
                         # =========================================
                         # INACTIVE CAREGIVER
                         # =========================================
 
                         if profile.role == "Caregiver":
-
 
                             # -------------------------------------
                             # PENDING
@@ -663,7 +644,6 @@ def user_login(request):
                                 )
 
                                 return redirect("login")
-
 
                             # -------------------------------------
                             # REJECTED
@@ -693,7 +673,6 @@ def user_login(request):
 
                                 return redirect("login")
 
-
                             # -------------------------------------
                             # OTHER CAREGIVER STATUS
                             # -------------------------------------
@@ -707,7 +686,6 @@ def user_login(request):
                                 )
 
                                 return redirect("login")
-
 
                         # =========================================
                         # OTHER INACTIVE USERS
@@ -723,16 +701,13 @@ def user_login(request):
 
                             return redirect("login")
 
-
                     except UserProfile.DoesNotExist:
 
                         pass
 
-
             except User.DoesNotExist:
 
                 pass
-
 
             # -------------------------------------------------
             # NORMAL INVALID LOGIN
@@ -743,12 +718,10 @@ def user_login(request):
                 "Invalid Username or Password."
             )
 
-
     return render(
         request,
         "login.html"
     )
-
 
 def dashboard(request):
 
@@ -1190,13 +1163,21 @@ def book_caregiver(request):
             )
 
         # =================================================
-        # SUCCESS
+        # CAREBRIDGE NOTIFICATION
         # =================================================
 
-        messages.success(
-            request,
-            "Caregiver booking request sent successfully."
+        create_notification(
+            caregiver,
+            "Booking",
+            "New Caregiver Booking Request",
+            (
+                f"{request.user.get_full_name() or request.user.username} "
+                f"has sent you a caregiver booking request."
+            )
         )
+
+        # No messages.success() here.
+        # The event is shown in CareBridge Notifications.
 
         return redirect("book_caregiver")
 
@@ -1222,7 +1203,6 @@ def book_caregiver(request):
             "base_template": base_template,
         }
     )
-
 
 @login_required
 def caregiver_dashboard(request):
@@ -1290,16 +1270,8 @@ def caregiver_requests(request):
 @login_required
 def send_caregiver_bill(request, booking_id):
 
-    # =====================================================
-    # ONLY CAREGIVERS CAN SEND BILLS
-    # =====================================================
-
     if request.user.userprofile.role != "Caregiver":
         return redirect("dashboard")
-
-    # =====================================================
-    # GET BOOKING
-    # =====================================================
 
     booking = get_object_or_404(
         DirectCaregiverBooking,
@@ -1307,147 +1279,82 @@ def send_caregiver_bill(request, booking_id):
         caregiver=request.user
     )
 
-    # =====================================================
-    # ONLY PENDING BOOKINGS CAN RECEIVE A BILL
-    # =====================================================
-
     if booking.status != "Pending":
-
         messages.warning(
             request,
             "A bill can only be sent for a pending caregiver request."
         )
-
         return redirect("caregiver_requests")
-
-    # =====================================================
-    # CHECK WHETHER A PAYMENT ALREADY EXISTS
-    # =====================================================
 
     existing_payment = CaregiverPayment.objects.filter(
         booking=booking
     ).first()
 
     if existing_payment:
-
         messages.warning(
             request,
             "A bill has already been created for this booking."
         )
-
         return redirect("caregiver_requests")
-
-    # =====================================================
-    # POST
-    # =====================================================
 
     if request.method == "POST":
 
         amount = request.POST.get("amount", "").strip()
 
-        # -------------------------------------------------
-        # CHECK AMOUNT
-        # -------------------------------------------------
-
         if not amount:
-
             messages.error(
                 request,
                 "Please enter a bill amount."
             )
-
             return redirect("caregiver_requests")
 
         try:
-
             amount = Decimal(amount)
-
         except (InvalidOperation, ValueError):
-
             messages.error(
                 request,
                 "Please enter a valid amount."
             )
-
             return redirect("caregiver_requests")
 
-        # -------------------------------------------------
-        # AMOUNT MUST BE GREATER THAN ZERO
-        # -------------------------------------------------
-
         if amount <= 0:
-
             messages.error(
                 request,
                 "Bill amount must be greater than ₹0."
             )
-
             return redirect("caregiver_requests")
 
-        # -------------------------------------------------
-        # CREATE PAYMENT/BILL
-        # -------------------------------------------------
-
         payment = CaregiverPayment.objects.create(
-
             booking=booking,
-
             amount=amount,
-
             status="Pending"
-
         )
 
-        # =================================================
-        # NOTIFY USER / CARE REPRESENTATIVE
-        # =================================================
-
         create_notification(
-
             booking.user,
-
             "Booking",
-
             "Caregiver Bill Received",
-
             (
                 f"Your caregiver has sent a bill of "
                 f"₹{payment.amount} for the requested "
                 f"caregiver service. Please review the bill "
                 f"and proceed with payment or cancel the bill."
             )
-
         )
 
-        # =================================================
-        # SUCCESS MESSAGE
-        # =================================================
-
-        messages.success(
-
-            request,
-
-            f"Bill of ₹{payment.amount} sent successfully."
-
-        )
+        # No messages.success() here.
+        # The event is shown in CareBridge Notifications.
 
         return redirect("caregiver_requests")
 
-    # =====================================================
-    # GET
-    # =====================================================
-
     return render(
-
         request,
-
         "dashboard/send_caregiver_bill.html",
-
         {
             "booking": booking,
         }
-
     )
+
 
 @login_required
 def view_caregiver_bill(request, booking_id):
@@ -1503,61 +1410,25 @@ def pay_caregiver_bill(request, payment_id):
 
     booking = payment.booking
 
-    # Only booking owner can pay
     if booking.user != request.user:
         messages.error(
             request,
             "You are not authorized to make this payment."
         )
-        return redirect("my_bookings")
+        return redirect("dashboard")
 
-    # Payment must still be pending
     if payment.status != "Pending":
         messages.warning(
             request,
-            "This payment has already been processed."
+            "This payment is no longer pending."
         )
         return redirect("my_bookings")
-
-    # -------------------------------------------------
-    # PAYMENT CHECKOUT PAGE
-    # -------------------------------------------------
-
-    if request.method == "GET":
-
-        profile = get_object_or_404(
-            UserProfile,
-            user=request.user
-        )
-
-        if profile.role == "Care Representative":
-            base_template = "dashboard/care_rep_base.html"
-        else:
-            base_template = "dashboard/base_dashboard.html"
-
-        return render(
-            request,
-            "dashboard/caregiver_payment.html",
-            {
-                "payment": payment,
-                "booking": booking,
-                "base_template": base_template,
-            }
-        )
-
-    # -------------------------------------------------
-    # PROCESS DEMO PAYMENT
-    # -------------------------------------------------
 
     if request.method == "POST":
 
         payment_method = request.POST.get("payment_method")
 
-        if payment_method not in [
-            "UPI",
-            "Card",
-            "Net Banking"
-        ]:
+        if payment_method not in ["UPI", "Card", "Net Banking"]:
             messages.error(
                 request,
                 "Please select a valid payment method."
@@ -1567,51 +1438,48 @@ def pay_caregiver_bill(request, payment_id):
                 payment_id=payment.id
             )
 
-        # Demo payment — no real money transaction
         payment.status = "Paid"
         payment.paid_at = timezone.now()
         payment.save()
 
-        # -------------------------------------------------
-        # NOTIFY CAREGIVER
-        # -------------------------------------------------
-
         create_notification(
             booking.caregiver,
-            "Booking",
+            "Payment",
             "Payment Received",
             (
                 f"Payment of ₹{payment.amount} has been received "
-                f"for the caregiver booking of "
-                f"{booking.user.get_full_name() or booking.user.username}. "
-                f"You can now accept or reject the booking."
+                f"for your caregiver service booking."
             )
         )
-
-        # -------------------------------------------------
-        # NOTIFY USER
-        # -------------------------------------------------
 
         create_notification(
             request.user,
-            "Booking",
+            "Payment",
             "Payment Successful",
             (
-                f"Your payment of ₹{payment.amount} for the caregiver "
-                f"service was successful using {payment_method}. "
-                f"The caregiver can now accept or reject your booking."
+                f"Your payment of ₹{payment.amount} for the "
+                f"caregiver service was completed successfully "
+                f"using {payment_method}."
             )
         )
 
-        messages.success(
-            request,
-            "Payment completed successfully."
-        )
+        # No messages.success() here.
+        # The event is shown in CareBridge Notifications.
 
         return redirect("my_bookings")
 
+    return render(
+        request,
+        "dashboard/pay_caregiver_bill.html",
+        {
+            "payment": payment,
+            "booking": booking,
+        }
+    )
+
 @login_required
 def cancel_caregiver_payment(request, payment_id):
+
     payment = get_object_or_404(
         CaregiverPayment,
         id=payment_id
@@ -1619,78 +1487,70 @@ def cancel_caregiver_payment(request, payment_id):
 
     booking = payment.booking
 
-    # Only the user who made the booking can cancel the payment
     if booking.user != request.user:
         messages.error(
             request,
             "You are not authorized to cancel this payment."
         )
+        return redirect("dashboard")
+
+    if payment.status != "Pending":
+        messages.warning(
+            request,
+            "This payment can no longer be cancelled."
+        )
         return redirect("my_bookings")
 
-    # Payment can only be cancelled while it is pending
-    if payment.status != "Pending":
-        messages.error(
-            request,
-            "This payment cannot be cancelled."
-        )
-        return redirect(
-            "view_caregiver_bill",
-            booking_id=booking.id
-        )
-
     if request.method == "POST":
-        cancellation_feedback = request.POST.get(
-            "cancellation_feedback",
+
+        cancellation_reason = request.POST.get(
+            "cancellation_reason",
             ""
         ).strip()
 
-        # Cancellation reason is required
-        if not cancellation_feedback:
+        if not cancellation_reason:
             messages.error(
                 request,
-                "Please provide a reason for cancellation."
+                "Please provide a cancellation reason."
             )
             return redirect(
-                "view_caregiver_bill",
-                booking_id=booking.id
+                "cancel_caregiver_payment",
+                payment_id=payment.id
             )
 
-        # Cancel the payment
         payment.status = "Cancelled"
-        payment.cancellation_reason = cancellation_feedback
+        payment.cancellation_reason = cancellation_reason
         payment.save()
 
-        # Cancel the caregiver booking
         booking.status = "Cancelled"
         booking.save()
 
-        # Notify caregiver
         create_notification(
             booking.caregiver,
-            "Booking",
+            "Payment",
             "Caregiver Payment Cancelled",
-            f"The payment for the caregiver request from "
-            f"{booking.user.get_full_name() or booking.user.username} "
-            f"has been cancelled."
+            (
+                f"The caregiver payment of ₹{payment.amount} "
+                f"was cancelled by the requester. "
+                f"Reason: {cancellation_reason}"
+            )
         )
 
-        # Notify requester
         create_notification(
-            booking.user,
-            "Booking",
+            request.user,
+            "Payment",
             "Caregiver Request Cancelled",
-            "Your caregiver request has been cancelled because "
-            "the payment was cancelled."
+            (
+                f"Your caregiver payment of ₹{payment.amount} "
+                f"and caregiver request have been cancelled."
+            )
         )
 
-        messages.success(
-            request,
-            "Payment and caregiver request cancelled successfully."
-        )
+        # No messages.success() here.
+        # The event is shown in CareBridge Notifications.
 
         return redirect("my_bookings")
 
-    # GET request → show cancellation form
     return render(
         request,
         "dashboard/cancel_caregiver_payment.html",
@@ -1699,7 +1559,6 @@ def cancel_caregiver_payment(request, payment_id):
             "booking": booking,
         }
     )
-
 
 @login_required
 def my_bookings(request):
@@ -1825,10 +1684,8 @@ def accept_caregiver_booking(request, booking_id):
         )
     )
 
-    messages.success(
-        request,
-        "Booking accepted successfully."
-    )
+    # No messages.success() here.
+    # The event is shown in CareBridge Notifications.
 
     return redirect("caregiver_dashboard")
 
@@ -1889,10 +1746,8 @@ def reject_caregiver_booking(request, booking_id):
         )
     )
 
-    messages.success(
-        request,
-        "Booking rejected."
-    )
+    # No messages.success() here.
+    # The event is shown in CareBridge Notifications.
 
     return redirect("caregiver_dashboard")
 
@@ -2490,10 +2345,8 @@ def caregiver_schedule(request):
 
 
 
+@login_required
 def complete_caregiver_service(request, booking_id):
-
-    if not request.user.is_authenticated:
-        return redirect('/login/')
 
     booking = get_object_or_404(
         DirectCaregiverBooking,
@@ -2518,15 +2371,15 @@ def complete_caregiver_service(request, booking_id):
         f"has been completed successfully."
     )
 
-    print("COMPLETION NOTIFICATION CREATED FOR:", booking.user.username)
-
-    messages.success(
-        request,
-        "Service marked as completed successfully."
+    print(
+        "COMPLETION NOTIFICATION CREATED FOR:",
+        booking.user.username
     )
 
-    return redirect('caregiver_dashboard')
+    # No messages.success() here.
+    # The event is shown in CareBridge Notifications.
 
+    return redirect("caregiver_dashboard")
 
 def completed_services(request):
 
