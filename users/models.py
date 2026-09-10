@@ -220,6 +220,10 @@ class RepresentedPerson(models.Model):
 # DIRECT CAREGIVER BOOKING
 # =====================================================
 
+# =====================================================
+# DIRECT CAREGIVER BOOKING
+# =====================================================
+
 class DirectCaregiverBooking(models.Model):
 
     STATUS_CHOICES = [
@@ -311,6 +315,11 @@ class DirectCaregiverBooking(models.Model):
         blank=True
     )
 
+    # NEW: SERVICE DURATION IN HOURS
+    duration = models.PositiveIntegerField(
+        default=1
+    )
+
     priority = models.CharField(
         max_length=20,
         choices=PRIORITY_CHOICES,
@@ -349,8 +358,6 @@ class DirectCaregiverBooking(models.Model):
             f"{self.user.username} "
             f"booked {self.caregiver.username}"
         )
-
-
 # =====================================================
 # CAREGIVER PAYMENT
 # =====================================================
@@ -421,6 +428,10 @@ class CaregiverPayment(models.Model):
             f"{self.status}"
         )
 
+
+# =====================================================
+# DIRECT VOLUNTEER BOOKING
+# =====================================================
 
 # =====================================================
 # DIRECT VOLUNTEER BOOKING
@@ -517,6 +528,11 @@ class DirectVolunteerBooking(models.Model):
         blank=True
     )
 
+    # NEW: SERVICE DURATION IN HOURS
+    duration = models.PositiveIntegerField(
+        default=1
+    )
+
     priority = models.CharField(
         max_length=20,
         choices=PRIORITY_CHOICES,
@@ -555,7 +571,6 @@ class DirectVolunteerBooking(models.Model):
             f"{self.user.username} "
             f"booked {self.volunteer.username}"
         )
-
 
 # =====================================================
 # SERVICE REQUEST

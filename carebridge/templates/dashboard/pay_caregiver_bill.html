@@ -1,0 +1,354 @@
+{% extends base_template %}
+
+{% block title %}Pay Caregiver Bill{% endblock %}
+
+{% block content %}
+
+<style>
+    .payment-page {
+        max-width: 850px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .payment-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .payment-header h1 {
+        margin-bottom: 8px;
+        color: #1f2937;
+    }
+
+    .payment-header p {
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .payment-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    .bill-summary {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 25px;
+    }
+
+    .bill-summary h2 {
+        margin-top: 0;
+        margin-bottom: 18px;
+        color: #111827;
+        font-size: 20px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #6b7280;
+        font-weight: 600;
+    }
+
+    .detail-value {
+        color: #111827;
+        text-align: right;
+    }
+
+    .amount-box {
+        background: #eefbf3;
+        border: 1px solid #b7e4c7;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .amount-label {
+        color: #4b5563;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+
+    .amount {
+        font-size: 32px;
+        font-weight: 700;
+        color: #15803d;
+    }
+
+    .payment-method-section {
+        margin-top: 25px;
+    }
+
+    .payment-method-section h3 {
+        margin-bottom: 15px;
+        color: #111827;
+    }
+
+    .payment-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .payment-option {
+        position: relative;
+    }
+
+    .payment-option input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .payment-option label {
+        display: block;
+        padding: 18px 12px;
+        text-align: center;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        cursor: pointer;
+        background: #ffffff;
+        transition: 0.2s ease;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .payment-option label:hover {
+        border-color: #93c5fd;
+        background: #f8fbff;
+    }
+
+    .payment-option input:checked+label {
+        border-color: #2563eb;
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .payment-button {
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        padding: 15px 20px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        background: #2563eb;
+        color: white;
+        transition: 0.2s ease;
+    }
+
+    .payment-button:hover {
+        background: #1d4ed8;
+    }
+
+    .cancel-button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        text-decoration: none;
+        margin-top: 12px;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        background: #fef2f2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .cancel-button:hover {
+        background: #fee2e2;
+    }
+
+    .demo-note {
+        margin-top: 22px;
+        padding: 15px;
+        border-radius: 10px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+        .payment-page {
+            margin: 20px auto;
+            padding: 12px;
+        }
+
+        .payment-card {
+            padding: 20px;
+        }
+
+        .payment-options {
+            grid-template-columns: 1fr;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-value {
+            text-align: left;
+        }
+    }
+</style>
+
+<div class="payment-page">
+
+    <div class="payment-header">
+        <h1>💳 Pay Caregiver Bill</h1>
+        <p>Complete the payment for your caregiver service.</p>
+    </div>
+
+    <div class="payment-card">
+
+        <!-- BOOKING DETAILS -->
+        <div class="bill-summary">
+
+            <h2>📋 Booking Details</h2>
+
+            <div class="detail-row">
+                <span class="detail-label">Caregiver</span>
+                <span class="detail-value">
+                    {{ booking.caregiver.get_full_name|default:booking.caregiver.username }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Service</span>
+                <span class="detail-value">
+                    {{ booking.service_type }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value">
+                    {{ booking.booking_date }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Time</span>
+                <span class="detail-value">
+                    {{ booking.booking_time }}
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value">
+                    {{ booking.duration }} hour(s)
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Priority</span>
+                <span class="detail-value">
+                    {{ booking.priority }}
+                </span>
+            </div>
+
+        </div>
+
+
+        <!-- BILL AMOUNT -->
+        <div class="amount-box">
+
+            <div class="amount-label">
+                Amount to Pay
+            </div>
+
+            <div class="amount">
+                ₹{{ payment.amount }}
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT FORM -->
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="payment-method-section">
+
+                <h3>💳 Select Payment Method</h3>
+
+                <div class="payment-options">
+
+                    <div class="payment-option">
+                        <input type="radio" name="payment_method" value="UPI" id="upi" required>
+
+                        <label for="upi">
+                            📱 UPI
+                        </label>
+                    </div>
+
+
+                    <div class="payment-option">
+                        <input type="radio" name="payment_method" value="Card" id="card">
+
+                        <label for="card">
+                            💳 Card
+                        </label>
+                    </div>
+
+
+                    <div class="payment-option">
+                        <input type="radio" name="payment_method" value="Net Banking" id="netbanking">
+
+                        <label for="netbanking">
+                            🏦 Net Banking
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="payment-button">
+                💰 Pay ₹{{ payment.amount }} Now
+            </button>
+
+        </form>
+
+
+        <!-- CANCEL PAYMENT -->
+        <a href="{% url 'cancel_caregiver_payment' payment.id %}" class="cancel-button">
+            Cancel Payment
+        </a>
+
+
+        <!-- DEMO PAYMENT NOTE -->
+        <div class="demo-note">
+            <strong>ℹ️ Academic Project Demo</strong><br>
+            This is a simulated payment for the CareBridge academic project.
+            No real money will be transferred.
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

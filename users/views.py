@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import DirectCaregiverBooking
 from decimal import Decimal, InvalidOperation
+from datetime import datetime, timedelta
 
 from .models import (
     UserProfile,
@@ -1014,10 +1015,103 @@ def care_rep_dashboard(request):
         }
     )
 
-def book_caregiver(request):
+# =====================================================
+# BOOKING TIME OVERLAP CHECK
+# =====================================================
 
-    if not request.user.is_authenticated:
-        return redirect('/login/')
+def has_booking_overlap(
+    booking_model,
+    helper_field,
+    helper,
+    booking_date,
+    booking_time,
+    duration
+):
+    """
+    Check whether the selected helper already has
+    an active booking that overlaps the requested
+    date and time period.
+
+    Only Pending and Accepted bookings block a slot.
+    Rejected, Cancelled and Completed bookings do not.
+    """
+
+    try:
+        selected_date = datetime.strptime(
+            booking_date,
+            "%Y-%m-%d"
+        ).date()
+
+        selected_time = datetime.strptime(
+            booking_time,
+            "%H:%M"
+        ).time()
+
+    except (ValueError, TypeError):
+        return False
+
+    requested_start = datetime.combine(
+        selected_date,
+        selected_time
+    )
+
+    requested_end = (
+        requested_start +
+        timedelta(hours=duration)
+    )
+
+    active_bookings = booking_model.objects.filter(
+        **{
+            helper_field: helper,
+            "booking_date": selected_date,
+            "status__in": ["Pending", "Accepted"]
+        }
+    )
+
+    for existing_booking in active_bookings:
+
+        if not existing_booking.booking_time:
+            continue
+
+        existing_start = datetime.combine(
+            existing_booking.booking_date,
+            existing_booking.booking_time
+        )
+
+        existing_duration = (
+            existing_booking.duration or 1
+        )
+
+        existing_end = (
+            existing_start +
+            timedelta(hours=existing_duration)
+        )
+
+        # -------------------------------------------------
+        # OVERLAP CONDITION
+        # -------------------------------------------------
+        #
+        # Existing: 10 AM - 12 PM
+        # New:       9 AM - 11 AM
+        #
+        # They overlap.
+        #
+        # Existing: 10 AM - 12 PM
+        # New:      12 PM - 2 PM
+        #
+        # They do NOT overlap.
+        # -------------------------------------------------
+
+        if (
+            requested_start < existing_end
+            and requested_end > existing_start
+        ):
+            return True
+
+    return False
+
+@login_required
+def book_caregiver(request):
 
     profile = get_object_or_404(
         UserProfile,
@@ -1035,7 +1129,7 @@ def book_caregiver(request):
     )
 
     # =====================================================
-    # CHECK ACTIVE BOOKING
+    # CHECK ACTIVE BOOKING FOR CURRENT USER
     # =====================================================
 
     active_booking = DirectCaregiverBooking.objects.filter(
@@ -1049,13 +1143,35 @@ def book_caregiver(request):
 
     if request.method == "POST":
 
-        caregiver_id = request.POST.get("caregiver_id")
+        caregiver_id = request.POST.get(
+            "caregiver_id"
+        )
 
-        service = request.POST.get("service")
-        address = request.POST.get("address")
-        booking_date = request.POST.get("booking_date")
-        booking_time = request.POST.get("booking_time")
-        priority = request.POST.get("priority")
+        service = request.POST.get(
+            "service"
+        )
+
+        address = request.POST.get(
+            "address"
+        )
+
+        booking_date = request.POST.get(
+            "booking_date"
+        )
+
+        booking_time = request.POST.get(
+            "booking_time"
+        )
+
+        # NEW
+        duration_value = request.POST.get(
+            "duration",
+            "1"
+        )
+
+        priority = request.POST.get(
+            "priority"
+        )
 
         description = request.POST.get(
             "description",
@@ -1076,6 +1192,99 @@ def book_caregiver(request):
             return redirect("book_caregiver")
 
         # =================================================
+        # VALIDATE DURATION
+        # =================================================
+
+        try:
+
+            duration = int(duration_value)
+
+        except (ValueError, TypeError):
+
+            messages.error(
+                request,
+                "Please select a valid service duration."
+            )
+
+            return redirect("book_caregiver")
+
+        if duration < 1 or duration > 8:
+
+            messages.error(
+                request,
+                "Service duration must be between 1 and 8 hours."
+            )
+
+            return redirect("book_caregiver")
+
+        # =================================================
+        # VALIDATE DATE
+        # =================================================
+
+        try:
+
+            selected_date = datetime.strptime(
+                booking_date,
+                "%Y-%m-%d"
+            ).date()
+
+        except (ValueError, TypeError):
+
+            messages.error(
+                request,
+                "Please select a valid booking date."
+            )
+
+            return redirect("book_caregiver")
+
+        # =================================================
+        # VALIDATE TIME
+        # =================================================
+
+        try:
+
+            selected_time = datetime.strptime(
+                booking_time,
+                "%H:%M"
+            ).time()
+
+        except (ValueError, TypeError):
+
+            messages.error(
+                request,
+                "Please select a valid booking time."
+            )
+
+            return redirect("book_caregiver")
+
+        # =================================================
+        # CALCULATE END TIME
+        # =================================================
+
+        booking_start = datetime.combine(
+            selected_date,
+            selected_time
+        )
+
+        booking_end = (
+            booking_start +
+            timedelta(hours=duration)
+        )
+
+        # =================================================
+        # MAKE SURE BOOKING DOES NOT CROSS MIDNIGHT
+        # =================================================
+
+        if booking_end.date() != selected_date:
+
+            messages.error(
+                request,
+                "A booking cannot continue into the next day."
+            )
+
+            return redirect("book_caregiver")
+
+        # =================================================
         # GET VERIFIED CAREGIVER
         # =================================================
 
@@ -1086,6 +1295,28 @@ def book_caregiver(request):
             userprofile__role="Caregiver",
             userprofile__verification_status="Verified"
         )
+
+        # =================================================
+        # CHECK CAREGIVER AVAILABILITY
+        # =================================================
+
+        if has_booking_overlap(
+            DirectCaregiverBooking,
+            "caregiver",
+            caregiver,
+            booking_date,
+            booking_time,
+            duration
+        ):
+
+            messages.warning(
+                request,
+                "The selected caregiver is already booked during "
+                "part or all of this time period. Please choose "
+                "another time."
+            )
+
+            return redirect("book_caregiver")
 
         # =================================================
         # CARE REPRESENTATIVE REQUEST
@@ -1100,26 +1331,28 @@ def book_caregiver(request):
 
             DirectCaregiverBooking.objects.create(
 
-                # The care representative is technically
-                # the user creating the booking
+                # The care representative is the requester
                 user=request.user,
 
                 caregiver=caregiver,
 
-                # IMPORTANT
+                # Care Representative information
                 is_care_representative_request=True,
 
                 care_representative=request.user,
 
                 represented_person=represented_person,
 
+                # Service information
                 service=service,
 
                 address=address,
 
-                booking_date=booking_date,
+                booking_date=selected_date,
 
-                booking_time=booking_time,
+                booking_time=selected_time,
+
+                duration=duration,
 
                 priority=priority,
 
@@ -1140,20 +1373,23 @@ def book_caregiver(request):
 
                 caregiver=caregiver,
 
-                # IMPORTANT
+                # Normal user booking
                 is_care_representative_request=False,
 
                 care_representative=None,
 
                 represented_person=None,
 
+                # Service information
                 service=service,
 
                 address=address,
 
-                booking_date=booking_date,
+                booking_date=selected_date,
 
-                booking_time=booking_time,
+                booking_time=selected_time,
+
+                duration=duration,
 
                 priority=priority,
 
@@ -1172,7 +1408,8 @@ def book_caregiver(request):
             "New Caregiver Booking Request",
             (
                 f"{request.user.get_full_name() or request.user.username} "
-                f"has sent you a caregiver booking request."
+                f"has sent you a caregiver booking request for "
+                f"{duration} hour(s)."
             )
         )
 
@@ -1410,12 +1647,20 @@ def pay_caregiver_bill(request, payment_id):
 
     booking = payment.booking
 
+    # -------------------------------------------------
+    # CHECK USER AUTHORIZATION
+    # -------------------------------------------------
+
     if booking.user != request.user:
         messages.error(
             request,
             "You are not authorized to make this payment."
         )
         return redirect("dashboard")
+
+    # -------------------------------------------------
+    # PAYMENT MUST STILL BE PENDING
+    # -------------------------------------------------
 
     if payment.status != "Pending":
         messages.warning(
@@ -1424,23 +1669,54 @@ def pay_caregiver_bill(request, payment_id):
         )
         return redirect("my_bookings")
 
+    # -------------------------------------------------
+    # SELECT DASHBOARD LAYOUT
+    # -------------------------------------------------
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role == "Care Representative":
+        base_template = "dashboard/care_rep_base.html"
+    else:
+        base_template = "dashboard/base_dashboard.html"
+
+    # -------------------------------------------------
+    # PROCESS PAYMENT
+    # -------------------------------------------------
+
     if request.method == "POST":
 
         payment_method = request.POST.get("payment_method")
 
-        if payment_method not in ["UPI", "Card", "Net Banking"]:
+        if payment_method not in [
+            "UPI",
+            "Card",
+            "Net Banking"
+        ]:
             messages.error(
                 request,
                 "Please select a valid payment method."
             )
+
             return redirect(
                 "pay_caregiver_bill",
                 payment_id=payment.id
             )
 
+        # -------------------------------------------------
+        # DEMO PAYMENT
+        # -------------------------------------------------
+
         payment.status = "Paid"
         payment.paid_at = timezone.now()
         payment.save()
+
+        # -------------------------------------------------
+        # NOTIFY CAREGIVER
+        # -------------------------------------------------
 
         create_notification(
             booking.caregiver,
@@ -1451,6 +1727,10 @@ def pay_caregiver_bill(request, payment_id):
                 f"for your caregiver service booking."
             )
         )
+
+        # -------------------------------------------------
+        # NOTIFY USER
+        # -------------------------------------------------
 
         create_notification(
             request.user,
@@ -1463,10 +1743,14 @@ def pay_caregiver_bill(request, payment_id):
             )
         )
 
-        # No messages.success() here.
+        # No messages.success().
         # The event is shown in CareBridge Notifications.
 
         return redirect("my_bookings")
+
+    # -------------------------------------------------
+    # SHOW PAYMENT PAGE
+    # -------------------------------------------------
 
     return render(
         request,
@@ -1474,6 +1758,7 @@ def pay_caregiver_bill(request, payment_id):
         {
             "payment": payment,
             "booking": booking,
+            "base_template": base_template,
         }
     )
 
@@ -2031,7 +2316,10 @@ def confirm_volunteer_booking(request, volunteer_id):
 
             return redirect("care_rep_dashboard")
 
-        # Check active booking
+        # ---------------------------------------------
+        # Check active booking for this Care Representative
+        # ---------------------------------------------
+
         active_booking = DirectVolunteerBooking.objects.filter(
             care_representative=request.user,
             status__in=["Pending", "Accepted"]
@@ -2047,6 +2335,148 @@ def confirm_volunteer_booking(request, volunteer_id):
             return redirect("care_rep_dashboard")
 
         if request.method == "POST":
+
+            # ---------------------------------------------
+            # Get booking duration
+            # ---------------------------------------------
+
+            duration = request.POST.get(
+                "duration",
+                "1"
+            )
+
+            try:
+                duration = int(duration)
+            except (ValueError, TypeError):
+
+                messages.error(
+                    request,
+                    "Please select a valid service duration."
+                )
+
+                return redirect(
+                    "confirm_volunteer_booking",
+                    volunteer_id=volunteer.id
+                )
+
+            # ---------------------------------------------
+            # Validate duration
+            # ---------------------------------------------
+
+            if duration < 1 or duration > 8:
+
+                messages.error(
+                    request,
+                    "Service duration must be between 1 and 8 hours."
+                )
+
+                return redirect(
+                    "confirm_volunteer_booking",
+                    volunteer_id=volunteer.id
+                )
+
+            booking_date = request.POST.get(
+                "booking_date"
+            )
+
+            booking_time = request.POST.get(
+                "booking_time"
+            )
+
+            # ---------------------------------------------
+            # Validate date and time
+            # ---------------------------------------------
+
+            if not booking_date or not booking_time:
+
+                messages.error(
+                    request,
+                    "Please select both booking date and booking time."
+                )
+
+                return redirect(
+                    "confirm_volunteer_booking",
+                    volunteer_id=volunteer.id
+                )
+
+            try:
+
+                selected_date = datetime.strptime(
+                    booking_date,
+                    "%Y-%m-%d"
+                ).date()
+
+                selected_time = datetime.strptime(
+                    booking_time,
+                    "%H:%M"
+                ).time()
+
+            except (ValueError, TypeError):
+
+                messages.error(
+                    request,
+                    "Please select a valid booking date and time."
+                )
+
+                return redirect(
+                    "confirm_volunteer_booking",
+                    volunteer_id=volunteer.id
+                )
+
+            # ---------------------------------------------
+            # Check whether service crosses midnight
+            # ---------------------------------------------
+
+            requested_start = datetime.combine(
+                selected_date,
+                selected_time
+            )
+
+            requested_end = (
+                requested_start +
+                timedelta(hours=duration)
+            )
+
+            if requested_end.date() != selected_date:
+
+                messages.error(
+                    request,
+                    "Volunteer service must finish on the same day. "
+                    "Please choose an earlier starting time or shorter duration."
+                )
+
+                return redirect(
+                    "confirm_volunteer_booking",
+                    volunteer_id=volunteer.id
+                )
+
+            # ---------------------------------------------
+            # Check volunteer slot overlap
+            # ---------------------------------------------
+
+            if has_booking_overlap(
+                DirectVolunteerBooking,
+                "volunteer",
+                volunteer,
+                booking_date,
+                booking_time,
+                duration
+            ):
+
+                messages.error(
+                    request,
+                    "This volunteer is already booked during the selected time slot. "
+                    "Please choose another time."
+                )
+
+                return redirect(
+                    "confirm_volunteer_booking",
+                    volunteer_id=volunteer.id
+                )
+
+            # ---------------------------------------------
+            # Create Care Representative volunteer booking
+            # ---------------------------------------------
 
             booking = DirectVolunteerBooking.objects.create(
 
@@ -2073,13 +2503,11 @@ def confirm_volunteer_booking(request, volunteer_id):
                     represented_person.address
                 ),
 
-                booking_date=request.POST.get(
-                    "booking_date"
-                ) or None,
+                booking_date=selected_date,
 
-                booking_time=request.POST.get(
-                    "booking_time"
-                ) or None,
+                booking_time=selected_time,
+
+                duration=duration,
 
                 priority=request.POST.get(
                     "priority",
@@ -2105,7 +2533,8 @@ def confirm_volunteer_booking(request, volunteer_id):
                 message=(
                     f"{request.user.get_full_name() or request.user.username} "
                     f"has requested your volunteer service for "
-                    f"{represented_person.full_name}."
+                    f"{represented_person.full_name} "
+                    f"for {duration} hour(s)."
                 )
             )
 
@@ -2137,6 +2566,148 @@ def confirm_volunteer_booking(request, volunteer_id):
 
     if request.method == "POST":
 
+        # ---------------------------------------------
+        # Get booking duration
+        # ---------------------------------------------
+
+        duration = request.POST.get(
+            "duration",
+            "1"
+        )
+
+        try:
+            duration = int(duration)
+        except (ValueError, TypeError):
+
+            messages.error(
+                request,
+                "Please select a valid service duration."
+            )
+
+            return redirect(
+                "confirm_volunteer_booking",
+                volunteer_id=volunteer.id
+            )
+
+        # ---------------------------------------------
+        # Validate duration
+        # ---------------------------------------------
+
+        if duration < 1 or duration > 8:
+
+            messages.error(
+                request,
+                "Service duration must be between 1 and 8 hours."
+            )
+
+            return redirect(
+                "confirm_volunteer_booking",
+                volunteer_id=volunteer.id
+            )
+
+        booking_date = request.POST.get(
+            "booking_date"
+        )
+
+        booking_time = request.POST.get(
+            "booking_time"
+        )
+
+        # ---------------------------------------------
+        # Validate date and time
+        # ---------------------------------------------
+
+        if not booking_date or not booking_time:
+
+            messages.error(
+                request,
+                "Please select both booking date and booking time."
+            )
+
+            return redirect(
+                "confirm_volunteer_booking",
+                volunteer_id=volunteer.id
+            )
+
+        try:
+
+            selected_date = datetime.strptime(
+                booking_date,
+                "%Y-%m-%d"
+            ).date()
+
+            selected_time = datetime.strptime(
+                booking_time,
+                "%H:%M"
+            ).time()
+
+        except (ValueError, TypeError):
+
+            messages.error(
+                request,
+                "Please select a valid booking date and time."
+            )
+
+            return redirect(
+                "confirm_volunteer_booking",
+                volunteer_id=volunteer.id
+            )
+
+        # ---------------------------------------------
+        # Check whether service crosses midnight
+        # ---------------------------------------------
+
+        requested_start = datetime.combine(
+            selected_date,
+            selected_time
+        )
+
+        requested_end = (
+            requested_start +
+            timedelta(hours=duration)
+        )
+
+        if requested_end.date() != selected_date:
+
+            messages.error(
+                request,
+                "Volunteer service must finish on the same day. "
+                "Please choose an earlier starting time or shorter duration."
+            )
+
+            return redirect(
+                "confirm_volunteer_booking",
+                volunteer_id=volunteer.id
+            )
+
+        # ---------------------------------------------
+        # Check volunteer slot overlap
+        # ---------------------------------------------
+
+        if has_booking_overlap(
+            DirectVolunteerBooking,
+            "volunteer",
+            volunteer,
+            booking_date,
+            booking_time,
+            duration
+        ):
+
+            messages.error(
+                request,
+                "This volunteer is already booked during the selected time slot. "
+                "Please choose another time."
+            )
+
+            return redirect(
+                "confirm_volunteer_booking",
+                volunteer_id=volunteer.id
+            )
+
+        # ---------------------------------------------
+        # Create normal user volunteer booking
+        # ---------------------------------------------
+
         booking = DirectVolunteerBooking.objects.create(
 
             user=request.user,
@@ -2159,13 +2730,11 @@ def confirm_volunteer_booking(request, volunteer_id):
                 ""
             ),
 
-            booking_date=request.POST.get(
-                "booking_date"
-            ) or None,
+            booking_date=selected_date,
 
-            booking_time=request.POST.get(
-                "booking_time"
-            ) or None,
+            booking_time=selected_time,
+
+            duration=duration,
 
             priority=request.POST.get(
                 "priority",
@@ -2190,7 +2759,8 @@ def confirm_volunteer_booking(request, volunteer_id):
             title="New Direct Booking Request",
             message=(
                 f"{request.user.get_full_name() or request.user.username} "
-                f"has sent you a direct volunteer booking request."
+                f"has sent you a direct volunteer booking request "
+                f"for {duration} hour(s)."
             )
         )
 
@@ -2209,7 +2779,6 @@ def confirm_volunteer_booking(request, volunteer_id):
             "profile": profile,
         }
     )
-
 
 @login_required
 def volunteer_dashboard(request):
