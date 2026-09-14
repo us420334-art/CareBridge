@@ -181,17 +181,26 @@ Notifications
 
                     <!-- =================================================
                          NOTIFICATION TITLE
+                         CLICKING IT MARKS THE NOTIFICATION AS READ
                     ================================================== -->
 
-                    <h3 style="
-                        margin:0;
-                        color:#1f2937;
-                        font-size:16px;
-                    ">
+                    <a href="{% url 'mark_notification_read' notification.id %}"
+                       style="
+                           text-decoration:none;
+                           color:#1f2937;
+                       ">
 
-                        {{ notification.title }}
+                        <h3 style="
+                            margin:0;
+                            color:#1f2937;
+                            font-size:16px;
+                        ">
 
-                    </h3>
+                            {{ notification.title }}
+
+                        </h3>
+
+                    </a>
 
 
                     <!-- =================================================
