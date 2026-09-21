@@ -1,6 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -10,7 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
+
         {% block title %}CareBridge{% endblock %}
+
     </title>
 
 
@@ -19,8 +22,11 @@
     ====================================================== -->
 
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=999">
+
     <link rel="stylesheet" href="{% static 'css/profile.css' %}?v=1">
+
     <link rel="stylesheet" href="{% static 'css/care_representatives.css' %}?v=1">
+
 
     {% block extra_css %}
     {% endblock %}
@@ -35,13 +41,19 @@
             box-sizing: border-box;
         }
 
+
         body {
             margin: 0;
+
             padding: 0;
+
             font-family: Arial, Helvetica, sans-serif;
+
             background: #f5f8fb;
+
             color: #333;
         }
+
 
         a {
             text-decoration: none;
@@ -54,12 +66,17 @@
 
         .sidebar {
             position: fixed;
+
             left: 0;
+
             top: 0;
+
             width: 250px;
+
             height: 100vh;
 
             background: #1b6ca8;
+
             color: white;
 
             overflow-y: auto;
@@ -69,6 +86,7 @@
             box-shadow: 3px 0 15px rgba(0, 0, 0, 0.12);
         }
 
+
         .logo {
             padding: 25px 20px;
 
@@ -76,6 +94,7 @@
 
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
+
 
         .logo h2 {
             margin: 0;
@@ -85,6 +104,7 @@
             color: white;
         }
 
+
         .logo p {
             margin: 8px 0 0 0;
 
@@ -92,6 +112,7 @@
 
             color: rgba(255, 255, 255, 0.85);
         }
+
 
         .sidebar ul {
             list-style: none;
@@ -101,9 +122,11 @@
             margin: 0;
         }
 
+
         .sidebar ul li {
             margin: 4px 12px;
         }
+
 
         .sidebar ul li a {
             display: flex;
@@ -122,6 +145,7 @@
 
             transition: 0.2s ease;
         }
+
 
         .sidebar ul li a:hover {
             background: rgba(255, 255, 255, 0.15);
@@ -165,6 +189,7 @@
             gap: 20px;
         }
 
+
         .topbar h2 {
             margin: 0;
 
@@ -172,6 +197,7 @@
 
             color: #1f2937;
         }
+
 
         .top-right {
             display: flex;
@@ -185,6 +211,7 @@
             flex-wrap: wrap;
         }
 
+
         .username {
             font-size: 14px;
 
@@ -194,6 +221,7 @@
 
             white-space: nowrap;
         }
+
 
         .logout {
             color: #dc3545;
@@ -205,8 +233,41 @@
             white-space: nowrap;
         }
 
+
         .logout:hover {
             text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           NOTIFICATION DOT
+        ====================================================== */
+
+        .notification-icon {
+            position: relative;
+
+            display: inline-block;
+
+            line-height: 1;
+        }
+
+
+        .notification-dot {
+            position: absolute;
+
+            top: -4px;
+
+            right: -6px;
+
+            width: 8px;
+
+            height: 8px;
+
+            background: #ff3b30;
+
+            border: 2px solid #1b6ca8;
+
+            border-radius: 50%;
         }
 
 
@@ -235,6 +296,7 @@
 
             flex-shrink: 0;
         }
+
 
         .language-switcher button {
             display: inline-flex !important;
@@ -266,9 +328,11 @@
             opacity: 1 !important;
         }
 
+
         .language-switcher button:hover {
             background: white;
         }
+
 
         .language-switcher button.active {
             background: #1b6ca8;
@@ -301,6 +365,7 @@
             margin-bottom: 30px;
         }
 
+
         .card {
             background: white;
 
@@ -318,12 +383,14 @@
             transition: 0.2s ease;
         }
 
+
         .card:hover {
             transform: translateY(-4px);
 
             box-shadow:
                 0 10px 25px rgba(0, 0, 0, 0.12);
         }
+
 
         .card h3 {
             margin-top: 0;
@@ -334,6 +401,7 @@
 
             font-size: 18px;
         }
+
 
         .card p {
             margin: 0;
@@ -363,17 +431,20 @@
             border: 1px solid #e5e7eb;
         }
 
+
         .profile h2 {
             margin-top: 0;
 
             color: #1b6ca8;
         }
 
+
         .profile p {
             margin: 10px 0;
 
             color: #4b5563;
         }
+
 
         .badge {
             display: inline-block;
@@ -412,6 +483,7 @@
             z-index: 9999;
         }
 
+
         .toast {
             display: flex;
 
@@ -433,25 +505,31 @@
             border-left: 5px solid;
         }
 
+
         .toast.success {
             border-left-color: #28a745;
         }
+
 
         .toast.error {
             border-left-color: #dc3545;
         }
 
+
         .toast.warning {
             border-left-color: #f59e0b;
         }
+
 
         .toast.info {
             border-left-color: #1b6ca8;
         }
 
+
         .toast-icon {
             font-size: 22px;
         }
+
 
         .toast-content {
             flex: 1;
@@ -460,6 +538,7 @@
 
             font-size: 14px;
         }
+
 
         .toast-close {
             background: none;
@@ -488,9 +567,11 @@
                 height: auto;
             }
 
+
             .main {
                 margin-left: 0;
             }
+
 
             .topbar {
                 min-height: 80px;
@@ -504,6 +585,7 @@
                 gap: 12px;
             }
 
+
             .top-right {
                 width: 100%;
 
@@ -512,17 +594,21 @@
                 flex-wrap: wrap;
             }
 
+
             .language-switcher {
                 display: flex !important;
             }
+
 
             .content {
                 padding: 15px;
             }
 
+
             .cards {
                 grid-template-columns: 1fr;
             }
+
         }
     </style>
 
@@ -530,8 +616,6 @@
 
 
 <body>
-
-
     <!-- =====================================================
          TOAST MESSAGES
     ====================================================== -->
@@ -565,12 +649,18 @@
 
             </div>
 
+
             <div class="toast-content">
+
                 {{ message }}
+
             </div>
 
+
             <button type="button" class="toast-close" onclick="closeToast(this)">
+
                 ×
+
             </button>
 
         </div>
@@ -588,9 +678,11 @@
 
     <div class="sidebar">
 
+
         <div class="logo">
 
             <h2>❤️ CareBridge</h2>
+
 
             {% if request.user.userprofile.language == "ml" %}
 
@@ -612,7 +704,9 @@
         <ul>
 
 
-            <!-- DASHBOARD -->
+            <!-- =================================================
+                 DASHBOARD
+            ================================================== -->
 
             <li>
 
@@ -621,9 +715,13 @@
                     🏠
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     ഡാഷ്ബോർഡ്
+
                     {% else %}
+
                     Dashboard
+
                     {% endif %}
 
                 </a>
@@ -631,7 +729,9 @@
             </li>
 
 
-            <!-- SERVICE REQUESTS -->
+            <!-- =================================================
+                 SERVICE REQUESTS
+            ================================================== -->
 
             <li>
 
@@ -640,9 +740,13 @@
                     📝
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     സേവന അഭ്യർത്ഥനകൾ
+
                     {% else %}
+
                     Service Requests
+
                     {% endif %}
 
                 </a>
@@ -650,7 +754,9 @@
             </li>
 
 
-            <!-- BOOK CAREGIVER -->
+            <!-- =================================================
+                 BOOK CAREGIVER
+            ================================================== -->
 
             <li>
 
@@ -659,9 +765,13 @@
                     👨‍⚕️
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     കെയർഗിവറെ ബുക്ക് ചെയ്യുക
+
                     {% else %}
+
                     Book Caregiver
+
                     {% endif %}
 
                 </a>
@@ -669,7 +779,9 @@
             </li>
 
 
-            <!-- BOOK VOLUNTEER -->
+            <!-- =================================================
+                 BOOK VOLUNTEER
+            ================================================== -->
 
             <li>
 
@@ -678,9 +790,13 @@
                     🤝
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     വോളന്റിയറെ ബുക്ക് ചെയ്യുക
+
                     {% else %}
+
                     Book Volunteer
+
                     {% endif %}
 
                 </a>
@@ -688,7 +804,9 @@
             </li>
 
 
-            <!-- MY BOOKINGS -->
+            <!-- =================================================
+                 MY BOOKINGS
+            ================================================== -->
 
             <li>
 
@@ -697,9 +815,13 @@
                     📋
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     എന്റെ ബുക്കിംഗുകൾ
+
                     {% else %}
+
                     My Bookings
+
                     {% endif %}
 
                 </a>
@@ -707,7 +829,9 @@
             </li>
 
 
-            <!-- EMERGENCY SOS -->
+            <!-- =================================================
+                 EMERGENCY SOS
+            ================================================== -->
 
             <li>
 
@@ -716,9 +840,13 @@
                     🚑
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     അടിയന്തര SOS
+
                     {% else %}
+
                     Emergency SOS
+
                     {% endif %}
 
                 </a>
@@ -726,7 +854,9 @@
             </li>
 
 
-            <!-- MEDICINE -->
+            <!-- =================================================
+                 MEDICINE
+            ================================================== -->
 
             <li>
 
@@ -735,9 +865,13 @@
                     💊
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     മരുന്ന് ഓർമ്മപ്പെടുത്തലുകൾ
+
                     {% else %}
+
                     Medicine Reminders
+
                     {% endif %}
 
                 </a>
@@ -745,18 +879,35 @@
             </li>
 
 
-            <!-- NOTIFICATIONS -->
+            <!-- =================================================
+                 NOTIFICATIONS
+            ================================================== -->
 
             <li>
 
                 <a href="{% url 'notifications' %}">
 
-                    🔔
+                    <span class="notification-icon">
+
+                        🔔
+
+                        {% if unread_notifications_count > 0 %}
+
+                        <span class="notification-dot"></span>
+
+                        {% endif %}
+
+                    </span>
+
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     അറിയിപ്പുകൾ
+
                     {% else %}
+
                     Notifications
+
                     {% endif %}
 
                 </a>
@@ -764,7 +915,9 @@
             </li>
 
 
-            <!-- FEEDBACK -->
+            <!-- =================================================
+                 FEEDBACK
+            ================================================== -->
 
             <li>
 
@@ -773,9 +926,13 @@
                     ⭐
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     അഭിപ്രായം
+
                     {% else %}
+
                     Feedback
+
                     {% endif %}
 
                 </a>
@@ -783,7 +940,9 @@
             </li>
 
 
-            <!-- PROFILE -->
+            <!-- =================================================
+                 PROFILE
+            ================================================== -->
 
             <li>
 
@@ -792,9 +951,13 @@
                     👤
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     എന്റെ പ്രൊഫൈൽ
+
                     {% else %}
+
                     My Profile
+
                     {% endif %}
 
                 </a>
@@ -802,7 +965,9 @@
             </li>
 
 
-            <!-- LOGOUT -->
+            <!-- =================================================
+                 LOGOUT
+            ================================================== -->
 
             <li>
 
@@ -811,9 +976,13 @@
                     🚪
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     ലോഗൗട്ട്
+
                     {% else %}
+
                     Logout
+
                     {% endif %}
 
                 </a>
@@ -823,9 +992,8 @@
 
         </ul>
 
+
     </div>
-
-
     <!-- =====================================================
          MAIN
     ====================================================== -->
@@ -840,26 +1008,33 @@
         <div class="topbar">
 
 
-            <!-- PAGE TITLE -->
+            <!-- =================================================
+                 PAGE TITLE
+            ================================================== -->
 
             <div>
 
                 <h2>
 
                     {% block page_title %}
+
                     Dashboard
+
                     {% endblock %}
 
                 </h2>
 
 
-                <!-- WELCOME -->
+                <!-- =================================================
+                     WELCOME
+                ================================================== -->
 
                 {% if request.user.userprofile.language == "ml" %}
 
                 <p style="color:#777; margin-top:5px;">
 
                     വീണ്ടും സ്വാഗതം,
+
                     {{ request.user.first_name|default:request.user.username }}
 
                 </p>
@@ -869,6 +1044,7 @@
                 <p style="color:#777; margin-top:5px;">
 
                     Welcome back,
+
                     {{ request.user.first_name|default:request.user.username }}
 
                 </p>
@@ -898,7 +1074,9 @@
 
                     <button type="submit" name="language" value="en"
                         class="{% if request.user.userprofile.language == 'en' %}active{% endif %}">
+
                         🇬🇧 English
+
                     </button>
 
 
@@ -906,13 +1084,17 @@
 
                     <button type="submit" name="language" value="ml"
                         class="{% if request.user.userprofile.language == 'ml' %}active{% endif %}">
+
                         🇮🇳 മലയാളം
+
                     </button>
 
                 </form>
 
 
-                <!-- USERNAME -->
+                <!-- =================================================
+                     USERNAME
+                ================================================== -->
 
                 <span class="username">
 
@@ -921,20 +1103,27 @@
                 </span>
 
 
-                <!-- LOGOUT -->
+                <!-- =================================================
+                     LOGOUT
+                ================================================== -->
 
                 <a href="{% url 'logout' %}" class="logout">
 
                     {% if request.user.userprofile.language == "ml" %}
+
                     ലോഗൗട്ട്
+
                     {% else %}
+
                     Logout
+
                     {% endif %}
 
                 </a>
 
 
             </div>
+
 
         </div>
 
@@ -946,19 +1135,19 @@
         <div class="content">
 
             {% block content %}
+
             {% endblock %}
 
         </div>
 
 
     </div>
-
-
     <!-- =====================================================
          JAVASCRIPT
     ====================================================== -->
 
     <script>
+
 
         function closeToast(button) {
 
@@ -984,9 +1173,11 @@
             const toasts =
                 document.querySelectorAll("[data-toast]");
 
+
             toasts.forEach(function (toast) {
 
                 toast.style.opacity = "0";
+
 
                 setTimeout(function () {
 
@@ -997,6 +1188,7 @@
             });
 
         }, 4000);
+
 
     </script>
 

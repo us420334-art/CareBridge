@@ -12,8 +12,8 @@ Caregiver Requests
 
 <style>
     /* =====================================================
-   PAGE
-===================================================== */
+       PAGE
+    ===================================================== */
 
     .caregiver-page {
         max-width: 1400px;
@@ -23,8 +23,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   HEADER
-===================================================== */
+       HEADER
+    ===================================================== */
 
     .dashboard-header {
         display: flex;
@@ -58,8 +58,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   SECTION HEADER
-===================================================== */
+       SECTION HEADER
+    ===================================================== */
 
     .section-header {
         margin-bottom: 22px;
@@ -78,8 +78,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   REQUEST TYPE CARDS
-===================================================== */
+       REQUEST TYPE CARDS
+    ===================================================== */
 
     .request-type-grid {
         display: grid;
@@ -144,8 +144,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   REQUEST SECTIONS
-===================================================== */
+       REQUEST SECTIONS
+    ===================================================== */
 
     .request-section {
         display: none;
@@ -188,8 +188,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   BOOKING CARDS
-===================================================== */
+       BOOKING CARDS
+    ===================================================== */
 
     .bookings-container {
         display: flex;
@@ -232,8 +232,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   STATUS
-===================================================== */
+       STATUS
+    ===================================================== */
 
     .status {
         display: inline-block;
@@ -270,8 +270,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   PERSON BOX
-===================================================== */
+       PERSON BOX
+    ===================================================== */
 
     .person-box {
         background: #f8fafc;
@@ -308,8 +308,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   BOOKING DETAILS
-===================================================== */
+       BOOKING DETAILS
+    ===================================================== */
 
     .booking-details {
         display: grid;
@@ -330,8 +330,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   DESCRIPTION
-===================================================== */
+       DESCRIPTION
+    ===================================================== */
 
     .description-box {
         background: #fafafa;
@@ -355,8 +355,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   PAYMENT BOX
-===================================================== */
+       PAYMENT BOX
+    ===================================================== */
 
     .payment-box {
         background: #f8fafc;
@@ -436,8 +436,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   BILL MESSAGE
-===================================================== */
+       BILL MESSAGE
+    ===================================================== */
 
     .bill-required-message {
         background: #fff8e1;
@@ -471,8 +471,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   ACTION BUTTONS
-===================================================== */
+       ACTION BUTTONS
+    ===================================================== */
 
     .booking-actions {
         display: flex;
@@ -529,8 +529,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   COMPLETED / REJECTED / CANCELLED MESSAGES
-===================================================== */
+       COMPLETED / REJECTED / CANCELLED MESSAGES
+    ===================================================== */
 
     .completed-message {
         background: #e8f5e9;
@@ -558,8 +558,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   EMPTY STATE
-===================================================== */
+       EMPTY STATE
+    ===================================================== */
 
     .empty-state {
         background: white;
@@ -587,8 +587,8 @@ Caregiver Requests
 
 
     /* =====================================================
-   RESPONSIVE
-===================================================== */
+       RESPONSIVE
+    ===================================================== */
 
     @media(max-width: 900px) {
 
@@ -621,11 +621,12 @@ Caregiver Requests
     }
 </style>
 
+
 <div class="caregiver-page">
 
     <!-- =====================================================
-     HEADER
-===================================================== -->
+         HEADER
+    ===================================================== -->
 
     <div class="dashboard-header">
 
@@ -649,8 +650,8 @@ Caregiver Requests
 
 
     <!-- =====================================================
-     REQUEST TYPES
-===================================================== -->
+         REQUEST TYPES
+    ===================================================== -->
 
     <div class="section-header">
 
@@ -670,10 +671,7 @@ Caregiver Requests
 
         <!-- DIRECT USER -->
 
-        <div class="request-type-card"
-             onclick="showRequestSection('direct-section')"
-             role="button"
-             tabindex="0">
+        <div class="request-type-card" onclick="showRequestSection('direct-section')" role="button" tabindex="0">
 
             <div class="request-type-icon direct-icon">
                 👤
@@ -697,10 +695,8 @@ Caregiver Requests
 
         <!-- CARE REPRESENTATIVE -->
 
-        <div class="request-type-card"
-             onclick="showRequestSection('representative-section')"
-             role="button"
-             tabindex="0">
+        <div class="request-type-card" onclick="showRequestSection('representative-section')" role="button"
+            tabindex="0">
 
             <div class="request-type-icon representative-icon">
                 👥
@@ -725,8 +721,8 @@ Caregiver Requests
 
 
     <!-- =====================================================
-     DIRECT USER REQUESTS
-===================================================== -->
+         DIRECT USER REQUESTS
+    ===================================================== -->
 
     <div id="direct-section" class="request-section">
 
@@ -736,9 +732,7 @@ Caregiver Requests
                 👤 Direct User Requests
             </h2>
 
-            <button type="button"
-                    class="close-section"
-                    onclick="hideRequestSections()">
+            <button type="button" class="close-section" onclick="hideRequestSections()">
                 ✕ Close
             </button>
 
@@ -816,23 +810,35 @@ Caregiver Requests
                     <div class="person-grid">
 
                         <div class="person-item">
+
                             <strong>Name:</strong>
+
                             {{ booking.user.get_full_name|default:booking.user.username }}
+
                         </div>
 
                         <div class="person-item">
+
                             <strong>Phone:</strong>
+
                             {{ booking.user.userprofile.phone|default:"Not provided" }}
+
                         </div>
 
                         <div class="person-item">
+
                             <strong>User Type:</strong>
+
                             {{ booking.user.userprofile.role|default:"User" }}
+
                         </div>
 
                         <div class="person-item">
+
                             <strong>Address:</strong>
+
                             {{ booking.address|default:"Not specified" }}
+
                         </div>
 
                     </div>
@@ -845,28 +851,53 @@ Caregiver Requests
                 <div class="booking-details">
 
                     <div class="booking-detail">
+
                         <strong>📍 Address:</strong>
+
                         {{ booking.address|default:"Not specified" }}
+
                     </div>
 
                     <div class="booking-detail">
+
                         <strong>📅 Date:</strong>
+
                         {{ booking.booking_date|default:"Not specified" }}
+
                     </div>
 
                     <div class="booking-detail">
+
                         <strong>⏰ Time:</strong>
+
                         {{ booking.booking_time|default:"Not specified" }}
+
+                    </div>
+
+                    <!-- NEW: DURATION -->
+
+                    <div class="booking-detail">
+
+                        <strong>⏱ Duration:</strong>
+
+                        {{ booking.duration }} hour{{ booking.duration|pluralize }}
+
                     </div>
 
                     <div class="booking-detail">
+
                         <strong>⚡ Priority:</strong>
+
                         {{ booking.priority|default:"Medium" }}
+
                     </div>
 
                     <div class="booking-detail">
+
                         <strong>🕐 Requested:</strong>
+
                         {{ booking.booked_at|date:"d M Y, h:i A" }}
+
                     </div>
 
                 </div>
@@ -892,8 +923,8 @@ Caregiver Requests
 
 
                 <!-- =================================================
-                 PAYMENT INFORMATION
-            ================================================= -->
+                     PAYMENT INFORMATION
+                ================================================= -->
 
                 {% if booking.payment %}
 
@@ -969,19 +1000,25 @@ Caregiver Requests
                 {% if booking.payment.status == "Pending" %}
 
                 <div class="payment-pending-message">
+
                     ⏳ Bill sent successfully. Waiting for the user to complete or cancel the payment.
+
                 </div>
 
                 {% elif booking.payment.status == "Paid" %}
 
                 <div class="payment-received-message">
+
                     ✓ Payment received successfully. You can now accept or reject this caregiver request.
+
                 </div>
 
                 {% elif booking.payment.status == "Cancelled" %}
 
                 <div class="cancelled-message">
+
                     ⚠ The user cancelled the caregiver request. The request cannot be accepted.
+
                 </div>
 
                 {% if booking.payment.cancellation_reason %}
@@ -1008,7 +1045,9 @@ Caregiver Requests
                 {% if booking.status == "Pending" %}
 
                 <div class="bill-required-message">
+
                     💰 No bill has been sent yet. Review the request and send a bill before accepting or rejecting it.
+
                 </div>
 
                 {% endif %}
@@ -1017,69 +1056,83 @@ Caregiver Requests
 
 
                 <!-- =================================================
-                 ACTIONS
-            ================================================= -->
+                     ACTIONS
+                ================================================= -->
 
                 <div class="booking-actions">
 
                     {% if booking.status == "Pending" %}
 
-                        {% if not booking.payment %}
+                    {% if not booking.payment %}
 
-                        <a href="{% url 'send_caregiver_bill' booking.id %}"
-                           class="btn bill-btn">
-                            💰 Add Amount &amp; Send Bill
-                        </a>
+                    <a href="{% url 'send_caregiver_bill' booking.id %}" class="btn bill-btn">
 
-                        {% elif booking.payment.status == "Pending" %}
+                        💰 Add Amount &amp; Send Bill
 
-                        <span class="payment-pending-message">
-                            ⏳ Waiting for Payment
-                        </span>
+                    </a>
 
-                        {% elif booking.payment.status == "Cancelled" %}
+                    {% elif booking.payment.status == "Pending" %}
 
-                        <span class="cancelled-message">
-                            ⚠ Payment Cancelled
-                        </span>
+                    <span class="payment-pending-message">
 
-                        {% elif booking.payment.status == "Paid" %}
+                        ⏳ Waiting for Payment
 
-                        <a href="{% url 'accept_caregiver_booking' booking.id %}"
-                           class="btn accept-btn">
-                            ✓ Accept Request
-                        </a>
+                    </span>
 
-                        <a href="{% url 'reject_caregiver_booking' booking.id %}"
-                           class="btn reject-btn">
-                            ✕ Reject Request
-                        </a>
+                    {% elif booking.payment.status == "Cancelled" %}
 
-                        {% endif %}
+                    <span class="cancelled-message">
+
+                        ⚠ Payment Cancelled
+
+                    </span>
+
+                    {% elif booking.payment.status == "Paid" %}
+
+                    <a href="{% url 'accept_caregiver_booking' booking.id %}" class="btn accept-btn">
+
+                        ✓ Accept Request
+
+                    </a>
+
+                    <a href="{% url 'reject_caregiver_booking' booking.id %}" class="btn reject-btn">
+
+                        ✕ Reject Request
+
+                    </a>
+
+                    {% endif %}
 
                     {% elif booking.status == "Accepted" %}
 
-                    <a href="{% url 'complete_caregiver_service' booking.id %}"
-                       class="btn complete-btn">
+                    <a href="{% url 'complete_caregiver_service' booking.id %}" class="btn complete-btn">
+
                         ✓ Mark as Completed
+
                     </a>
 
                     {% elif booking.status == "Completed" %}
 
                     <div class="completed-message">
+
                         ✓ Service Completed
+
                     </div>
 
                     {% elif booking.status == "Rejected" %}
 
                     <div class="rejected-message">
+
                         ✕ Request Rejected
+
                     </div>
 
                     {% elif booking.status == "Cancelled" %}
 
                     <div class="cancelled-message">
+
                         ⚠ Request Cancelled
+
                     </div>
 
                     {% endif %}
@@ -1103,7 +1156,7 @@ Caregiver Requests
                 </h3>
 
                 <p>
-                    There are currently no direct caregiver requests.
+                    There are currently no caregiver requests from direct users.
                 </p>
 
             </div>
@@ -1115,10 +1168,9 @@ Caregiver Requests
 
     </div>
 
-
     <!-- =====================================================
-     CARE REPRESENTATIVE REQUESTS
-===================================================== -->
+         CARE REPRESENTATIVE REQUESTS
+    ===================================================== -->
 
     <div id="representative-section" class="request-section">
 
@@ -1128,10 +1180,10 @@ Caregiver Requests
                 👥 Care Representative Requests
             </h2>
 
-            <button type="button"
-                    class="close-section"
-                    onclick="hideRequestSections()">
+            <button type="button" class="close-section" onclick="hideRequestSections()">
+
                 ✕ Close
+
             </button>
 
         </div>
@@ -1165,31 +1217,41 @@ Caregiver Requests
                     {% if booking.status == "Pending" %}
 
                     <span class="status pending">
+
                         ⏳ Pending
+
                     </span>
 
                     {% elif booking.status == "Accepted" %}
 
                     <span class="status accepted">
+
                         ✓ Accepted
+
                     </span>
 
                     {% elif booking.status == "Completed" %}
 
                     <span class="status completed">
+
                         ✓ Completed
+
                     </span>
 
                     {% elif booking.status == "Rejected" %}
 
                     <span class="status rejected">
+
                         ✕ Rejected
+
                     </span>
 
                     {% elif booking.status == "Cancelled" %}
 
                     <span class="status cancelled">
+
                         ⚠ Cancelled
+
                     </span>
 
                     {% endif %}
@@ -1204,47 +1266,77 @@ Caregiver Requests
                 <div class="person-box representative-person">
 
                     <h4>
+
                         👤 Person Requiring Care
+
                     </h4>
+
 
                     <div class="person-grid">
 
+
                         <div class="person-item">
+
                             <strong>Name:</strong>
+
                             {{ booking.represented_person.full_name }}
+
                         </div>
 
+
                         <div class="person-item">
+
                             <strong>Age:</strong>
+
                             {{ booking.represented_person.age }}
+
                         </div>
 
+
                         <div class="person-item">
+
                             <strong>Type:</strong>
+
                             {{ booking.represented_person.person_type }}
+
                         </div>
 
+
                         <div class="person-item">
+
                             <strong>Relationship:</strong>
+
                             {{ booking.represented_person.relationship }}
+
                         </div>
 
+
                         <div class="person-item">
+
                             <strong>Phone:</strong>
+
                             {{ booking.represented_person.phone }}
+
                         </div>
 
+
                         <div class="person-item">
+
                             <strong>Address:</strong>
+
                             {{ booking.represented_person.address }}
+
                         </div>
 
 
                         {% if booking.represented_person.blood_group %}
 
                         <div class="person-item">
+
                             <strong>Blood Group:</strong>
+
                             {{ booking.represented_person.blood_group }}
+
                         </div>
 
                         {% endif %}
@@ -1253,11 +1345,15 @@ Caregiver Requests
                         {% if booking.represented_person.medical_conditions %}
 
                         <div class="person-item">
+
                             <strong>Medical Conditions:</strong>
+
                             {{ booking.represented_person.medical_conditions }}
+
                         </div>
 
                         {% endif %}
+
 
                     </div>
 
@@ -1273,10 +1369,14 @@ Caregiver Requests
                 <div class="person-box">
 
                     <h4>
+
                         👥 Care Representative
+
                     </h4>
 
+
                     <div class="person-grid">
+
 
                         <div class="person-item">
 
@@ -1286,6 +1386,7 @@ Caregiver Requests
 
                         </div>
 
+
                         <div class="person-item">
 
                             <strong>Username:</strong>
@@ -1293,6 +1394,7 @@ Caregiver Requests
                             {{ booking.care_representative.username }}
 
                         </div>
+
 
                     </div>
 
@@ -1305,30 +1407,62 @@ Caregiver Requests
 
                 <div class="booking-details">
 
+
                     <div class="booking-detail">
+
                         <strong>📍 Address:</strong>
+
                         {{ booking.address|default:"Not specified" }}
+
                     </div>
 
+
                     <div class="booking-detail">
+
                         <strong>📅 Date:</strong>
+
                         {{ booking.booking_date|default:"Not specified" }}
+
                     </div>
 
+
                     <div class="booking-detail">
+
                         <strong>⏰ Time:</strong>
+
                         {{ booking.booking_time|default:"Not specified" }}
+
                     </div>
 
+
+                    <!-- NEW: DURATION -->
+
                     <div class="booking-detail">
+
+                        <strong>⏱ Duration:</strong>
+
+                        {{ booking.duration }} hour{{ booking.duration|pluralize }}
+
+                    </div>
+
+
+                    <div class="booking-detail">
+
                         <strong>⚡ Priority:</strong>
+
                         {{ booking.priority|default:"Medium" }}
+
                     </div>
 
+
                     <div class="booking-detail">
+
                         <strong>🕐 Requested:</strong>
+
                         {{ booking.booked_at|date:"d M Y, h:i A" }}
+
                     </div>
+
 
                 </div>
 
@@ -1340,11 +1474,16 @@ Caregiver Requests
                 <div class="description-box">
 
                     <strong>
+
                         📝 Description
+
                     </strong>
 
+
                     <p>
+
                         {{ booking.description }}
+
                     </p>
 
                 </div>
@@ -1353,25 +1492,31 @@ Caregiver Requests
 
 
                 <!-- =================================================
-                 PAYMENT INFORMATION
-            ================================================= -->
+                     PAYMENT INFORMATION
+                ================================================= -->
 
                 {% if booking.payment %}
 
                 <div class="payment-box">
 
                     <h4>
+
                         💳 Payment Information
+
                     </h4>
 
+
                     <div class="payment-info">
+
 
                         <div class="payment-detail">
 
                             <strong>Bill Amount:</strong><br>
 
                             <span class="payment-amount">
+
                                 ₹{{ booking.payment.amount }}
+
                             </span>
 
                         </div>
@@ -1381,27 +1526,38 @@ Caregiver Requests
 
                             <strong>Payment Status:</strong><br>
 
+
                             {% if booking.payment.status == "Pending" %}
 
                             <span class="payment-status pending">
+
                                 ⏳ Payment Pending
+
                             </span>
+
 
                             {% elif booking.payment.status == "Paid" %}
 
                             <span class="payment-status paid">
+
                                 ✓ Payment Received
+
                             </span>
+
 
                             {% elif booking.payment.status == "Cancelled" %}
 
                             <span class="payment-status cancelled">
+
                                 ⚠ Payment Cancelled
+
                             </span>
 
                             {% endif %}
 
+
                         </div>
+
 
                     </div>
 
@@ -1411,16 +1567,22 @@ Caregiver Requests
                     <div class="cancellation-box">
 
                         <strong>
+
                             ⚠ Cancellation Reason
+
                         </strong>
 
+
                         <p>
+
                             {{ booking.payment.cancellation_reason }}
+
                         </p>
 
                     </div>
 
                     {% endif %}
+
 
                 </div>
 
@@ -1430,120 +1592,164 @@ Caregiver Requests
                 {% if booking.payment.status == "Pending" %}
 
                 <div class="payment-pending-message">
+
                     ⏳ Bill sent successfully. Waiting for the care representative to complete or cancel the payment.
+
                 </div>
+
 
                 {% elif booking.payment.status == "Paid" %}
 
                 <div class="payment-received-message">
+
                     ✓ Payment received successfully. You can now accept or reject this caregiver request.
+
                 </div>
+
 
                 {% elif booking.payment.status == "Cancelled" %}
 
                 <div class="cancelled-message">
+
                     ⚠ The care representative cancelled the caregiver request. The request cannot be accepted.
+
                 </div>
+
 
                 {% if booking.payment.cancellation_reason %}
 
                 <div class="cancellation-box">
 
                     <strong>
+
                         ⚠ Cancellation Reason from Care Representative
+
                     </strong>
 
+
                     <p>
+
                         {{ booking.payment.cancellation_reason }}
+
                     </p>
 
                 </div>
 
                 {% endif %}
 
+
                 {% endif %}
 
 
                 {% else %}
 
+
                 {% if booking.status == "Pending" %}
 
                 <div class="bill-required-message">
+
                     💰 No bill has been sent yet. Review the request and send a bill before accepting or rejecting it.
+
                 </div>
 
                 {% endif %}
+
 
                 {% endif %}
 
 
                 <!-- =================================================
-                 ACTIONS
-            ================================================= -->
+                     ACTIONS
+                ================================================= -->
 
                 <div class="booking-actions">
 
+
                     {% if booking.status == "Pending" %}
 
-                        {% if not booking.payment %}
 
-                        <a href="{% url 'send_caregiver_bill' booking.id %}"
-                           class="btn bill-btn">
-                            💰 Add Amount &amp; Send Bill
-                        </a>
+                    {% if not booking.payment %}
 
-                        {% elif booking.payment.status == "Pending" %}
+                    <a href="{% url 'send_caregiver_bill' booking.id %}" class="btn bill-btn">
 
-                        <span class="payment-pending-message">
-                            ⏳ Waiting for Payment
-                        </span>
+                        💰 Add Amount &amp; Send Bill
 
-                        {% elif booking.payment.status == "Cancelled" %}
+                    </a>
 
-                        <span class="cancelled-message">
-                            ⚠ Payment Cancelled
-                        </span>
 
-                        {% elif booking.payment.status == "Paid" %}
+                    {% elif booking.payment.status == "Pending" %}
 
-                        <a href="{% url 'accept_caregiver_booking' booking.id %}"
-                           class="btn accept-btn">
-                            ✓ Accept Request
-                        </a>
+                    <span class="payment-pending-message">
 
-                        <a href="{% url 'reject_caregiver_booking' booking.id %}"
-                           class="btn reject-btn">
-                            ✕ Reject Request
-                        </a>
+                        ⏳ Waiting for Payment
 
-                        {% endif %}
+                    </span>
+
+
+                    {% elif booking.payment.status == "Cancelled" %}
+
+                    <span class="cancelled-message">
+
+                        ⚠ Payment Cancelled
+
+                    </span>
+
+
+                    {% elif booking.payment.status == "Paid" %}
+
+                    <a href="{% url 'accept_caregiver_booking' booking.id %}" class="btn accept-btn">
+
+                        ✓ Accept Request
+
+                    </a>
+
+
+                    <a href="{% url 'reject_caregiver_booking' booking.id %}" class="btn reject-btn">
+
+                        ✕ Reject Request
+
+                    </a>
+
+                    {% endif %}
+
 
                     {% elif booking.status == "Accepted" %}
 
-                    <a href="{% url 'complete_caregiver_service' booking.id %}"
-                       class="btn complete-btn">
+                    <a href="{% url 'complete_caregiver_service' booking.id %}" class="btn complete-btn">
+
                         ✓ Mark as Completed
+
                     </a>
+
 
                     {% elif booking.status == "Completed" %}
 
                     <div class="completed-message">
+
                         ✓ Service Completed
+
                     </div>
+
 
                     {% elif booking.status == "Rejected" %}
 
                     <div class="rejected-message">
+
                         ✕ Request Rejected
+
                     </div>
+
 
                     {% elif booking.status == "Cancelled" %}
 
                     <div class="cancelled-message">
+
                         ⚠ Request Cancelled
+
                     </div>
 
                     {% endif %}
+
 
                 </div>
 
@@ -1556,15 +1762,23 @@ Caregiver Requests
             <div class="empty-state">
 
                 <div class="empty-icon">
+
                     👥
+
                 </div>
 
+
                 <h3>
+
                     No Care Representative Requests
+
                 </h3>
 
+
                 <p>
+
                     There are currently no caregiver requests from care representatives.
+
                 </p>
 
             </div>
@@ -1575,6 +1789,9 @@ Caregiver Requests
         </div>
 
     </div>
+    <!-- =====================================================
+     END OF CARE REPRESENTATIVE REQUESTS
+===================================================== -->
 
 </div>
 
@@ -1625,12 +1842,16 @@ Caregiver Requests
 
 
         window.scrollTo({
+
             top: 0,
+
             behavior: "smooth"
+
         });
 
     }
 
 </script>
+
 
 {% endblock %}
