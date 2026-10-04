@@ -16,7 +16,6 @@
     </title>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -45,12 +44,10 @@
             overflow-y: auto;
 
             background:
-                linear-gradient(
-                    180deg,
+                linear-gradient(180deg,
                     #0d47a1,
                     #1976d2,
-                    #42a5f5
-                );
+                    #42a5f5);
 
             color: white;
 
@@ -246,10 +243,13 @@
             color: white;
             cursor: pointer;
         }
-
     </style>
 
+    {% block extra_css %}
+    {% endblock %}
+
 </head>
+
 
 
 <body>
@@ -311,16 +311,7 @@
             </li>
 
 
-            <!-- COMMUNITY SERVICES -->
-
-            <li>
-
-                <a href="#">
-                    🤝 Community Services
-                </a>
-
-            </li>
-
+            
 
             <!-- COMPLETED SERVICES -->
 
@@ -331,7 +322,12 @@
                 </a>
 
             </li>
-
+            <!-- FEEDBACK & RATINGS -->
+            <li>
+                <a href="{% url 'provider_feedback' %}">
+                    ⭐ Feedback & Ratings
+                </a>
+            </li>
 
             <!-- NOTIFICATIONS -->
 
@@ -345,7 +341,7 @@
 
                         {% if unread_notifications_count > 0 %}
 
-                            <span class="notification-dot"></span>
+                        <span class="notification-dot"></span>
 
                         {% endif %}
 

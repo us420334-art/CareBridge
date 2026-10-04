@@ -19,7 +19,6 @@
 
 
     <style>
-
         /* =====================================================
            RESET
         ====================================================== */
@@ -57,12 +56,10 @@
             overflow-y: auto;
 
             background:
-                linear-gradient(
-                    180deg,
+                linear-gradient(180deg,
                     #0d47a1,
                     #1976d2,
-                    #42a5f5
-                );
+                    #42a5f5);
 
             color: white;
 
@@ -410,7 +407,6 @@
             }
 
         }
-
     </style>
 
 
@@ -503,7 +499,12 @@
                 </a>
 
             </li>
-
+            <!-- FEEDBACK & RATINGS -->
+            <li>
+                <a href="{% url 'provider_feedback' %}">
+                    ⭐ Feedback & Ratings
+                </a>
+            </li>
 
             <!-- NOTIFICATIONS -->
 
@@ -517,7 +518,7 @@
 
                         {% if unread_notifications_count > 0 %}
 
-                            <span class="notification-dot"></span>
+                        <span class="notification-dot"></span>
 
                         {% endif %}
 

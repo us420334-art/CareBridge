@@ -288,6 +288,11 @@ path(
     views.volunteer_available_slots,
     name="volunteer_available_slots",
 ),
+path(
+    "provider-feedback/",
+    views.provider_feedback,
+    name="provider_feedback",
+),
     # Logout
     path(
         'logout/',

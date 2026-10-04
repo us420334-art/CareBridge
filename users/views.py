@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+from .models import Feedback, UserProfile, Notification
 from datetime import datetime, timedelta, time
 from decimal import Decimal, InvalidOperation
 
@@ -807,7 +807,12 @@ def profile(request):
     # Select dashboard layout
     # ---------------------------------------------
 
-    if profile.role == "Care Representative":
+    
+    if profile.role == "Volunteer":
+
+        base_template = "dashboard/volunteer_base.html"
+
+    elif profile.role == "Care Representative":
 
         base_template = "dashboard/care_rep_base.html"
 
@@ -818,6 +823,7 @@ def profile(request):
     else:
 
         base_template = "dashboard/base_dashboard.html"
+
 
     # ---------------------------------------------
     # Caregiver verification documents
@@ -925,17 +931,19 @@ def edit_profile(request):
     # SELECT DASHBOARD LAYOUT
     # =================================================
 
-    if profile.role == "Care Representative":
+    
+    if profile.role == "Volunteer":
+         base_template = "dashboard/volunteer_base.html"
 
-        base_template = "dashboard/care_rep_base.html"
+    elif profile.role == "Care Representative":
+         base_template = "dashboard/care_rep_base.html"
 
     elif profile.role == "Caregiver":
-
-        base_template = "dashboard/caregiver_base.html"
+          base_template = "dashboard/caregiver_base.html"
 
     else:
-
         base_template = "dashboard/base_dashboard.html"
+
 
     # =================================================
     # SHOW EDIT PROFILE PAGE
@@ -3667,6 +3675,7 @@ def create_notification(user, notification_type, title, message):
         message=message
     )
 
+
 def notifications(request):
 
     if not request.user.is_authenticated:
@@ -3685,16 +3694,16 @@ def notifications(request):
         user=request.user
     )
 
-    if profile.role == "Care Representative":
+    if profile.role == "Volunteer":
+        base_template = "dashboard/volunteer_base.html"
 
+    elif profile.role == "Care Representative":
         base_template = "dashboard/care_rep_base.html"
 
     elif profile.role == "Caregiver":
-
         base_template = "dashboard/caregiver_base.html"
 
     else:
-
         base_template = "dashboard/base_dashboard.html"
 
     return render(
@@ -3705,6 +3714,7 @@ def notifications(request):
             "base_template": base_template,
         }
     )
+
 
 def mark_notification_read(request, notification_id):
 
@@ -4831,3 +4841,41 @@ def confirm_caregiver_booking(request, caregiver_id):
         )
 
     return redirect('request_submitted')
+
+@login_required
+def provider_feedback(request):
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    # Only caregivers and volunteers can view provider feedback.
+    if profile.role not in ["Caregiver", "Volunteer"]:
+        return redirect("home")
+
+    feedback_list = Feedback.objects.filter(
+        service_provider=request.user,
+        service_type=profile.role
+    ).select_related(
+        "user"
+    ).order_by(
+        "-created_at"
+    )
+
+    if profile.role == "Caregiver":
+        base_template = "dashboard/caregiver_base.html"
+    else:
+        base_template = "dashboard/volunteer_base.html"
+
+    return render(
+        request,
+        "dashboard/provider_feedback.html",
+        {
+            "feedback_list": feedback_list,
+            "base_template": base_template,
+            "unread_notifications_count": Notification.objects.filter(
+                user=request.user,
+                is_read=False
+            ).count(),
+        }
+    )

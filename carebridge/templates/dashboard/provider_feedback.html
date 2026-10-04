@@ -1,0 +1,175 @@
+{% extends base_template %}
+
+{% block title %}
+Feedback & Ratings | CareBridge
+{% endblock %}
+
+{% block page_title %}
+⭐ Feedback & Ratings
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feedback-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 30px;
+    }
+
+    .feedback-header {
+        background: linear-gradient(135deg, #eaf5fb, #ffffff);
+        padding: 28px;
+        border-radius: 16px;
+        border: 1px solid #d8e8f0;
+        margin-bottom: 25px;
+    }
+
+    .feedback-header h2 {
+        color: #1b6ca8;
+        margin-bottom: 10px;
+    }
+
+    .feedback-header p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .feedback-card {
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        border: 1px solid #e3ebf0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        margin-bottom: 20px;
+    }
+
+    .feedback-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .reviewer-name {
+        font-size: 17px;
+        font-weight: bold;
+        color: #263238;
+    }
+
+    .rating {
+        color: #e6a000;
+        font-size: 19px;
+        letter-spacing: 2px;
+    }
+
+    .rating-number {
+        color: #666;
+        font-size: 13px;
+        letter-spacing: normal;
+    }
+
+    .feedback-comment {
+        color: #444;
+        line-height: 1.8;
+        margin-top: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .feedback-meta {
+        color: #777;
+        font-size: 13px;
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid #eee;
+    }
+
+    .empty-feedback {
+        background: white;
+        padding: 45px 25px;
+        border-radius: 14px;
+        text-align: center;
+        border: 1px solid #e3ebf0;
+    }
+
+    .empty-feedback h3 {
+        color: #1b6ca8;
+        margin-bottom: 10px;
+    }
+
+    .empty-feedback p {
+        color: #777;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 650px) {
+        .feedback-page {
+            padding: 15px;
+        }
+
+        .feedback-card {
+            padding: 18px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="feedback-page">
+
+    <div class="feedback-header">
+        <h2>⭐ Feedback from Users</h2>
+        <p>
+            Read the ratings and comments users have shared
+            about your services. Your feedback can help you
+            continue improving the support you provide.
+        </p>
+    </div>
+
+    {% for feedback in feedback_list %}
+    <div class="feedback-card">
+
+        <div class="feedback-top">
+            <div class="reviewer-name">
+                👤
+                {{ feedback.user.first_name|default:feedback.user.username }}
+            </div>
+
+            <div class="rating">
+                {% for star in "12345" %}
+                {% if forloop.counter <= feedback.rating %} ★ {% else %} ☆ {% endif %} {% endfor %} <span
+                    class="rating-number">
+                    {{ feedback.rating }}/5
+                    </span>
+            </div>
+        </div>
+
+        <div class="feedback-comment">
+            {{ feedback.comment|linebreaksbr }}
+        </div>
+
+        <div class="feedback-meta">
+            <strong>Service:</strong>
+            {{ feedback.get_service_type_display }}
+
+            &nbsp; | &nbsp;
+
+            <strong>Date:</strong>
+            {{ feedback.created_at|date:"d M Y, h:i A" }}
+        </div>
+
+    </div>
+
+    {% empty %}
+    <div class="empty-feedback">
+        <h3>💬 No Feedback Yet</h3>
+        <p>
+            You haven't received any feedback yet.
+            Comments and ratings about your services
+            will appear here when users submit them.
+        </p>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
