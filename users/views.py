@@ -2,15 +2,16 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from datetime import datetime
 from django.http import JsonResponse
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .models import DirectCaregiverBooking
+
+from datetime import datetime, timedelta, time
 from decimal import Decimal, InvalidOperation
-from datetime import datetime, timedelta
+
+from .models import DirectCaregiverBooking,DirectVolunteerBooking
 
 from .models import (
     UserProfile,
@@ -1109,6 +1110,92 @@ def has_booking_overlap(
             return True
 
     return False
+
+
+@login_required
+def volunteer_available_slots(request):
+    if request.method != "GET":
+        return JsonResponse(
+            {"error": "GET request required."},
+            status=405
+        )
+
+    volunteer_id = request.GET.get("volunteer_id")
+    booking_date = request.GET.get("booking_date")
+    duration = request.GET.get("duration")
+
+    if not volunteer_id or not booking_date or not duration:
+        return JsonResponse({"slots": []})
+
+    try:
+        volunteer = User.objects.get(
+            id=volunteer_id,
+            userprofile__role="Volunteer"
+        )
+
+        selected_date = datetime.strptime(
+            booking_date, "%Y-%m-%d"
+        ).date()
+
+        duration = int(duration)
+
+        if not 1 <= duration <= 8:
+            raise ValueError
+
+    except (User.DoesNotExist, ValueError, TypeError):
+        return JsonResponse({"slots": []})
+
+    # Don't offer past dates.
+    from django.utils import timezone
+
+    today = timezone.localdate()
+
+    if selected_date < today:
+        return JsonResponse({"slots": []})
+
+    available_slots = []
+
+    # Offer hourly starting times from 8 AM to 8 PM.
+    # A service must finish on the same day.
+    for hour in range(8, 21):
+        start_time = time(hour=hour, minute=0)
+
+        start_datetime = datetime.combine(
+            selected_date, start_time
+        )
+
+        end_datetime = start_datetime + timedelta(
+            hours=duration
+        )
+
+        if end_datetime.date() != selected_date:
+            continue
+
+        # Skip slots that have already started.
+        current_time = timezone.localtime()
+
+        if selected_date == today:
+            current_datetime = current_time.replace(tzinfo=None)
+
+            if start_datetime <= current_datetime:
+                continue
+
+        time_string = start_time.strftime("%H:%M")
+
+        if not has_booking_overlap(
+            DirectVolunteerBooking,
+            "volunteer",
+            volunteer,
+            booking_date,
+            time_string,
+            duration
+        ):
+            available_slots.append({
+                "value": time_string,
+                "label": start_time.strftime("%I:%M %p")
+            })
+
+    return JsonResponse({"slots": available_slots})
 
 @login_required
 def book_caregiver(request):
@@ -2883,6 +2970,61 @@ def reject_volunteer_booking(request, booking_id):
             request,
             "Volunteer booking rejected."
         )
+
+    return redirect("volunteer_dashboard")
+
+
+
+@login_required
+def complete_volunteer_booking(request, booking_id):
+    if request.method != "POST":
+        return redirect("volunteer_dashboard")
+
+    profile = get_object_or_404(
+        UserProfile,
+        user=request.user
+    )
+
+    if profile.role != "Volunteer":
+        messages.error(
+            request,
+            "You are not authorized to complete this booking."
+        )
+        return redirect("dashboard")
+
+    booking = get_object_or_404(
+        DirectVolunteerBooking,
+        id=booking_id,
+        volunteer=request.user
+    )
+
+    if booking.status != "Accepted":
+        messages.error(
+            request,
+            "Only accepted volunteer bookings can be marked as completed."
+        )
+        return redirect("volunteer_dashboard")
+
+    # Update booking status
+    booking.status = "Completed"
+    booking.save(update_fields=["status"])
+
+    # Notify the user who requested the volunteer service
+    create_notification(
+        booking.user,
+        "Booking",
+        "Volunteer Service Completed",
+        (
+            f"Your volunteer service with "
+            f"{request.user.get_full_name() or request.user.username} "
+            f"has been marked as completed."
+        )
+    )
+
+    messages.success(
+        request,
+        "Volunteer service marked as completed successfully."
+    )
 
     return redirect("volunteer_dashboard")
 

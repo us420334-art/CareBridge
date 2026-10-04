@@ -1,12 +1,7 @@
 {% extends 'dashboard/volunteer_base.html' %}
 
-{% block title %}
-Volunteer Dashboard
-{% endblock %}
-
-{% block page_title %}
-Volunteer Dashboard
-{% endblock %}
+{% block title %}Volunteer Dashboard{% endblock %}
+{% block page_title %}Volunteer Dashboard{% endblock %}
 
 {% block content %}
 
@@ -24,6 +19,63 @@ Volunteer Dashboard
         margin-bottom: 28px;
     }
 
+    .request-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .request-summary-card {
+        background: white;
+        border: 1px solid #dfe6ef;
+        border-radius: 20px;
+        padding: 28px;
+        cursor: pointer;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-align: left;
+        width: 100%;
+        font-family: inherit;
+    }
+
+    .request-summary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+    }
+
+    .direct-card {
+        border-left: 6px solid #28a745;
+    }
+
+    .representative-card {
+        border-left: 6px solid #2563eb;
+    }
+
+    .summary-icon {
+        font-size: 35px;
+        margin-bottom: 12px;
+    }
+
+    .summary-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #17365d;
+        margin-bottom: 10px;
+    }
+
+    .summary-count {
+        font-size: 30px;
+        font-weight: 800;
+        color: #2563eb;
+        margin-bottom: 8px;
+    }
+
+    .summary-description {
+        color: #64748b;
+        font-size: 14px;
+    }
+
     .request-section {
         margin-bottom: 45px;
     }
@@ -39,9 +91,17 @@ Volunteer Dashboard
         color: #2563eb;
     }
 
-    /* =========================
-       BOOKING CARD
-    ========================= */
+    .back-button {
+        border: none;
+        border-radius: 9px;
+        padding: 11px 20px;
+        margin-bottom: 22px;
+        background: #17365d;
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+    }
 
     .booking-card {
         background: white;
@@ -51,10 +111,6 @@ Volunteer Dashboard
         margin-bottom: 25px;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
     }
-
-    /* =========================
-       HEADER
-    ========================= */
 
     .booking-header {
         display: flex;
@@ -77,10 +133,6 @@ Volunteer Dashboard
         font-size: 30px;
     }
 
-    /* =========================
-       REQUEST TYPE
-    ========================= */
-
     .request-type {
         display: inline-block;
         background: #eef4ff;
@@ -91,10 +143,6 @@ Volunteer Dashboard
         font-weight: 700;
         margin-bottom: 20px;
     }
-
-    /* =========================
-       CARE REPRESENTATIVE
-    ========================= */
 
     .care-rep-info {
         background: #eef6ff;
@@ -125,10 +173,6 @@ Volunteer Dashboard
     .care-rep-item strong {
         color: #172b4d;
     }
-
-    /* =========================
-       STATUS
-    ========================= */
 
     .status-badge {
         padding: 10px 20px;
@@ -162,10 +206,6 @@ Volunteer Dashboard
         color: #374151;
     }
 
-    /* =========================
-       DETAILS
-    ========================= */
-
     .booking-details {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -198,15 +238,12 @@ Volunteer Dashboard
         grid-column: 1 / -1;
     }
 
-    /* =========================
-       ACTIONS
-    ========================= */
-
     .booking-actions {
         margin-top: 25px;
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
+        align-items: center;
     }
 
     .action-button {
@@ -238,6 +275,15 @@ Volunteer Dashboard
         background: #c82333;
     }
 
+    .complete-button {
+        background: #2563eb;
+        color: white;
+    }
+
+    .complete-button:hover {
+        background: #1d4ed8;
+    }
+
     .completed-label {
         background: #6f42c1;
         color: white;
@@ -262,10 +308,6 @@ Volunteer Dashboard
         font-weight: 700;
     }
 
-    /* =========================
-       NO REQUESTS
-    ========================= */
-
     .no-requests {
         background: white;
         padding: 35px;
@@ -276,14 +318,13 @@ Volunteer Dashboard
         border: 1px solid #e5e7eb;
     }
 
-    /* =========================
-       MOBILE
-    ========================= */
-
     @media (max-width: 750px) {
-
         .volunteer-dashboard {
             padding: 20px 15px;
+        }
+
+        .request-cards {
+            grid-template-columns: 1fr;
         }
 
         .booking-details {
@@ -309,230 +350,140 @@ Volunteer Dashboard
     }
 </style>
 
-
 <div class="volunteer-dashboard">
-
-    <!-- =====================================================
-         HEADING
-    ===================================================== -->
 
     <div class="dashboard-heading">
         🤝 Volunteer Dashboard
     </div>
 
-
-    <!-- =====================================================
-         MESSAGES
-    ===================================================== -->
-
     {% if messages %}
-
     {% for message in messages %}
-
-    <div style="
-                background:#d4edda;
-                color:#155724;
-                padding:12px 18px;
-                border-radius:10px;
-                margin-bottom:20px;
-                font-weight:600;
-            ">
+    <div
+        style="background:#d4edda; color:#155724; padding:12px 18px; border-radius:10px; margin-bottom:20px; font-weight:600;">
         ✔ {{ message }}
     </div>
-
     {% endfor %}
-
     {% endif %}
 
+    <!-- TWO DASHBOARD CARDS -->
+    <div id="requestCards" class="request-cards">
 
-    <!-- =====================================================
-         DIRECT USER REQUESTS
-    ===================================================== -->
+        <button type="button" class="request-summary-card direct-card" onclick="showRequestSection('directRequests')">
+            <div class="summary-icon">👤</div>
+            <div class="summary-title">Direct User Requests</div>
+            <div class="summary-count">{{ direct_requests|length }}</div>
+            <div class="summary-description">
+                View and manage requests received directly from users.
+            </div>
+        </button>
 
-    <div class="request-section">
+        <button type="button" class="request-summary-card representative-card"
+            onclick="showRequestSection('representativeRequests')">
+            <div class="summary-icon">💙</div>
+            <div class="summary-title">Care Representative Requests</div>
+            <div class="summary-count">{{ representative_requests|length }}</div>
+            <div class="summary-description">
+                View and manage requests submitted by care representatives.
+            </div>
+        </button>
 
-        <h2 class="section-title">
-            📋 Direct User Requests
-        </h2>
+    </div>
 
+    <!-- DIRECT USER REQUESTS -->
+    <div id="directRequests" class="request-section" style="display:none;">
+
+        <button type="button" class="back-button" onclick="hideRequestSections()">
+            ← Back to Dashboard
+        </button>
+
+        <h2 class="section-title">📋 Direct User Requests</h2>
 
         {% for booking in direct_requests %}
-
         <div class="booking-card">
 
-            <!-- REQUEST TYPE -->
-
-            <div class="request-type">
-                👤 Direct User Request
-            </div>
-
-
-            <!-- HEADER -->
+            <div class="request-type">👤 Direct User Request</div>
 
             <div class="booking-header">
-
                 <div class="user-name">
-
-                    <span class="user-icon">
-                        👤
-                    </span>
-
+                    <span class="user-icon">👤</span>
                     {{ booking.user.get_full_name|default:booking.user.username }}
-
                 </div>
 
-
                 {% if booking.status == "Pending" %}
-
-                <span class="status-badge status-pending">
-                    🟡 Pending
-                </span>
-
+                <span class="status-badge status-pending">🟡 Pending</span>
                 {% elif booking.status == "Accepted" %}
-
-                <span class="status-badge status-accepted">
-                    🟢 Accepted
-                </span>
-
+                <span class="status-badge status-accepted">🟢 Accepted</span>
                 {% elif booking.status == "Completed" %}
-
-                <span class="status-badge status-completed">
-                    🔵 Completed
-                </span>
-
+                <span class="status-badge status-completed">🔵 Completed</span>
                 {% elif booking.status == "Rejected" %}
-
-                <span class="status-badge status-rejected">
-                    🔴 Rejected
-                </span>
-
+                <span class="status-badge status-rejected">🔴 Rejected</span>
                 {% elif booking.status == "Cancelled" %}
-
-                <span class="status-badge status-cancelled">
-                    ⚪ Cancelled
-                </span>
-
+                <span class="status-badge status-cancelled">⚪ Cancelled</span>
                 {% endif %}
-
             </div>
-
-
-            <!-- DETAILS -->
 
             <div class="booking-details">
 
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        📞 PHONE
-                    </span>
-
+                    <span class="detail-label">📞 PHONE</span>
                     <span class="detail-value">
                         {{ booking.user.userprofile.phone|default:"Not provided" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        🛠️ SERVICE REQUIRED
-                    </span>
-
+                    <span class="detail-label">🛠️ SERVICE REQUIRED</span>
                     <span class="detail-value">
                         {{ booking.service|default:"Not specified" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        📅 SERVICE DATE
-                    </span>
-
+                    <span class="detail-label">📅 SERVICE DATE</span>
                     <span class="detail-value">
                         {{ booking.booking_date|default:"Not specified" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        🕐 SERVICE TIME
-                    </span>
-
+                    <span class="detail-label">🕐 SERVICE TIME</span>
                     <span class="detail-value">
                         {{ booking.booking_time|default:"Not specified" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        ⚠️ PRIORITY
-                    </span>
-
+                    <span class="detail-label">⚠️ PRIORITY</span>
                     <span class="detail-value">
                         {{ booking.priority|default:"Medium" }}
                     </span>
-
                 </div>
-
 
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        🕒 REQUEST RECEIVED
-                    </span>
-
-                    <span class="detail-value">
-                        {{ booking.booked_at }}
-                    </span>
-
+                    <span class="detail-label">🕒 REQUEST RECEIVED</span>
+                    <span class="detail-value">{{ booking.booked_at }}</span>
                 </div>
 
-
                 <div class="detail-box detail-full">
-
-                    <span class="detail-label">
-                        📍 SERVICE ADDRESS
-                    </span>
-
+                    <span class="detail-label">📍 SERVICE ADDRESS</span>
                     <span class="detail-value">
                         {{ booking.address|default:"No address provided." }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box detail-full">
-
-                    <span class="detail-label">
-                        📝 ADDITIONAL REQUIREMENTS
-                    </span>
-
+                    <span class="detail-label">📝 ADDITIONAL REQUIREMENTS</span>
                     <span class="detail-value">
                         {{ booking.description|default:"No additional requirements provided." }}
                     </span>
-
                 </div>
 
             </div>
 
-
-            <!-- ACTIONS -->
-
+            <!-- DIRECT REQUEST ACTIONS -->
             <div class="booking-actions">
 
                 {% if booking.status == "Pending" %}
-
                 <a href="{% url 'accept_volunteer_booking' booking.id %}" class="action-button accept-button">
                     ✅ Accept
                 </a>
@@ -542,317 +493,180 @@ Volunteer Dashboard
                 </a>
 
                 {% elif booking.status == "Accepted" %}
+                <span class="status-badge status-accepted">🟢 Accepted</span>
 
-                <span class="status-badge status-accepted">
-                    🟢 Accepted
-                </span>
+                <form method="POST" action="{% url 'complete_volunteer_booking' booking.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="action-button complete-button"
+                        onclick="return confirm('Mark this volunteer service as completed?');">
+                        ✅ Mark as Completed
+                    </button>
+                </form>
 
                 {% elif booking.status == "Completed" %}
-
-                <span class="completed-label">
-                    🏆 Completed
-                </span>
+                <span class="completed-label">🏆 Completed</span>
 
                 {% elif booking.status == "Rejected" %}
-
-                <span class="rejected-label">
-                    ❌ Rejected
-                </span>
+                <span class="rejected-label">❌ Rejected</span>
 
                 {% elif booking.status == "Cancelled" %}
-
-                <span class="cancelled-label">
-                    ⚪ Cancelled
-                </span>
-
+                <span class="cancelled-label">⚪ Cancelled</span>
                 {% endif %}
 
             </div>
-
         </div>
 
         {% empty %}
-
         <div class="no-requests">
-
-            👤
-            <br><br>
-
+            👤<br><br>
             No direct user requests available.
-
         </div>
-
         {% endfor %}
 
     </div>
 
+    <!-- CARE REPRESENTATIVE REQUESTS -->
+    <div id="representativeRequests" class="request-section" style="display:none;">
 
-    <!-- =====================================================
-         CARE REPRESENTATIVE REQUESTS
-    ===================================================== -->
-
-    <div class="request-section">
+        <button type="button" class="back-button" onclick="hideRequestSections()">
+            ← Back to Dashboard
+        </button>
 
         <h2 class="section-title care-rep-title">
             💙 Care Representative Requests
         </h2>
 
-
         {% for booking in representative_requests %}
-
         <div class="booking-card">
-
-            <!-- REQUEST TYPE -->
 
             <div class="request-type">
                 💙 Care Representative Request
             </div>
 
-
-            <!-- HEADER -->
-
+            <!-- BOOKING HEADER -->
             <div class="booking-header">
 
                 <div class="user-name">
-
-                    <span class="user-icon">
-                        💙
-                    </span>
-
+                    <span class="user-icon">💙</span>
                     Care Representative Request
-
                 </div>
 
-
                 {% if booking.status == "Pending" %}
-
-                <span class="status-badge status-pending">
-                    🟡 Pending
-                </span>
-
+                <span class="status-badge status-pending">🟡 Pending</span>
                 {% elif booking.status == "Accepted" %}
-
-                <span class="status-badge status-accepted">
-                    🟢 Accepted
-                </span>
-
+                <span class="status-badge status-accepted">🟢 Accepted</span>
                 {% elif booking.status == "Completed" %}
-
-                <span class="status-badge status-completed">
-                    🔵 Completed
-                </span>
-
+                <span class="status-badge status-completed">🔵 Completed</span>
                 {% elif booking.status == "Rejected" %}
-
-                <span class="status-badge status-rejected">
-                    🔴 Rejected
-                </span>
-
+                <span class="status-badge status-rejected">🔴 Rejected</span>
                 {% elif booking.status == "Cancelled" %}
-
-                <span class="status-badge status-cancelled">
-                    ⚪ Cancelled
-                </span>
-
+                <span class="status-badge status-cancelled">⚪ Cancelled</span>
                 {% endif %}
 
             </div>
 
-
             <!-- CARE REPRESENTATIVE INFORMATION -->
-
             <div class="care-rep-info">
 
                 <div class="care-rep-info-title">
                     💙 Care Representative Information
                 </div>
 
-
                 <div class="care-rep-grid">
 
                     <div class="care-rep-item">
-
-                        <strong>
-                            👤 Care Representative:
-                        </strong>
-
-                        {{ booking.care_representative.username }}
-
+                        <strong>👤 Care Representative:</strong>
+                        {{ booking.care_representative.username|default:"Not provided" }}
                     </div>
 
-
                     <div class="care-rep-item">
-
-                        <strong>
-                            📞 Representative Phone:
-                        </strong>
-
+                        <strong>📞 Representative Phone:</strong>
                         {{ booking.care_representative.userprofile.phone|default:"Not provided" }}
-
                     </div>
 
-
                     <div class="care-rep-item">
-
-                        <strong>
-                            🧑 Represented Person:
-                        </strong>
-
-                        {{ booking.represented_person.full_name }}
-
+                        <strong>🧑 Represented Person:</strong>
+                        {{ booking.represented_person.full_name|default:"Not provided" }}
                     </div>
 
-
                     <div class="care-rep-item">
-
-                        <strong>
-                            🎂 Age:
-                        </strong>
-
-                        {{ booking.represented_person.age }}
-
+                        <strong>🎂 Age:</strong>
+                        {{ booking.represented_person.age|default:"Not provided" }}
                     </div>
 
-
                     <div class="care-rep-item">
-
-                        <strong>
-                            🤝 Relationship:
-                        </strong>
-
-                        {{ booking.represented_person.relationship }}
-
+                        <strong>🤝 Relationship:</strong>
+                        {{ booking.represented_person.relationship|default:"Not provided" }}
                     </div>
 
-
                     <div class="care-rep-item">
-
-                        <strong>
-                            📞 Person's Phone:
-                        </strong>
-
-                        {{ booking.represented_person.phone }}
-
+                        <strong>📞 Person's Phone:</strong>
+                        {{ booking.represented_person.phone|default:"Not provided" }}
                     </div>
 
                 </div>
-
             </div>
 
-
             <!-- BOOKING DETAILS -->
-
             <div class="booking-details">
 
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        🛠️ SERVICE REQUIRED
-                    </span>
-
+                    <span class="detail-label">🛠️ SERVICE REQUIRED</span>
                     <span class="detail-value">
                         {{ booking.service|default:"Not specified" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        📅 SERVICE DATE
-                    </span>
-
+                    <span class="detail-label">📅 SERVICE DATE</span>
                     <span class="detail-value">
                         {{ booking.booking_date|default:"Not specified" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        🕐 SERVICE TIME
-                    </span>
-
+                    <span class="detail-label">🕐 SERVICE TIME</span>
                     <span class="detail-value">
                         {{ booking.booking_time|default:"Not specified" }}
                     </span>
-
                 </div>
 
-
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        ⚠️ PRIORITY
-                    </span>
-
+                    <span class="detail-label">⚠️ PRIORITY</span>
                     <span class="detail-value">
                         {{ booking.priority|default:"Medium" }}
                     </span>
-
                 </div>
-
 
                 <div class="detail-box">
-
-                    <span class="detail-label">
-                        🕒 REQUEST RECEIVED
-                    </span>
-
-                    <span class="detail-value">
-                        {{ booking.booked_at }}
-                    </span>
-
+                    <span class="detail-label">🕒 REQUEST RECEIVED</span>
+                    <span class="detail-value">{{ booking.booked_at }}</span>
                 </div>
 
-
                 <div class="detail-box detail-full">
-
-                    <span class="detail-label">
-                        📍 SERVICE ADDRESS
-                    </span>
-
+                    <span class="detail-label">📍 SERVICE ADDRESS</span>
                     <span class="detail-value">
-
                         {% if booking.address %}
-
                         {{ booking.address }}
-
                         {% else %}
-
                         {{ booking.represented_person.address|default:"No address provided." }}
-
                         {% endif %}
-
                     </span>
-
                 </div>
 
-
                 <div class="detail-box detail-full">
-
-                    <span class="detail-label">
-                        📝 ADDITIONAL REQUIREMENTS
-                    </span>
-
+                    <span class="detail-label">📝 ADDITIONAL REQUIREMENTS</span>
                     <span class="detail-value">
                         {{ booking.description|default:"No additional requirements provided." }}
                     </span>
-
                 </div>
 
             </div>
 
-
-            <!-- ACTIONS -->
-
+            <!-- CARE REPRESENTATIVE REQUEST ACTIONS -->
             <div class="booking-actions">
 
                 {% if booking.status == "Pending" %}
-
                 <a href="{% url 'accept_volunteer_booking' booking.id %}" class="action-button accept-button">
                     ✅ Accept
                 </a>
@@ -862,29 +676,24 @@ Volunteer Dashboard
                 </a>
 
                 {% elif booking.status == "Accepted" %}
+                <span class="status-badge status-accepted">🟢 Accepted</span>
 
-                <span class="status-badge status-accepted">
-                    🟢 Accepted
-                </span>
+                <form method="POST" action="{% url 'complete_volunteer_booking' booking.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="action-button complete-button"
+                        onclick="return confirm('Mark this volunteer service as completed?');">
+                        ✅ Mark as Completed
+                    </button>
+                </form>
 
                 {% elif booking.status == "Completed" %}
-
-                <span class="completed-label">
-                    🏆 Completed
-                </span>
+                <span class="completed-label">🏆 Completed</span>
 
                 {% elif booking.status == "Rejected" %}
-
-                <span class="rejected-label">
-                    ❌ Rejected
-                </span>
+                <span class="rejected-label">❌ Rejected</span>
 
                 {% elif booking.status == "Cancelled" %}
-
-                <span class="cancelled-label">
-                    ⚪ Cancelled
-                </span>
-
+                <span class="cancelled-label">⚪ Cancelled</span>
                 {% endif %}
 
             </div>
@@ -892,20 +701,41 @@ Volunteer Dashboard
         </div>
 
         {% empty %}
-
         <div class="no-requests">
-
-            💙
-            <br><br>
-
+            💙<br><br>
             No Care Representative requests.
-
         </div>
-
         {% endfor %}
 
     </div>
 
 </div>
+
+<!-- DASHBOARD CARD NAVIGATION -->
+<script>
+    function showRequestSection(sectionId) {
+        document.getElementById("requestCards").style.display = "none";
+        document.getElementById("directRequests").style.display = "none";
+        document.getElementById("representativeRequests").style.display = "none";
+
+        document.getElementById(sectionId).style.display = "block";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+    function hideRequestSections() {
+        document.getElementById("directRequests").style.display = "none";
+        document.getElementById("representativeRequests").style.display = "none";
+        document.getElementById("requestCards").style.display = "grid";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+</script>
 
 {% endblock %}

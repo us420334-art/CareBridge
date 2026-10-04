@@ -278,6 +278,16 @@ path(
         name='reject_volunteer_booking'
     ),
 
+path(
+    'complete-volunteer-booking/<int:booking_id>/',
+    views.complete_volunteer_booking,
+    name='complete_volunteer_booking'
+),
+path(
+    "volunteer-available-slots/",
+    views.volunteer_available_slots,
+    name="volunteer_available_slots",
+),
     # Logout
     path(
         'logout/',

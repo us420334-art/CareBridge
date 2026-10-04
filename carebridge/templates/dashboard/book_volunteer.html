@@ -34,7 +34,6 @@ Book a Volunteer
 {% block extra_css %}
 
 <style>
-
     .volunteer-page {
         padding: 30px 35px 50px;
         max-width: 1100px;
@@ -370,7 +369,6 @@ Book a Volunteer
         }
 
     }
-
 </style>
 
 {% endblock %}
@@ -556,8 +554,8 @@ Book a Volunteer
         </p>
 
 
-        <form method="POST">
 
+        <form method="POST" id="volunteerBookingForm">
             {% csrf_token %}
 
 
@@ -645,11 +643,7 @@ Book a Volunteer
                 </label>
 
 
-                <textarea
-                    name="address"
-                    class="control"
-                    required
-                >{{ profile.address }}</textarea>
+                <textarea name="address" class="control" required>{{ profile.address }}</textarea>
 
             </div>
 
@@ -684,13 +678,8 @@ Book a Volunteer
 
                     <div class="service-option">
 
-                        <input
-                            type="radio"
-                            name="service"
-                            id="shopping_assistance"
-                            value="Shopping Assistance"
-                            required
-                        >
+                        <input type="radio" name="service" id="shopping_assistance" value="Shopping Assistance"
+                            required>
 
 
                         <label for="shopping_assistance">
@@ -738,12 +727,7 @@ Book a Volunteer
 
                     <div class="service-option">
 
-                        <input
-                            type="radio"
-                            name="service"
-                            id="bank_assistance"
-                            value="Bank Assistance"
-                        >
+                        <input type="radio" name="service" id="bank_assistance" value="Bank Assistance">
 
 
                         <label for="bank_assistance">
@@ -791,12 +775,7 @@ Book a Volunteer
 
                     <div class="service-option">
 
-                        <input
-                            type="radio"
-                            name="service"
-                            id="transport_assistance"
-                            value="Transport Assistance"
-                        >
+                        <input type="radio" name="service" id="transport_assistance" value="Transport Assistance">
 
 
                         <label for="transport_assistance">
@@ -844,12 +823,7 @@ Book a Volunteer
 
                     <div class="service-option">
 
-                        <input
-                            type="radio"
-                            name="service"
-                            id="hospital_accompaniment"
-                            value="Hospital Accompaniment"
-                        >
+                        <input type="radio" name="service" id="hospital_accompaniment" value="Hospital Accompaniment">
 
 
                         <label for="hospital_accompaniment">
@@ -897,12 +871,7 @@ Book a Volunteer
 
                     <div class="service-option">
 
-                        <input
-                            type="radio"
-                            name="service"
-                            id="general_support"
-                            value="General Support"
-                        >
+                        <input type="radio" name="service" id="general_support" value="General Support">
 
 
                         <label for="general_support">
@@ -978,12 +947,7 @@ Book a Volunteer
                     </label>
 
 
-                    <input
-                        type="date"
-                        name="booking_date"
-                        class="control"
-                        required
-                    >
+                    <input type="date" name="booking_date" class="control" required>
 
                 </div>
 
@@ -1011,12 +975,25 @@ Book a Volunteer
                     </label>
 
 
-                    <input
-                        type="time"
-                        name="booking_time"
-                        class="control"
-                        required
-                    >
+                    
+                    <select name="booking_time" id="booking_time" class="control" required>
+                        <option value="">
+                            {% if request.user.userprofile.language == 'ml' %}
+                            ആദ്യം വോളന്റിയർ, തീയതി, ദൈർഘ്യം തിരഞ്ഞെടുക്കുക
+                            {% else %}
+                            Select volunteer, date and duration first
+                            {% endif %}
+                        </option>
+                    </select>
+
+                    <p id="slotMessage" style="margin-top: 8px; color: #64748b; font-size: 13px;">
+                        {% if request.user.userprofile.language == 'ml' %}
+                        ലഭ്യമായ സമയങ്ങൾ ഇവിടെ കാണിക്കും.
+                        {% else %}
+                        Available starting times will appear here.
+                        {% endif %}
+                    </p>
+
 
                 </div>
 
@@ -1046,11 +1023,7 @@ Book a Volunteer
                 </label>
 
 
-                <select
-                    name="duration"
-                    class="control"
-                    required
-                >
+                <select name="duration" class="control" required>
 
                     <option value="">
 
@@ -1235,11 +1208,7 @@ Book a Volunteer
 
                     <label>
 
-                        <input
-                            type="radio"
-                            name="priority"
-                            value="Low"
-                        >
+                        <input type="radio" name="priority" value="Low">
 
                         <span>
 
@@ -1260,12 +1229,7 @@ Book a Volunteer
 
                     <label>
 
-                        <input
-                            type="radio"
-                            name="priority"
-                            value="Medium"
-                            checked
-                        >
+                        <input type="radio" name="priority" value="Medium" checked>
 
                         <span>
 
@@ -1286,11 +1250,7 @@ Book a Volunteer
 
                     <label>
 
-                        <input
-                            type="radio"
-                            name="priority"
-                            value="High"
-                        >
+                        <input type="radio" name="priority" value="High">
 
                         <span>
 
@@ -1311,11 +1271,7 @@ Book a Volunteer
 
                     <label>
 
-                        <input
-                            type="radio"
-                            name="priority"
-                            value="Emergency"
-                        >
+                        <input type="radio" name="priority" value="Emergency">
 
                         <span>
 
@@ -1360,21 +1316,15 @@ Book a Volunteer
                 </label>
 
 
-                <textarea
-                    name="description"
-                    class="control"
-                    placeholder="{% if request.user.userprofile.language == 'ml' %}വോളന്റിയർ അറിയേണ്ട പ്രധാന കാര്യങ്ങൾ ഇവിടെ എഴുതുക...{% else %}Tell the volunteer anything important they should know...{% endif %}"
-                ></textarea>
+                <textarea name="description" class="control"
+                    placeholder="{% if request.user.userprofile.language == 'ml' %}വോളന്റിയർ അറിയേണ്ട പ്രധാന കാര്യങ്ങൾ ഇവിടെ എഴുതുക...{% else %}Tell the volunteer anything important they should know...{% endif %}"></textarea>
 
             </div>
 
 
             <!-- SUBMIT -->
 
-            <button
-                type="submit"
-                class="submit"
-            >
+            <button type="submit" class="submit">
 
                 {% if request.user.userprofile.language == 'ml' %}
 
@@ -1397,5 +1347,105 @@ Book a Volunteer
 
 
 </div>
+<script>
+    document.getElementById("volunteerBookingForm").addEventListener("submit", function (event) {
+        const volunteerSelect = this.querySelector('[name="volunteer_id"]');
+        const volunteerId = volunteerSelect.value;
+
+        if (!volunteerId) {
+            event.preventDefault();
+            alert("Please select a volunteer.");
+            return;
+        }
+
+        this.action = "{% url 'confirm_volunteer_booking' volunteer_id=12345 %}"
+            .replace("12345", volunteerId);
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("volunteerBookingForm");
+        const volunteerSelect = form.querySelector('[name="volunteer_id"]');
+        const dateInput = form.querySelector('[name="booking_date"]');
+        const durationSelect = form.querySelector('[name="duration"]');
+        const timeSelect = document.getElementById("booking_time");
+        const slotMessage = document.getElementById("slotMessage");
+
+        const isMalayalam = "{{ request.user.userprofile.language }}" === "ml";
+
+        async function loadAvailableSlots() {
+            const volunteerId = volunteerSelect.value;
+            const date = dateInput.value;
+            const duration = durationSelect.value;
+
+            timeSelect.innerHTML = "";
+
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = isMalayalam
+                ? "ലഭ്യമായ സമയം തിരഞ്ഞെടുക്കുക"
+                : "Select an available time";
+            timeSelect.appendChild(placeholder);
+
+            if (!volunteerId || !date || !duration) {
+                slotMessage.textContent = isMalayalam
+                    ? "വോളന്റിയർ, തീയതി, ദൈർഘ്യം എന്നിവ തിരഞ്ഞെടുക്കുക."
+                    : "Select a volunteer, date and duration first.";
+                return;
+            }
+
+            slotMessage.textContent = isMalayalam
+                ? "ലഭ്യമായ സമയങ്ങൾ പരിശോധിക്കുന്നു..."
+                : "Checking available times...";
+
+            timeSelect.disabled = true;
+
+            try {
+                const params = new URLSearchParams({
+                    volunteer_id: volunteerId,
+                    booking_date: date,
+                    duration: duration
+                });
+
+                const response = await fetch(
+                    "{% url 'volunteer_available_slots' %}?" + params.toString()
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load available slots.");
+                }
+
+                const data = await response.json();
+
+                data.slots.forEach(function (slot) {
+                    const option = document.createElement("option");
+                    option.value = slot.value;
+                    option.textContent = slot.label;
+                    timeSelect.appendChild(option);
+                });
+
+                slotMessage.textContent = data.slots.length
+                    ? (isMalayalam
+                        ? "ലഭ്യമായ സമയം തിരഞ്ഞെടുക്കുക."
+                        : "Choose one of the available starting times.")
+                    : (isMalayalam
+                        ? "ഈ തീയതിയിൽ ലഭ്യമായ സമയങ്ങളില്ല."
+                        : "No available starting times for this date and duration.");
+
+            } catch (error) {
+                slotMessage.textContent = isMalayalam
+                    ? "സമയങ്ങൾ ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+                    : "Could not load available times. Please try again.";
+            } finally {
+                timeSelect.disabled = false;
+            }
+        }
+
+        volunteerSelect.addEventListener("change", loadAvailableSlots);
+        dateInput.addEventListener("change", loadAvailableSlots);
+        durationSelect.addEventListener("change", loadAvailableSlots);
+    });
+</script>
 
 {% endblock %}
