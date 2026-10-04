@@ -677,53 +677,19 @@ Medicine Reminders
 
 
 
-    <!-- =========================================
-         DUE REMINDERS
-    ========================================== -->
 
-    {% if due_reminders %}
-
-    <div class="due-box">
-
+    <!-- LIVE MEDICINE REMINDERS -->
+    <div class="due-box" id="dueReminderBox" style="display: none;">
         <h3>
-
             {% if request.user.userprofile.language == "ml" %}
             🔔 മരുന്ന് കഴിക്കേണ്ട സമയം
             {% else %}
             🔔 Medicine Reminder
             {% endif %}
-
         </h3>
 
-
-        {% for reminder in due_reminders %}
-
-        <p>
-
-            💊
-
-            <strong>
-                {{ reminder.medicine_name }}
-            </strong>
-
-            {% if reminder.dosage %}
-            — {{ reminder.dosage }}
-            {% endif %}
-
-            {% if request.user.userprofile.language == "ml" %}
-            കഴിക്കേണ്ട സമയമായി.
-            {% else %}
-            is due now.
-            {% endif %}
-
-        </p>
-
-        {% endfor %}
-
+        <div id="dueReminderList"></div>
     </div>
-
-    {% endif %}
-
 
 
     <!-- =========================================
@@ -1272,5 +1238,81 @@ Medicine Reminders
 
 
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const alertBox = document.getElementById("dueReminderBox");
+        const reminderList = document.getElementById("dueReminderList");
+
+        const statusUrl = "{% url 'medicine_alerts_status' %}";
+        const isMalayalam =
+            "{{ request.user.userprofile.language }}" === "ml";
+
+        async function checkMedicineReminders() {
+            try {
+                const response = await fetch(statusUrl, {
+                    method: "GET",
+                    cache: "no-store",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Unable to fetch reminders");
+                }
+
+                const data = await response.json();
+
+                if (!data.authenticated) {
+                    return;
+                }
+
+                reminderList.replaceChildren();
+
+                if (!data.due_reminders ||
+                    data.due_reminders.length === 0) {
+                    alertBox.style.display = "none";
+                    return;
+                }
+
+                data.due_reminders.forEach(function (reminder) {
+                    const paragraph = document.createElement("p");
+
+                    const medicine = document.createElement("strong");
+                    medicine.textContent = "💊 " + reminder.medicine_name;
+
+                    paragraph.appendChild(medicine);
+
+                    if (reminder.dosage) {
+                        paragraph.appendChild(
+                            document.createTextNode(" — " + reminder.dosage)
+                        );
+                    }
+
+                    paragraph.appendChild(
+                        document.createTextNode(
+                            isMalayalam
+                                ? " കഴിക്കേണ്ട സമയമായി."
+                                : " is due now."
+                        )
+                    );
+
+                    reminderList.appendChild(paragraph);
+                });
+
+                alertBox.style.display = "block";
+
+            } catch (error) {
+                console.error("Medicine reminder check failed:", error);
+            }
+        }
+
+        checkMedicineReminders();
+
+        // Check for due reminders every 30 seconds.
+        setInterval(checkMedicineReminders, 30000);
+    });
+</script>
 
 {% endblock %}
